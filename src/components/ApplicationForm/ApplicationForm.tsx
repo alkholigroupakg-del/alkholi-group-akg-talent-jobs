@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 import StepIndicator from "./StepIndicator";
 import BasicInfoStep from "./steps/BasicInfoStep";
 import JobPreferencesStep from "./steps/JobPreferencesStep";
@@ -17,12 +18,8 @@ const ApplicationForm = () => {
   const { t, lang, dir } = useLanguage();
 
   const stepLabels = [
-    t("step.basic"),
-    t("step.job"),
-    t("step.edu"),
-    t("step.exp"),
-    t("step.fin"),
-    t("step.attach"),
+    t("step.basic"), t("step.job"), t("step.edu"),
+    t("step.exp"), t("step.fin"), t("step.attach"),
   ];
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -54,7 +51,7 @@ const ApplicationForm = () => {
     const requiredByStep: Record<number, string[]> = {
       1: ["fullName", "gender", "nationality", "birthDate", "maritalStatus", "dependents", "phone", "email", "currentCity", "hasTransport"],
       2: ["desiredPosition", "jobType", "preferredCity", "hearAbout"],
-      3: ["educationLevel", "major", "university", "graduationYear", "gpa"],
+      3: ["educationLevel", "major", "university", "graduationYear", "gpa", "currentlyStudying"],
       4: ["yearsExperience", "currentlyEmployed", "currentTitle", "currentTasks", "selfSummary", "otherExperience", "arabicLevel", "englishLevel", "otherLanguage", "linkedin"],
       5: ["currentSalary", "expectedSalary", "availableDate"],
       6: [],
@@ -80,14 +77,92 @@ const ApplicationForm = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const uploadFile = async (file: File, folder: string) => {
+    const ext = file.name.split(".").pop();
+    const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from("resumes").upload(path, file);
+    if (error) return null;
+    return path;
+  };
+
   const handleSubmit = async () => {
     if (!validateStep()) return;
+
+    // Check resume file
+    if (!files.resume) {
+      toast.error(t("validation.required"));
+      return;
+    }
+
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    localStorage.removeItem(STORAGE_KEY);
-    toast.success(t("validation.success"));
+    try {
+      // Upload files
+      let resumeUrl = null;
+      let degreeUrl = null;
+      let experienceCertUrl = null;
+      let trainingCertsUrl = null;
+      let otherDocsUrl = null;
+
+      if (files.resume) resumeUrl = await uploadFile(files.resume, "resumes");
+      if (files.degreeCopy) degreeUrl = await uploadFile(files.degreeCopy, "degrees");
+      if (files.experienceCert) experienceCertUrl = await uploadFile(files.experienceCert, "experience");
+      if (files.trainingCerts) trainingCertsUrl = await uploadFile(files.trainingCerts, "training");
+      if (files.otherDocs) otherDocsUrl = await uploadFile(files.otherDocs, "other");
+
+      // Insert to database
+      const { error } = await supabase.from("applicants").insert({
+        full_name: formData.fullName,
+        gender: formData.gender,
+        nationality: formData.nationality,
+        birth_date: formData.birthDate,
+        marital_status: formData.maritalStatus,
+        dependents: parseInt(formData.dependents) || 0,
+        phone: formData.phone,
+        email: formData.email,
+        current_city: formData.currentCity,
+        has_transport: formData.hasTransport,
+        desired_position: formData.desiredPosition,
+        job_type: formData.jobType,
+        preferred_city: formData.preferredCity,
+        hear_about: formData.hearAbout,
+        education_level: formData.educationLevel,
+        major: formData.major,
+        university: formData.university,
+        graduation_year: formData.graduationYear,
+        gpa: formData.gpa,
+        currently_studying: formData.currentlyStudying,
+        current_study: formData.currentStudy || null,
+        years_experience: formData.yearsExperience,
+        currently_employed: formData.currentlyEmployed,
+        current_title: formData.currentTitle,
+        current_tasks: formData.currentTasks,
+        self_summary: formData.selfSummary,
+        other_experience: formData.otherExperience,
+        arabic_level: formData.arabicLevel,
+        english_level: formData.englishLevel,
+        other_language: formData.otherLanguage,
+        linkedin: formData.linkedin,
+        current_salary: formData.currentSalary,
+        expected_salary: formData.expectedSalary,
+        available_date: formData.availableDate,
+        resume_url: resumeUrl,
+        degree_url: degreeUrl,
+        experience_cert_url: experienceCertUrl,
+        training_certs_url: trainingCertsUrl,
+        other_docs_url: otherDocsUrl,
+      });
+
+      if (error) throw error;
+
+      setIsSubmitted(true);
+      localStorage.removeItem(STORAGE_KEY);
+      toast.success(t("validation.success"));
+    } catch (err) {
+      console.error("Submit error:", err);
+      toast.error(t("validation.required"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const NextArrow = lang === "ar" ? ArrowLeft : ArrowRight;
