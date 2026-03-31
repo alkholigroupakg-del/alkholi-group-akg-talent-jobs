@@ -7,6 +7,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index.tsx";
 import ApplyPage from "./pages/ApplyPage.tsx";
+import JobsPage from "./pages/JobsPage.tsx";
+import DashboardPage from "./pages/DashboardPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/apply" element={<ApplyPage />} />
+              <Route path="/jobs" element={<JobsPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

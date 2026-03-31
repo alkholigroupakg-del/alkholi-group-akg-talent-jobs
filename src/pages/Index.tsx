@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Users, Briefcase, Building2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Users, Briefcase, Building2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TopBar from "@/components/TopBar";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -18,6 +18,12 @@ const Index = () => {
           <img src={logo} alt="AlKholi Group" className="h-10 md:h-14 object-contain bg-card/80 backdrop-blur-sm rounded-lg px-4 py-2" />
           <div className="flex items-center gap-3">
             <TopBar />
+            <Link to="/jobs">
+              <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 gap-2 font-medium">
+                <Search className="w-4 h-4" />
+                <span className="hidden md:inline">{t("nav.jobs")}</span>
+              </Button>
+            </Link>
             <Link to="/apply">
               <Button className="gradient-accent text-accent-foreground hover:opacity-90 gap-2 font-semibold">
                 {t("nav.apply")}
@@ -44,11 +50,17 @@ const Index = () => {
             <p className="text-lg md:text-xl text-primary-foreground/80 leading-relaxed max-w-lg">
               {t("hero.desc")}
             </p>
-            <div className="flex gap-4 pt-4">
+            <div className="flex flex-wrap gap-4 pt-4">
               <Link to="/apply">
                 <Button size="lg" className="gradient-accent text-accent-foreground hover:opacity-90 gap-2 text-lg px-8 py-6 font-bold shadow-glow">
                   {t("hero.cta")}
                   <Arrow className="w-5 h-5" />
+                </Button>
+              </Link>
+              <Link to="/jobs">
+                <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-white/10 gap-2 text-lg px-8 py-6 font-bold">
+                  <Search className="w-5 h-5" />
+                  {t("hero.viewJobs")}
                 </Button>
               </Link>
             </div>
