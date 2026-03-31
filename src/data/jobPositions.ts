@@ -139,7 +139,11 @@ export const yearsOfExperience = [
 ];
 
 export const salaryRanges = [
-  ...Array.from({ length: 50 }, (_, i) => `${((i + 1) * 1000).toLocaleString("en-US")} ريال`),
+  ...Array.from({ length: 50 }, (_, i) => {
+    const from = (i * 1000 + 1000).toLocaleString("en-US");
+    const to = (i * 1000 + 1999).toLocaleString("en-US");
+    return `${from} إلى ${to} ريال`;
+  }),
   "أعلى من 50,000 ريال",
 ];
 
