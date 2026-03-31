@@ -1,3 +1,5 @@
+import type { Lang } from "@/contexts/LanguageContext";
+
 export const jobPositions = [
   "مدير الموارد البشرية",
   "مدير إدارة الموارد البشرية عام",
@@ -100,75 +102,53 @@ export const jobPositions = [
   "Content Creator",
 ];
 
-export const nationalities = [
-  "سعودي/ة",
-  "إماراتي/ة",
-  "كويتي/ة",
-  "بحريني/ة",
-  "عماني/ة",
-  "قطري/ة",
-  "مصري/ة",
-  "أردني/ة",
-  "لبناني/ة",
-  "سوري/ة",
-  "عراقي/ة",
-  "يمني/ة",
-  "فلسطيني/ة",
-  "سوداني/ة",
-  "تونسي/ة",
-  "مغربي/ة",
-  "جزائري/ة",
-  "ليبي/ة",
-  "باكستاني/ة",
-  "هندي/ة",
-  "بنغلاديشي/ة",
-  "فلبيني/ة",
-  "إندونيسي/ة",
-  "أخرى",
+// Bilingual data
+const nationalitiesData: Record<Lang, string[]> = {
+  ar: [
+    "سعودي/ة", "إماراتي/ة", "كويتي/ة", "بحريني/ة", "عماني/ة", "قطري/ة",
+    "مصري/ة", "أردني/ة", "لبناني/ة", "سوري/ة", "عراقي/ة", "يمني/ة",
+    "فلسطيني/ة", "سوداني/ة", "تونسي/ة", "مغربي/ة", "جزائري/ة", "ليبي/ة",
+    "باكستاني/ة", "هندي/ة", "بنغلاديشي/ة", "فلبيني/ة", "إندونيسي/ة", "أخرى",
+  ],
+  en: [
+    "Saudi", "Emirati", "Kuwaiti", "Bahraini", "Omani", "Qatari",
+    "Egyptian", "Jordanian", "Lebanese", "Syrian", "Iraqi", "Yemeni",
+    "Palestinian", "Sudanese", "Tunisian", "Moroccan", "Algerian", "Libyan",
+    "Pakistani", "Indian", "Bangladeshi", "Filipino", "Indonesian", "Other",
+  ],
+};
+
+const educationLevelsData: Record<Lang, string[]> = {
+  ar: ["دكتوراه", "ماجستير", "بكالوريوس", "دبلوم", "ثانوية عامة", "أقل من ثانوية"],
+  en: ["Doctorate", "Master's", "Bachelor's", "Diploma", "High School", "Below High School"],
+};
+
+export const getNationalities = (lang: Lang) => nationalitiesData[lang];
+export const getEducationLevels = (lang: Lang) => educationLevelsData[lang];
+
+export const getYearsOfExperience = (lang: Lang) => [
+  ...Array.from({ length: 30 }, (_, i) => 
+    lang === "ar" ? `${i + 1} سنة` : `${i + 1} year${i + 1 > 1 ? "s" : ""}`
+  ),
+  lang === "ar" ? "أعلى من 30 سنة" : "More than 30 years",
 ];
 
-export const cities = [
-  "الرياض",
-  "جدة",
-  "المنطقة الشرقية",
-];
-
-export const yearsOfExperience = [
-  ...Array.from({ length: 30 }, (_, i) => `${i + 1} سنة`),
-  "أعلى من 30 سنة",
-];
-
-export const salaryRanges = [
+export const getSalaryRanges = (lang: Lang) => [
   ...Array.from({ length: 50 }, (_, i) => {
     const from = (i * 1000 + 1000).toLocaleString("en-US");
     const to = (i * 1000 + 1999).toLocaleString("en-US");
-    return `${from} إلى ${to} ريال`;
+    return lang === "ar" 
+      ? `${from} إلى ${to} ريال`
+      : `${from} to ${to} SAR`;
   }),
-  "أعلى من 50,000 ريال",
+  lang === "ar" ? "أعلى من 50,000 ريال" : "More than 50,000 SAR",
 ];
 
-export const educationLevels = [
-  "دكتوراه",
-  "ماجستير",
-  "بكالوريوس",
-  "دبلوم",
-  "ثانوية عامة",
-  "أقل من ثانوية",
-];
-
-export const languageLevels = [
-  "ممتاز",
-  "جيد جداً",
-  "جيد",
-  "متوسط",
-  "مبتدئ",
-];
-
-export const hearAboutUs = [
-  "LinkedIn",
-  "تويتر / X",
-  "موقع الشركة",
-  "صديق أو معارف",
-  "منصة توظيف",
-  "أخرى",
-];
+// Keep backward compat exports
+export const nationalities = nationalitiesData.ar;
+export const cities = ["الرياض", "جدة", "المنطقة الشرقية"];
+export const yearsOfExperience = getYearsOfExperience("ar");
+export const salaryRanges = getSalaryRanges("ar");
+export const educationLevels = educationLevelsData.ar;
+export const languageLevels = ["ممتاز", "جيد جداً", "جيد", "متوسط", "مبتدئ"];
+export const hearAboutUs = ["LinkedIn", "تويتر / X", "موقع الشركة", "صديق أو معارف", "منصة توظيف", "أخرى"];

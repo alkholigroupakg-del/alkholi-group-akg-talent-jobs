@@ -1,6 +1,6 @@
 import FormField from "../FormField";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { languageLevels, yearsOfExperience } from "@/data/jobPositions";
+import { getYearsOfExperience } from "@/data/jobPositions";
 
 interface Props {
   data: Record<string, string>;
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const ExperienceStep = ({ data, onChange }: Props) => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   const yesNoOptions = [t("opt.yes"), t("opt.no")];
   const langLevelOptions = [
@@ -20,7 +20,7 @@ const ExperienceStep = ({ data, onChange }: Props) => {
     <div className="space-y-5 animate-fade-in">
       <h3 className="text-xl font-bold text-primary mb-6">{t("step.exp")}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <FormField label={t("field.yearsExperience")} name="yearsExperience" type="select" required value={data.yearsExperience || ""} onChange={onChange} options={yearsOfExperience} />
+        <FormField label={t("field.yearsExperience")} name="yearsExperience" type="select" required value={data.yearsExperience || ""} onChange={onChange} options={getYearsOfExperience(lang)} />
         <FormField label={t("field.currentlyEmployed")} name="currentlyEmployed" type="select" required value={data.currentlyEmployed || ""} onChange={onChange} options={yesNoOptions} />
         <FormField label={t("field.currentTitle")} name="currentTitle" type="text" required value={data.currentTitle || ""} onChange={onChange} placeholder={t("ph.currentTitle")} />
         <div className="md:col-span-2">
