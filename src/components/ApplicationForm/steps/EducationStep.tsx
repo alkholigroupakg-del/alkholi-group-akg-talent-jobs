@@ -1,4 +1,5 @@
 import FormField from "../FormField";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { educationLevels } from "@/data/jobPositions";
 
 interface Props {
@@ -7,18 +8,22 @@ interface Props {
 }
 
 const EducationStep = ({ data, onChange }: Props) => {
+  const { t } = useLanguage();
+
+  const yesNoOptions = [t("opt.yes"), t("opt.no")];
+
   return (
     <div className="space-y-5 animate-fade-in">
-      <h3 className="text-xl font-bold text-primary mb-6">المؤهل العلمي</h3>
+      <h3 className="text-xl font-bold text-primary mb-6">{t("step.edu")}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <FormField label="المؤهل العلمي الحالي" name="educationLevel" type="select" required value={data.educationLevel || ""} onChange={onChange} options={educationLevels} />
-        <FormField label="التخصص" name="major" type="text" required value={data.major || ""} onChange={onChange} placeholder="أدخل تخصصك" />
-        <FormField label="الجامعة / المعهد" name="university" type="text" required value={data.university || ""} onChange={onChange} placeholder="اسم الجامعة أو المعهد" />
-        <FormField label="سنة التخرج" name="graduationYear" type="text" required value={data.graduationYear || ""} onChange={onChange} placeholder="مثال: 2020" />
-        <FormField label="المعدل التراكمي" name="gpa" type="text" required value={data.gpa || ""} onChange={onChange} placeholder="مثال: 4.5 من 5" />
-        <FormField label="هل ملتحق حالياً بدراسة أخرى؟" name="currentlyStudying" type="select" required value={data.currentlyStudying || ""} onChange={onChange} options={["نعم", "لا"]} />
-        {data.currentlyStudying === "نعم" && (
-          <FormField label="ماهي الدراسة الحالية؟" name="currentStudy" type="text" required value={data.currentStudy || ""} onChange={onChange} placeholder="وصف الدراسة الحالية" />
+        <FormField label={t("field.educationLevel")} name="educationLevel" type="select" required value={data.educationLevel || ""} onChange={onChange} options={educationLevels} />
+        <FormField label={t("field.major")} name="major" type="text" required value={data.major || ""} onChange={onChange} placeholder={t("ph.major")} />
+        <FormField label={t("field.university")} name="university" type="text" required value={data.university || ""} onChange={onChange} placeholder={t("ph.university")} />
+        <FormField label={t("field.graduationYear")} name="graduationYear" type="text" required value={data.graduationYear || ""} onChange={onChange} placeholder={t("ph.graduationYear")} />
+        <FormField label={t("field.gpa")} name="gpa" type="text" required value={data.gpa || ""} onChange={onChange} placeholder={t("ph.gpa")} />
+        <FormField label={t("field.currentlyStudying")} name="currentlyStudying" type="select" required value={data.currentlyStudying || ""} onChange={onChange} options={yesNoOptions} />
+        {(data.currentlyStudying === "نعم" || data.currentlyStudying === "Yes") && (
+          <FormField label={t("field.currentStudy")} name="currentStudy" type="text" required value={data.currentStudy || ""} onChange={onChange} placeholder={t("ph.currentStudy")} />
         )}
       </div>
     </div>
