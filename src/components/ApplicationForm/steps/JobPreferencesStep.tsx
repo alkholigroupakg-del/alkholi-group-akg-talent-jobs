@@ -14,10 +14,10 @@ const JobPreferencesStep = ({ data, onChange }: Props) => {
         <div className="md:col-span-2">
           <FormField label="الوظيفة المرغوب التقديم عليها" name="desiredPosition" type="select" required value={data.desiredPosition || ""} onChange={onChange} options={jobPositions} />
         </div>
-        <FormField label="نوع الوظيفة" name="jobType" type="select" value={data.jobType || ""} onChange={onChange} options={["دوام كامل", "دوام جزئي", "عن بُعد", "عقد مؤقت", "تدريب تعاوني", "تمهير"]} />
-        <FormField label="المدينة التي ترغب بالعمل فيها" name="preferredCity" type="select" value={data.preferredCity || ""} onChange={onChange} options={cities} />
+        <FormField label="نوع الوظيفة" name="jobType" type="select" required value={data.jobType || ""} onChange={onChange} options={["دوام كامل", "دوام جزئي", "عن بُعد", "عقد مؤقت", "تدريب تعاوني", "تمهير"]} />
+        <FormField label="المدينة التي ترغب بالعمل فيها" name="preferredCity" type="select" required value={data.preferredCity || ""} onChange={onChange} options={cities} />
         <div className="md:col-span-2">
-          <FormField label="كيف سمعت عن هذه الفرصة؟" name="hearAbout" type="select" value={data.hearAbout || ""} onChange={onChange} options={hearAboutUs} />
+          <FormField label="كيف سمعت عن هذه الفرصة؟" name="hearAbout" type="select" required value={data.hearAbout || ""} onChange={onChange} options={hearAboutUs} />
         </div>
       </div>
     </div>

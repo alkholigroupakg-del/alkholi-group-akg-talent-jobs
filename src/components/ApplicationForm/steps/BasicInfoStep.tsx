@@ -15,12 +15,12 @@ const BasicInfoStep = ({ data, onChange }: Props) => {
         <FormField label="الجنس" name="gender" type="select" required value={data.gender || ""} onChange={onChange} options={["ذكر", "أنثى"]} />
         <FormField label="الجنسية" name="nationality" type="select" required value={data.nationality || ""} onChange={onChange} options={nationalities} />
         <FormField label="تاريخ الميلاد" name="birthDate" type="date" required value={data.birthDate || ""} onChange={onChange} />
-        <FormField label="الحالة الاجتماعية" name="maritalStatus" type="select" value={data.maritalStatus || ""} onChange={onChange} options={["أعزب/عزباء", "متزوج/ة", "مطلق/ة", "أرمل/ة"]} />
-        <FormField label="عدد المعالين (إذا كنت متزوج)" name="dependents" type="number" value={data.dependents || ""} onChange={onChange} placeholder="0" />
+        <FormField label="الحالة الاجتماعية" name="maritalStatus" type="select" required value={data.maritalStatus || ""} onChange={onChange} options={["أعزب/عزباء", "متزوج/ة", "مطلق/ة", "أرمل/ة"]} />
+        <FormField label="عدد المعالين (إذا كنت متزوج)" name="dependents" type="number" required value={data.dependents || ""} onChange={onChange} placeholder="0" />
         <FormField label="رقم الجوال" name="phone" type="tel" required value={data.phone || ""} onChange={onChange} placeholder="05XXXXXXXX" />
         <FormField label="البريد الإلكتروني" name="email" type="email" required value={data.email || ""} onChange={onChange} placeholder="example@email.com" />
-        <FormField label="مقر السكن الحالي" name="currentCity" type="text" value={data.currentCity || ""} onChange={onChange} placeholder="المدينة" />
-        <FormField label="هل لديك وسيلة مواصلات؟" name="hasTransport" type="select" value={data.hasTransport || ""} onChange={onChange} options={["نعم", "لا"]} />
+        <FormField label="مقر السكن الحالي" name="currentCity" type="text" required value={data.currentCity || ""} onChange={onChange} placeholder="المدينة" />
+        <FormField label="هل لديك وسيلة مواصلات؟" name="hasTransport" type="select" required value={data.hasTransport || ""} onChange={onChange} options={["نعم", "لا"]} />
       </div>
     </div>
   );

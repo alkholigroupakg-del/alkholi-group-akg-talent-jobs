@@ -50,11 +50,11 @@ const ApplicationForm = () => {
 
   const validateStep = () => {
     const requiredByStep: Record<number, string[]> = {
-      1: ["fullName", "gender", "nationality", "birthDate", "phone", "email"],
-      2: ["desiredPosition"],
-      3: ["educationLevel", "major"],
-      4: [],
-      5: [],
+      1: ["fullName", "gender", "nationality", "birthDate", "maritalStatus", "dependents", "phone", "email", "currentCity", "hasTransport"],
+      2: ["desiredPosition", "jobType", "preferredCity", "hearAbout"],
+      3: ["educationLevel", "major", "university", "graduationYear", "gpa"],
+      4: ["yearsExperience", "currentlyEmployed", "currentTitle", "currentTasks", "selfSummary", "otherExperience", "arabicLevel", "englishLevel", "otherLanguage", "linkedin"],
+      5: ["currentSalary", "expectedSalary", "availableDate"],
       6: [],
     };
 

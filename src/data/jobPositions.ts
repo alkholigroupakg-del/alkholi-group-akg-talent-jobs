@@ -130,22 +130,17 @@ export const nationalities = [
 export const cities = [
   "الرياض",
   "جدة",
-  "مكة المكرمة",
-  "المدينة المنورة",
-  "الدمام",
-  "الخبر",
-  "الظهران",
-  "تبوك",
-  "أبها",
-  "الطائف",
-  "بريدة",
-  "حائل",
-  "جازان",
-  "نجران",
-  "ينبع",
-  "الجبيل",
-  "خميس مشيط",
-  "أخرى",
+  "المنطقة الشرقية",
+];
+
+export const yearsOfExperience = [
+  ...Array.from({ length: 30 }, (_, i) => `${i + 1} سنة`),
+  "أعلى من 30 سنة",
+];
+
+export const salaryRanges = [
+  ...Array.from({ length: 50 }, (_, i) => `${((i + 1) * 1000).toLocaleString("en-US")} ريال`),
+  "أعلى من 50,000 ريال",
 ];
 
 export const educationLevels = [
