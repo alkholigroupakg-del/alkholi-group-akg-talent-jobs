@@ -11,7 +11,7 @@ const ExperienceStep = ({ data, onChange }: Props) => {
     <div className="space-y-5 animate-fade-in">
       <h3 className="text-xl font-bold text-primary mb-6">الخبرات والمهارات</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <FormField label="عدد سنوات الخبرة" name="yearsExperience" type="select" value={data.yearsExperience || ""} onChange={onChange} options={["بدون خبرة", "أقل من سنة", "1-3 سنوات", "3-5 سنوات", "5-10 سنوات", "أكثر من 10 سنوات"]} />
+        <FormField label="عدد سنوات الخبرة" name="yearsExperience" type="select" required value={data.yearsExperience || ""} onChange={onChange} options={yearsOfExperience} />
         <FormField label="هل أنت على رأس العمل؟" name="currentlyEmployed" type="select" value={data.currentlyEmployed || ""} onChange={onChange} options={["نعم", "لا"]} />
         <FormField label="المسمى الوظيفي الحالي" name="currentTitle" type="text" value={data.currentTitle || ""} onChange={onChange} placeholder="المسمى الوظيفي" />
         <div className="md:col-span-2">
