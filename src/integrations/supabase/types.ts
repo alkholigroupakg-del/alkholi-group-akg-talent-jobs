@@ -14,7 +14,195 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applicants: {
+        Row: {
+          arabic_level: string | null
+          available_date: string | null
+          birth_date: string | null
+          created_at: string
+          current_city: string | null
+          current_salary: string | null
+          current_study: string | null
+          current_tasks: string | null
+          current_title: string | null
+          currently_employed: string | null
+          currently_studying: string | null
+          degree_url: string | null
+          dependents: number | null
+          desired_position: string | null
+          education_level: string | null
+          email: string | null
+          english_level: string | null
+          expected_salary: string | null
+          experience_cert_url: string | null
+          full_name: string
+          gender: string | null
+          gpa: string | null
+          graduation_year: string | null
+          has_transport: string | null
+          hear_about: string | null
+          id: string
+          job_type: string | null
+          linkedin: string | null
+          major: string | null
+          marital_status: string | null
+          nationality: string | null
+          notes: string | null
+          other_docs_url: string | null
+          other_experience: string | null
+          other_language: string | null
+          phone: string | null
+          preferred_city: string | null
+          resume_url: string | null
+          self_summary: string | null
+          status: Database["public"]["Enums"]["applicant_status"]
+          training_certs_url: string | null
+          university: string | null
+          updated_at: string
+          years_experience: string | null
+        }
+        Insert: {
+          arabic_level?: string | null
+          available_date?: string | null
+          birth_date?: string | null
+          created_at?: string
+          current_city?: string | null
+          current_salary?: string | null
+          current_study?: string | null
+          current_tasks?: string | null
+          current_title?: string | null
+          currently_employed?: string | null
+          currently_studying?: string | null
+          degree_url?: string | null
+          dependents?: number | null
+          desired_position?: string | null
+          education_level?: string | null
+          email?: string | null
+          english_level?: string | null
+          expected_salary?: string | null
+          experience_cert_url?: string | null
+          full_name: string
+          gender?: string | null
+          gpa?: string | null
+          graduation_year?: string | null
+          has_transport?: string | null
+          hear_about?: string | null
+          id?: string
+          job_type?: string | null
+          linkedin?: string | null
+          major?: string | null
+          marital_status?: string | null
+          nationality?: string | null
+          notes?: string | null
+          other_docs_url?: string | null
+          other_experience?: string | null
+          other_language?: string | null
+          phone?: string | null
+          preferred_city?: string | null
+          resume_url?: string | null
+          self_summary?: string | null
+          status?: Database["public"]["Enums"]["applicant_status"]
+          training_certs_url?: string | null
+          university?: string | null
+          updated_at?: string
+          years_experience?: string | null
+        }
+        Update: {
+          arabic_level?: string | null
+          available_date?: string | null
+          birth_date?: string | null
+          created_at?: string
+          current_city?: string | null
+          current_salary?: string | null
+          current_study?: string | null
+          current_tasks?: string | null
+          current_title?: string | null
+          currently_employed?: string | null
+          currently_studying?: string | null
+          degree_url?: string | null
+          dependents?: number | null
+          desired_position?: string | null
+          education_level?: string | null
+          email?: string | null
+          english_level?: string | null
+          expected_salary?: string | null
+          experience_cert_url?: string | null
+          full_name?: string
+          gender?: string | null
+          gpa?: string | null
+          graduation_year?: string | null
+          has_transport?: string | null
+          hear_about?: string | null
+          id?: string
+          job_type?: string | null
+          linkedin?: string | null
+          major?: string | null
+          marital_status?: string | null
+          nationality?: string | null
+          notes?: string | null
+          other_docs_url?: string | null
+          other_experience?: string | null
+          other_language?: string | null
+          phone?: string | null
+          preferred_city?: string | null
+          resume_url?: string | null
+          self_summary?: string | null
+          status?: Database["public"]["Enums"]["applicant_status"]
+          training_certs_url?: string | null
+          university?: string | null
+          updated_at?: string
+          years_experience?: string | null
+        }
+        Relationships: []
+      }
+      job_postings: {
+        Row: {
+          created_at: string
+          department: string | null
+          description_ar: string | null
+          description_en: string | null
+          id: string
+          is_active: boolean
+          job_type: string
+          location: string
+          requirements_ar: string | null
+          requirements_en: string | null
+          title_ar: string
+          title_en: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          description_ar?: string | null
+          description_en?: string | null
+          id?: string
+          is_active?: boolean
+          job_type: string
+          location: string
+          requirements_ar?: string | null
+          requirements_en?: string | null
+          title_ar: string
+          title_en?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          description_ar?: string | null
+          description_en?: string | null
+          id?: string
+          is_active?: boolean
+          job_type?: string
+          location?: string
+          requirements_ar?: string | null
+          requirements_en?: string | null
+          title_ar?: string
+          title_en?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +211,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      applicant_status:
+        | "new"
+        | "reviewing"
+        | "phone_interview"
+        | "in_person_interview"
+        | "accepted"
+        | "hired"
+        | "rejected"
+        | "withdrawn"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +346,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      applicant_status: [
+        "new",
+        "reviewing",
+        "phone_interview",
+        "in_person_interview",
+        "accepted",
+        "hired",
+        "rejected",
+        "withdrawn",
+      ],
+    },
   },
 } as const
