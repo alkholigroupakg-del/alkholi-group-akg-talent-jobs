@@ -35,20 +35,24 @@ const FormField = ({
   accept,
   onFileChange,
 }: FormFieldProps) => {
+  const { dir, t } = useLanguage();
+  const textAlign = dir === "rtl" ? "text-right" : "text-left";
+  const starMargin = dir === "rtl" ? "mr-1" : "ml-1";
+
   if (type === "textarea") {
     return (
       <div className="space-y-2">
         <Label htmlFor={name} className="text-sm font-medium text-foreground">
           {label}
-          {required && <span className="text-destructive mr-1">*</span>}
+          {required && <span className={`text-destructive ${starMargin}`}>*</span>}
         </Label>
         <Textarea
           id={name}
           value={value}
           onChange={(e) => onChange(name, e.target.value)}
           placeholder={placeholder}
-          className="min-h-[100px] bg-background border-input focus:ring-ring text-right"
-          dir="rtl"
+          className={`min-h-[100px] bg-background border-input focus:ring-ring ${textAlign}`}
+          dir={dir}
         />
       </div>
     );
@@ -59,13 +63,13 @@ const FormField = ({
       <div className="space-y-2">
         <Label htmlFor={name} className="text-sm font-medium text-foreground">
           {label}
-          {required && <span className="text-destructive mr-1">*</span>}
+          {required && <span className={`text-destructive ${starMargin}`}>*</span>}
         </Label>
         <Select value={value} onValueChange={(v) => onChange(name, v)}>
-          <SelectTrigger className="bg-background border-input text-right" dir="rtl">
-            <SelectValue placeholder={placeholder || "اختر..."} />
+          <SelectTrigger className={`bg-background border-input ${textAlign}`} dir={dir}>
+            <SelectValue placeholder={placeholder || t("ph.select")} />
           </SelectTrigger>
-          <SelectContent dir="rtl" className="max-h-[250px]">
+          <SelectContent dir={dir} className="max-h-[250px]">
             {options.map((opt) => (
               <SelectItem key={opt} value={opt}>
                 {opt}
@@ -82,7 +86,7 @@ const FormField = ({
       <div className="space-y-2">
         <Label htmlFor={name} className="text-sm font-medium text-foreground">
           {label}
-          {required && <span className="text-destructive mr-1">*</span>}
+          {required && <span className={`text-destructive ${starMargin}`}>*</span>}
         </Label>
         <Input
           id={name}
@@ -99,7 +103,7 @@ const FormField = ({
     <div className="space-y-2">
       <Label htmlFor={name} className="text-sm font-medium text-foreground">
         {label}
-        {required && <span className="text-destructive mr-1">*</span>}
+        {required && <span className={`text-destructive ${starMargin}`}>*</span>}
       </Label>
       <Input
         id={name}
@@ -107,8 +111,8 @@ const FormField = ({
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
         placeholder={placeholder}
-        className="bg-background border-input focus:ring-ring text-right"
-        dir="rtl"
+        className={`bg-background border-input focus:ring-ring ${textAlign}`}
+        dir={dir}
       />
     </div>
   );
