@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-type Lang = "ar" | "en";
+export type Lang = "ar" | "en";
 
 interface LanguageContextType {
   lang: Lang;
@@ -14,6 +14,8 @@ const translations: Record<Lang, Record<string, string>> = {
     // Navbar & general
     "nav.apply": "تقدم الآن",
     "nav.formTitle": "نموذج التقديم الوظيفي",
+    "nav.jobs": "الوظائف الشاغرة",
+    "nav.dashboard": "لوحة التحكم",
     "footer.rights": "مجموعة الخولي — جميع الحقوق محفوظة",
 
     // Hero
@@ -21,6 +23,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "hero.title2": "مع مجموعة الخولي",
     "hero.desc": "نبحث عن كفاءات متميزة للانضمام لفريقنا. قدّم طلبك الآن واكتشف الفرص الوظيفية المتاحة.",
     "hero.cta": "تقدم للوظيفة",
+    "hero.viewJobs": "تصفح الوظائف",
 
     // Features
     "features.title": "لماذا مجموعة الخولي؟",
@@ -174,11 +177,67 @@ const translations: Record<Lang, Record<string, string>> = {
     "opt.friend": "صديق أو معارف",
     "opt.jobPlatform": "منصة توظيف",
     "opt.other": "أخرى",
+
+    // Jobs page
+    "jobs.title": "الوظائف الشاغرة",
+    "jobs.desc": "اكتشف الفرص الوظيفية المتاحة حالياً وقدّم طلبك",
+    "jobs.noJobs": "لا توجد وظائف شاغرة حالياً",
+    "jobs.applyNow": "تقدم الآن",
+    "jobs.location": "الموقع",
+    "jobs.type": "نوع الوظيفة",
+    "jobs.department": "القسم",
+    "jobs.postedOn": "تاريخ النشر",
+
+    // Dashboard
+    "dash.title": "لوحة تحكم الموارد البشرية",
+    "dash.totalApplicants": "إجمالي المتقدمين",
+    "dash.newApplicants": "متقدمين جدد",
+    "dash.inInterview": "في المقابلات",
+    "dash.hired": "تم توظيفهم",
+    "dash.applicants": "المتقدمون",
+    "dash.search": "بحث بالاسم أو الوظيفة...",
+    "dash.export": "تصدير Excel",
+    "dash.status": "الحالة",
+    "dash.name": "الاسم",
+    "dash.position": "الوظيفة",
+    "dash.city": "المدينة",
+    "dash.date": "تاريخ التقديم",
+    "dash.actions": "الإجراءات",
+    "dash.notes": "الملاحظات",
+    "dash.saveNotes": "حفظ الملاحظات",
+    "dash.updateStatus": "تحديث الحالة",
+    "dash.viewDetails": "عرض التفاصيل",
+    "dash.byStatus": "حسب الحالة",
+    "dash.byPosition": "حسب الوظيفة",
+    "dash.byCity": "حسب المدينة",
+    "dash.timeline": "الجدول الزمني",
+    "dash.manageJobs": "إدارة الوظائف",
+    "dash.addJob": "إضافة وظيفة",
+    "dash.login": "تسجيل الدخول",
+    "dash.email": "البريد الإلكتروني",
+    "dash.password": "كلمة المرور",
+    "dash.loginBtn": "دخول",
+    "dash.loginError": "خطأ في البريد أو كلمة المرور",
+    "dash.logout": "تسجيل خروج",
+    "dash.all": "الكل",
+    "dash.filterStatus": "فلترة حسب الحالة",
+
+    // Statuses
+    "status.new": "جديد",
+    "status.reviewing": "قيد المراجعة",
+    "status.phone_interview": "مقابلة هاتفية",
+    "status.in_person_interview": "مقابلة شخصية",
+    "status.accepted": "مقبول",
+    "status.hired": "تم التوظيف",
+    "status.rejected": "مرفوض",
+    "status.withdrawn": "منسحب",
   },
   en: {
     // Navbar & general
     "nav.apply": "Apply Now",
     "nav.formTitle": "Job Application Form",
+    "nav.jobs": "Job Openings",
+    "nav.dashboard": "Dashboard",
     "footer.rights": "AlKholi Group — All Rights Reserved",
 
     // Hero
@@ -186,6 +245,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "hero.title2": "With AlKholi Group",
     "hero.desc": "We are looking for outstanding talents to join our team. Apply now and explore available opportunities.",
     "hero.cta": "Apply for a Job",
+    "hero.viewJobs": "Browse Jobs",
 
     // Features
     "features.title": "Why AlKholi Group?",
@@ -339,6 +399,60 @@ const translations: Record<Lang, Record<string, string>> = {
     "opt.friend": "Friend or Acquaintance",
     "opt.jobPlatform": "Job Platform",
     "opt.other": "Other",
+
+    // Jobs page
+    "jobs.title": "Job Openings",
+    "jobs.desc": "Explore available career opportunities and apply today",
+    "jobs.noJobs": "No job openings available at this time",
+    "jobs.applyNow": "Apply Now",
+    "jobs.location": "Location",
+    "jobs.type": "Job Type",
+    "jobs.department": "Department",
+    "jobs.postedOn": "Posted on",
+
+    // Dashboard
+    "dash.title": "HR Dashboard",
+    "dash.totalApplicants": "Total Applicants",
+    "dash.newApplicants": "New Applicants",
+    "dash.inInterview": "In Interviews",
+    "dash.hired": "Hired",
+    "dash.applicants": "Applicants",
+    "dash.search": "Search by name or position...",
+    "dash.export": "Export Excel",
+    "dash.status": "Status",
+    "dash.name": "Name",
+    "dash.position": "Position",
+    "dash.city": "City",
+    "dash.date": "Application Date",
+    "dash.actions": "Actions",
+    "dash.notes": "Notes",
+    "dash.saveNotes": "Save Notes",
+    "dash.updateStatus": "Update Status",
+    "dash.viewDetails": "View Details",
+    "dash.byStatus": "By Status",
+    "dash.byPosition": "By Position",
+    "dash.byCity": "By City",
+    "dash.timeline": "Timeline",
+    "dash.manageJobs": "Manage Jobs",
+    "dash.addJob": "Add Job",
+    "dash.login": "Login",
+    "dash.email": "Email",
+    "dash.password": "Password",
+    "dash.loginBtn": "Sign In",
+    "dash.loginError": "Invalid email or password",
+    "dash.logout": "Logout",
+    "dash.all": "All",
+    "dash.filterStatus": "Filter by status",
+
+    // Statuses
+    "status.new": "New",
+    "status.reviewing": "Under Review",
+    "status.phone_interview": "Phone Interview",
+    "status.in_person_interview": "In-Person Interview",
+    "status.accepted": "Accepted",
+    "status.hired": "Hired",
+    "status.rejected": "Rejected",
+    "status.withdrawn": "Withdrawn",
   },
 };
 
