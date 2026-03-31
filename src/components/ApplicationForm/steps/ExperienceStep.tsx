@@ -1,5 +1,5 @@
 import FormField from "../FormField";
-import { languageLevels } from "@/data/jobPositions";
+import { languageLevels, yearsOfExperience } from "@/data/jobPositions";
 
 interface Props {
   data: Record<string, string>;
