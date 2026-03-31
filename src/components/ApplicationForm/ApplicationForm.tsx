@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 import StepIndicator from "./StepIndicator";
 import BasicInfoStep from "./steps/BasicInfoStep";
 import JobPreferencesStep from "./steps/JobPreferencesStep";
@@ -12,16 +13,18 @@ import AttachmentsStep from "./steps/AttachmentsStep";
 
 const STORAGE_KEY = "akg-application-draft";
 
-const stepLabels = [
-  "البيانات الأساسية",
-  "التفضيلات الوظيفية",
-  "المؤهل العلمي",
-  "الخبرات والمهارات",
-  "التوقعات المالية",
-  "المرفقات",
-];
-
 const ApplicationForm = () => {
+  const { t, lang, dir } = useLanguage();
+
+  const stepLabels = [
+    t("step.basic"),
+    t("step.job"),
+    t("step.edu"),
+    t("step.exp"),
+    t("step.fin"),
+    t("step.attach"),
+  ];
+
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Record<string, string>>(() => {
     try {
@@ -35,7 +38,6 @@ const ApplicationForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Auto-save to localStorage
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
   }, [formData]);
@@ -61,7 +63,7 @@ const ApplicationForm = () => {
     const required = requiredByStep[currentStep] || [];
     const missing = required.filter((field) => !formData[field]);
     if (missing.length > 0) {
-      toast.error("يرجى تعبئة جميع الحقول المطلوبة");
+      toast.error(t("validation.required"));
       return false;
     }
     return true;
@@ -80,15 +82,16 @@ const ApplicationForm = () => {
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
-
     setIsSubmitting(true);
-    // Simulate submission
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsSubmitting(false);
     setIsSubmitted(true);
     localStorage.removeItem(STORAGE_KEY);
-    toast.success("تم إرسال طلبك بنجاح!");
+    toast.success(t("validation.success"));
   };
+
+  const NextArrow = lang === "ar" ? ArrowLeft : ArrowRight;
+  const PrevArrow = lang === "ar" ? ArrowRight : ArrowLeft;
 
   if (isSubmitted) {
     return (
@@ -97,10 +100,8 @@ const ApplicationForm = () => {
           <div className="w-20 h-20 mx-auto rounded-full gradient-accent flex items-center justify-center">
             <Send className="w-10 h-10 text-accent-foreground" />
           </div>
-          <h2 className="text-3xl font-bold text-primary">تم إرسال طلبك بنجاح!</h2>
-          <p className="text-muted-foreground text-lg max-w-md mx-auto">
-            شكراً لتقديمك على الوظيفة في مجموعة الخولي. سيتم مراجعة طلبك والتواصل معك في أقرب وقت.
-          </p>
+          <h2 className="text-3xl font-bold text-primary">{t("success.title")}</h2>
+          <p className="text-muted-foreground text-lg max-w-md mx-auto">{t("success.desc")}</p>
           <Button
             onClick={() => {
               setIsSubmitted(false);
@@ -110,7 +111,7 @@ const ApplicationForm = () => {
             }}
             className="gradient-accent text-accent-foreground hover:opacity-90 px-8"
           >
-            تقديم طلب جديد
+            {t("btn.newApplication")}
           </Button>
         </div>
       </div>
@@ -118,7 +119,7 @@ const ApplicationForm = () => {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto" dir="rtl">
+    <div className="w-full max-w-3xl mx-auto" dir={dir}>
       <StepIndicator currentStep={currentStep} totalSteps={6} stepLabels={stepLabels} />
 
       <div className="bg-card rounded-xl shadow-elevated p-6 md:p-8 border border-border">
@@ -130,20 +131,15 @@ const ApplicationForm = () => {
         {currentStep === 6 && <AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} />}
 
         <div className="flex justify-between items-center mt-8 pt-6 border-t border-border">
-          <Button
-            variant="outline"
-            onClick={handlePrev}
-            disabled={currentStep === 1}
-            className="gap-2"
-          >
-            <ArrowRight className="w-4 h-4" />
-            السابق
+          <Button variant="outline" onClick={handlePrev} disabled={currentStep === 1} className="gap-2">
+            <PrevArrow className="w-4 h-4" />
+            {t("btn.prev")}
           </Button>
 
           {currentStep < 6 ? (
             <Button onClick={handleNext} className="gradient-primary text-primary-foreground hover:opacity-90 gap-2">
-              التالي
-              <ArrowLeft className="w-4 h-4" />
+              {t("btn.next")}
+              <NextArrow className="w-4 h-4" />
             </Button>
           ) : (
             <Button
@@ -154,12 +150,12 @@ const ApplicationForm = () => {
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  جاري الإرسال...
+                  {t("btn.submitting")}
                 </>
               ) : (
                 <>
                   <Send className="w-4 h-4" />
-                  إرسال الطلب
+                  {t("btn.submit")}
                 </>
               )}
             </Button>

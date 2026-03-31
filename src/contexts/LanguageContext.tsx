@@ -1,0 +1,375 @@
+import { createContext, useContext, useState, ReactNode } from "react";
+
+type Lang = "ar" | "en";
+
+interface LanguageContextType {
+  lang: Lang;
+  setLang: (lang: Lang) => void;
+  t: (key: string) => string;
+  dir: "rtl" | "ltr";
+}
+
+const translations: Record<Lang, Record<string, string>> = {
+  ar: {
+    // Navbar & general
+    "nav.apply": "تقدم الآن",
+    "nav.formTitle": "نموذج التقديم الوظيفي",
+    "footer.rights": "مجموعة الخولي — جميع الحقوق محفوظة",
+
+    // Hero
+    "hero.title1": "ابنِ مستقبلك المهني",
+    "hero.title2": "مع مجموعة الخولي",
+    "hero.desc": "نبحث عن كفاءات متميزة للانضمام لفريقنا. قدّم طلبك الآن واكتشف الفرص الوظيفية المتاحة.",
+    "hero.cta": "تقدم للوظيفة",
+
+    // Features
+    "features.title": "لماذا مجموعة الخولي؟",
+    "features.desc": "نقدم بيئة عمل محفزة وفرص نمو حقيقية لكل فرد في فريقنا",
+    "features.env.title": "بيئة عمل احترافية",
+    "features.env.desc": "نوفر بيئة عمل محفزة تساعدك على الإبداع والتطور المهني المستمر.",
+    "features.team.title": "فريق متميز",
+    "features.team.desc": "انضم لفريق من المحترفين والخبراء في مختلف المجالات والتخصصات.",
+    "features.growth.title": "فرص نمو حقيقية",
+    "features.growth.desc": "نؤمن بتطوير كوادرنا ونقدم مسارات وظيفية واضحة للترقي.",
+
+    // CTA
+    "cta.title": "جاهز للخطوة التالية؟",
+    "cta.desc": "تقديم الطلب يستغرق بضع دقائق فقط. بياناتك تُحفظ تلقائياً.",
+    "cta.button": "ابدأ التقديم الآن",
+
+    // Apply page
+    "apply.title": "انضم لفريق مجموعة الخولي",
+    "apply.desc": "يرجى تعبئة النموذج التالي بدقة. سيتم التواصل معك بعد مراجعة طلبك.",
+
+    // Steps
+    "step.basic": "البيانات الأساسية",
+    "step.job": "التفضيلات الوظيفية",
+    "step.edu": "المؤهل العلمي",
+    "step.exp": "الخبرات والمهارات",
+    "step.fin": "التوقعات المالية",
+    "step.attach": "المرفقات",
+
+    // Buttons
+    "btn.next": "التالي",
+    "btn.prev": "السابق",
+    "btn.submit": "إرسال الطلب",
+    "btn.submitting": "جاري الإرسال...",
+    "btn.newApplication": "تقديم طلب جديد",
+
+    // Success
+    "success.title": "تم إرسال طلبك بنجاح!",
+    "success.desc": "شكراً لتقديمك على الوظيفة في مجموعة الخولي. سيتم مراجعة طلبك والتواصل معك في أقرب وقت.",
+
+    // Validation
+    "validation.required": "يرجى تعبئة جميع الحقول المطلوبة",
+    "validation.success": "تم إرسال طلبك بنجاح!",
+
+    // Basic Info fields
+    "field.fullName": "الاسم الكامل",
+    "field.gender": "الجنس",
+    "field.nationality": "الجنسية",
+    "field.birthDate": "تاريخ الميلاد",
+    "field.maritalStatus": "الحالة الاجتماعية",
+    "field.dependents": "عدد المعالين (إذا كنت متزوج)",
+    "field.phone": "رقم الجوال",
+    "field.email": "البريد الإلكتروني",
+    "field.currentCity": "مقر السكن الحالي",
+    "field.hasTransport": "هل لديك وسيلة مواصلات؟",
+
+    // Job Preferences
+    "field.desiredPosition": "الوظيفة المرغوب التقديم عليها",
+    "field.jobType": "نوع الوظيفة",
+    "field.preferredCity": "المدينة التي ترغب بالعمل فيها",
+    "field.hearAbout": "كيف سمعت عن هذه الفرصة؟",
+
+    // Education
+    "field.educationLevel": "المؤهل العلمي الحالي",
+    "field.major": "التخصص",
+    "field.university": "الجامعة / المعهد",
+    "field.graduationYear": "سنة التخرج",
+    "field.gpa": "المعدل التراكمي",
+    "field.currentlyStudying": "هل ملتحق حالياً بدراسة أخرى؟",
+    "field.currentStudy": "ماهي الدراسة الحالية؟",
+
+    // Experience
+    "field.yearsExperience": "عدد سنوات الخبرة",
+    "field.currentlyEmployed": "هل أنت على رأس العمل؟",
+    "field.currentTitle": "المسمى الوظيفي الحالي",
+    "field.currentTasks": "نبذة عن المهام الحالية",
+    "field.selfSummary": "نبذة عن نفسك (ملخص مهني)",
+    "field.otherExperience": "ماهي الخبرات المصاحبة في مجال غير التخصص؟",
+    "field.arabicLevel": "مستوى اللغة العربية",
+    "field.englishLevel": "مستوى اللغة الإنجليزية",
+    "field.otherLanguage": "لغة أخرى",
+    "field.linkedin": "رابط LinkedIn",
+
+    // Financials
+    "field.currentSalary": "الراتب الحالي (ريال)",
+    "field.expectedSalary": "الراتب المتوقع (ريال)",
+    "field.availableDate": "الموعد المتوقع للانضمام",
+
+    // Attachments
+    "field.resume": "تحميل السيرة الذاتية",
+    "field.degreeCopy": "صورة من المؤهل العلمي",
+    "field.experienceCert": "شهادة الخبرة (إن وجدت)",
+    "field.trainingCerts": "مستندات الدورات التدريبية",
+    "field.otherDocs": "مستندات أخرى ترغب بإضافتها",
+
+    // Placeholders
+    "ph.fullName": "أدخل اسمك الكامل",
+    "ph.phone": "05XXXXXXXX",
+    "ph.email": "example@email.com",
+    "ph.city": "المدينة",
+    "ph.select": "اختر...",
+    "ph.major": "أدخل تخصصك",
+    "ph.university": "اسم الجامعة أو المعهد",
+    "ph.graduationYear": "مثال: 2020",
+    "ph.gpa": "مثال: 4.5 من 5",
+    "ph.currentStudy": "وصف الدراسة الحالية",
+    "ph.currentTitle": "المسمى الوظيفي",
+    "ph.currentTasks": "اذكر أبرز مهامك الحالية...",
+    "ph.selfSummary": "اكتب ملخصاً مهنياً موجزاً عن نفسك...",
+    "ph.otherExperience": "اذكر أي خبرات إضافية...",
+    "ph.otherLanguage": "حدد اللغة ومستواك",
+    "ph.linkedin": "https://linkedin.com/in/...",
+    "ph.salary": "مثال: 8000",
+    "ph.dependents": "0",
+
+    // Select options
+    "opt.male": "ذكر",
+    "opt.female": "أنثى",
+    "opt.single": "أعزب/عزباء",
+    "opt.married": "متزوج/ة",
+    "opt.divorced": "مطلق/ة",
+    "opt.widowed": "أرمل/ة",
+    "opt.yes": "نعم",
+    "opt.no": "لا",
+    "opt.fulltime": "دوام كامل",
+    "opt.parttime": "دوام جزئي",
+    "opt.remote": "عن بُعد",
+    "opt.contract": "عقد مؤقت",
+    "opt.coop": "تدريب تعاوني",
+    "opt.tamheer": "تمهير",
+    "opt.immediate": "فوري",
+    "opt.oneWeek": "خلال أسبوع",
+    "opt.twoWeeks": "خلال أسبوعين",
+    "opt.oneMonth": "خلال شهر",
+    "opt.twoMonths": "خلال شهرين",
+    "opt.moreThanTwo": "أكثر من شهرين",
+    "opt.eastern": "المنطقة الشرقية",
+    "opt.riyadh": "الرياض",
+    "opt.jeddah": "جدة",
+
+    // Language levels
+    "opt.excellent": "ممتاز",
+    "opt.veryGood": "جيد جداً",
+    "opt.good": "جيد",
+    "opt.average": "متوسط",
+    "opt.beginner": "مبتدئ",
+
+    // hearAbout
+    "opt.linkedin": "LinkedIn",
+    "opt.twitter": "تويتر / X",
+    "opt.website": "موقع الشركة",
+    "opt.friend": "صديق أو معارف",
+    "opt.jobPlatform": "منصة توظيف",
+    "opt.other": "أخرى",
+  },
+  en: {
+    // Navbar & general
+    "nav.apply": "Apply Now",
+    "nav.formTitle": "Job Application Form",
+    "footer.rights": "AlKholi Group — All Rights Reserved",
+
+    // Hero
+    "hero.title1": "Build Your Career",
+    "hero.title2": "With AlKholi Group",
+    "hero.desc": "We are looking for outstanding talents to join our team. Apply now and explore available opportunities.",
+    "hero.cta": "Apply for a Job",
+
+    // Features
+    "features.title": "Why AlKholi Group?",
+    "features.desc": "We provide a motivating work environment and real growth opportunities for every team member",
+    "features.env.title": "Professional Environment",
+    "features.env.desc": "We provide a motivating work environment that helps you innovate and grow professionally.",
+    "features.team.title": "Outstanding Team",
+    "features.team.desc": "Join a team of professionals and experts across various fields and specializations.",
+    "features.growth.title": "Real Growth Opportunities",
+    "features.growth.desc": "We believe in developing our people and offer clear career paths for advancement.",
+
+    // CTA
+    "cta.title": "Ready for the Next Step?",
+    "cta.desc": "The application takes just a few minutes. Your data is saved automatically.",
+    "cta.button": "Start Applying Now",
+
+    // Apply page
+    "apply.title": "Join AlKholi Group Team",
+    "apply.desc": "Please fill out the following form carefully. We will contact you after reviewing your application.",
+
+    // Steps
+    "step.basic": "Basic Info",
+    "step.job": "Job Preferences",
+    "step.edu": "Education",
+    "step.exp": "Experience & Skills",
+    "step.fin": "Financial Expectations",
+    "step.attach": "Attachments",
+
+    // Buttons
+    "btn.next": "Next",
+    "btn.prev": "Previous",
+    "btn.submit": "Submit Application",
+    "btn.submitting": "Submitting...",
+    "btn.newApplication": "Submit New Application",
+
+    // Success
+    "success.title": "Application Submitted Successfully!",
+    "success.desc": "Thank you for applying at AlKholi Group. Your application will be reviewed and we will contact you soon.",
+
+    // Validation
+    "validation.required": "Please fill in all required fields",
+    "validation.success": "Application submitted successfully!",
+
+    // Basic Info fields
+    "field.fullName": "Full Name",
+    "field.gender": "Gender",
+    "field.nationality": "Nationality",
+    "field.birthDate": "Date of Birth",
+    "field.maritalStatus": "Marital Status",
+    "field.dependents": "Number of Dependents",
+    "field.phone": "Phone Number",
+    "field.email": "Email Address",
+    "field.currentCity": "Current City",
+    "field.hasTransport": "Do you have transportation?",
+
+    // Job Preferences
+    "field.desiredPosition": "Desired Position",
+    "field.jobType": "Job Type",
+    "field.preferredCity": "Preferred Work City",
+    "field.hearAbout": "How did you hear about us?",
+
+    // Education
+    "field.educationLevel": "Education Level",
+    "field.major": "Major",
+    "field.university": "University / Institute",
+    "field.graduationYear": "Graduation Year",
+    "field.gpa": "GPA",
+    "field.currentlyStudying": "Currently enrolled in another program?",
+    "field.currentStudy": "What is your current study?",
+
+    // Experience
+    "field.yearsExperience": "Years of Experience",
+    "field.currentlyEmployed": "Currently Employed?",
+    "field.currentTitle": "Current Job Title",
+    "field.currentTasks": "Current Tasks Summary",
+    "field.selfSummary": "Professional Summary",
+    "field.otherExperience": "Other Experience Outside Specialization",
+    "field.arabicLevel": "Arabic Language Level",
+    "field.englishLevel": "English Language Level",
+    "field.otherLanguage": "Other Language",
+    "field.linkedin": "LinkedIn Profile",
+
+    // Financials
+    "field.currentSalary": "Current Salary (SAR)",
+    "field.expectedSalary": "Expected Salary (SAR)",
+    "field.availableDate": "Expected Joining Date",
+
+    // Attachments
+    "field.resume": "Upload Resume",
+    "field.degreeCopy": "Degree Copy",
+    "field.experienceCert": "Experience Certificate (if available)",
+    "field.trainingCerts": "Training Certificates",
+    "field.otherDocs": "Other Documents",
+
+    // Placeholders
+    "ph.fullName": "Enter your full name",
+    "ph.phone": "05XXXXXXXX",
+    "ph.email": "example@email.com",
+    "ph.city": "City",
+    "ph.select": "Select...",
+    "ph.major": "Enter your major",
+    "ph.university": "University or institute name",
+    "ph.graduationYear": "e.g. 2020",
+    "ph.gpa": "e.g. 4.5 out of 5",
+    "ph.currentStudy": "Current study description",
+    "ph.currentTitle": "Job title",
+    "ph.currentTasks": "Describe your main current tasks...",
+    "ph.selfSummary": "Write a brief professional summary...",
+    "ph.otherExperience": "Mention any additional experience...",
+    "ph.otherLanguage": "Specify language and level",
+    "ph.linkedin": "https://linkedin.com/in/...",
+    "ph.salary": "e.g. 8000",
+    "ph.dependents": "0",
+
+    // Select options
+    "opt.male": "Male",
+    "opt.female": "Female",
+    "opt.single": "Single",
+    "opt.married": "Married",
+    "opt.divorced": "Divorced",
+    "opt.widowed": "Widowed",
+    "opt.yes": "Yes",
+    "opt.no": "No",
+    "opt.fulltime": "Full-time",
+    "opt.parttime": "Part-time",
+    "opt.remote": "Remote",
+    "opt.contract": "Contract",
+    "opt.coop": "Co-op Training",
+    "opt.tamheer": "Tamheer",
+    "opt.immediate": "Immediate",
+    "opt.oneWeek": "Within a week",
+    "opt.twoWeeks": "Within two weeks",
+    "opt.oneMonth": "Within a month",
+    "opt.twoMonths": "Within two months",
+    "opt.moreThanTwo": "More than two months",
+    "opt.eastern": "Eastern Province",
+    "opt.riyadh": "Riyadh",
+    "opt.jeddah": "Jeddah",
+
+    // Language levels
+    "opt.excellent": "Excellent",
+    "opt.veryGood": "Very Good",
+    "opt.good": "Good",
+    "opt.average": "Average",
+    "opt.beginner": "Beginner",
+
+    // hearAbout
+    "opt.linkedin": "LinkedIn",
+    "opt.twitter": "Twitter / X",
+    "opt.website": "Company Website",
+    "opt.friend": "Friend or Acquaintance",
+    "opt.jobPlatform": "Job Platform",
+    "opt.other": "Other",
+  },
+};
+
+const LanguageContext = createContext<LanguageContextType | null>(null);
+
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+  const [lang, setLang] = useState<Lang>(() => {
+    try {
+      return (localStorage.getItem("akg-lang") as Lang) || "ar";
+    } catch {
+      return "ar";
+    }
+  });
+
+  const handleSetLang = (l: Lang) => {
+    setLang(l);
+    localStorage.setItem("akg-lang", l);
+  };
+
+  const t = (key: string) => translations[lang][key] || key;
+  const dir = lang === "ar" ? "rtl" : "ltr";
+
+  return (
+    <LanguageContext.Provider value={{ lang, setLang: handleSetLang, t, dir }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => {
+  const ctx = useContext(LanguageContext);
+  if (!ctx) throw new Error("useLanguage must be used within LanguageProvider");
+  return ctx;
+};
