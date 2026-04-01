@@ -1,6 +1,6 @@
 import FormField from "../FormField";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { jobPositions } from "@/data/jobPositions";
+import { jobPositions, getSaudiCities } from "@/data/jobPositions";
 
 interface Props {
   data: Record<string, string>;
@@ -8,9 +8,9 @@ interface Props {
 }
 
 const JobPreferencesStep = ({ data, onChange }: Props) => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
-  const cityOptions = [t("opt.riyadh"), t("opt.jeddah"), t("opt.eastern")];
+  const cityOptions = getSaudiCities(lang);
   const jobTypeOptions = [
     t("opt.fulltime"), t("opt.parttime"), t("opt.remote"),
     t("opt.contract"), t("opt.coop"), t("opt.tamheer"),

@@ -52,7 +52,7 @@ const ApplicationForm = () => {
       1: ["fullName", "gender", "nationality", "birthDate", "maritalStatus", "dependents", "phone", "email", "currentCity", "hasTransport"],
       2: ["desiredPosition", "jobType", "preferredCity", "hearAbout"],
       3: ["educationLevel", "major", "university", "graduationYear", "gpa", "currentlyStudying"],
-      4: ["yearsExperience", "currentlyEmployed", "currentTitle", "currentTasks", "selfSummary", "otherExperience", "arabicLevel", "englishLevel", "otherLanguage", "linkedin"],
+      4: ["yearsExperience", "currentlyEmployed", "currentTitle", "currentTasks", "selfSummary", "otherExperience", "arabicLevel", "englishLevel", "linkedin"],
       5: ["currentSalary", "expectedSalary", "availableDate"],
       6: [],
     };
