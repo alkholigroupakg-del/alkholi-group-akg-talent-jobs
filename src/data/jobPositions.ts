@@ -100,21 +100,140 @@ export const jobPositions = [
   "Software Engineer",
   "Junior Developer",
   "Content Creator",
+  // New positions
+  "مدير مشروع التعبئة",
+  "إداري تعبئة",
+  "موظف مشتريات",
+  "مشرف كهرباء",
+  "مشرف مدني",
+  "عامل تنظيف",
+  "مراقب مستندات",
+  "سائق",
+  "مسؤول أول بيئة وصحة وسلامة",
+  "مدير نظام إدارة الصيانة CAFM",
+  "موظف مكتب مساعدة CAFM",
+  "إداري مشروع",
+  "منسق مشروع",
+  "موظف ضبط جودة",
+  "موظف لوجستيات معدات وأدوات",
+  "مسؤول أول مشتريات",
+  "رسام أوتوكاد ونظم معلومات جغرافية",
+  "منسق موظفين",
+  "أمين مستودع",
+  "فني مخازن",
+  "مدير حزمة الخدمات الهندسية",
+  "مهندس ميكانيك",
+  "مشرف أعمال مدنية",
+  "مشرف ميكانيك",
+  "بناء",
+  "مساعد بناء",
+  "دهان",
+  "كهربائي نوبات",
+  "مساعد كهربائي نوبات",
+  "مساعد كهربائي",
+  "سباك عام",
+  "مساعد سباك",
+  "فني مضخات",
+  "لحام",
+  "ميكانيكي صيانة وإصلاح",
+  "ميكانيكي عام",
+  "مدير حزمة الخدمات اللينة",
+  "مشرف نظافة نوبات",
+  "قائد فريق نظافة نوبات",
+  "قائد فريق نظافة",
+  "عامل نظافة عامة",
+  "عامل نظافة نوبات",
+  "سائق سيارة صالون",
+  "سائق بيك آب دفع رباعي",
+  "سائق شاحنة دينا",
+  "سائق شاحنة رافعة كرين",
+  "مشغل جرافة هيدروليكية",
+  "مشغل مدحلة رص",
+  "مشغل رافعة تلسكوبية",
+  "مشغل جرافة صغيرة بوبكات",
+  "مشغل مكنسة طرق آلية",
+  "مشغل غسالة طرق آلية",
+  "مشغل مكنسة وجلاية أرضيات",
+  "سائق صهريج مياه مع مضخة شفط",
+  "سائق صهريج مياه تزويد",
 ];
 
-// Bilingual data
+// Full nationalities list
 const nationalitiesData: Record<Lang, string[]> = {
   ar: [
-    "سعودي/ة", "إماراتي/ة", "كويتي/ة", "بحريني/ة", "عماني/ة", "قطري/ة",
-    "مصري/ة", "أردني/ة", "لبناني/ة", "سوري/ة", "عراقي/ة", "يمني/ة",
-    "فلسطيني/ة", "سوداني/ة", "تونسي/ة", "مغربي/ة", "جزائري/ة", "ليبي/ة",
-    "باكستاني/ة", "هندي/ة", "بنغلاديشي/ة", "فلبيني/ة", "إندونيسي/ة", "أخرى",
+    "أفغانستان", "الأرجنتين", "الأردن", "الإمارات العربية المتحدة", "إندونيسيا",
+    "إيران", "إريتريا", "إسبانيا", "أستراليا", "إستونيا", "إفريقيا الوسطى",
+    "الألبان", "البحرين", "البرتغال", "البوسنة والهرسك", "الجزائر", "السودان",
+    "السويد", "الصومال", "الصين", "العراق", "الفلبين", "المغرب", "المكسيك",
+    "المملكة المتحدة", "المملكة العربية السعودية", "النرويج", "الهند",
+    "الولايات المتحدة الأمريكية", "اليابان", "اليمن", "اليونان", "أذربيجان",
+    "أرمينيا", "أوكرانيا", "إثيوبيا", "إيطاليا", "بابوا غينيا الجديدة",
+    "باكستان", "باراغواي", "البرازيل", "بنغلاديش", "بنما", "بلجيكا", "بلغاريا",
+    "بولندا", "بيرو", "تايلاند", "تايوان", "تركمانستان", "تركيا", "تشاد",
+    "تشيلي", "تونس", "جيبوتي", "جنوب أفريقيا", "جنوب السودان", "جورجيا",
+    "دومينيكا", "روسيا", "رواندا", "رومانيا", "زامبيا", "زيمبابوي",
+    "ساحل العاج", "ساموا", "سلطنة عمان", "سنغافورة", "سوريا", "سلوفاكيا",
+    "سلوفينيا", "سويسرا", "طاجيكستان", "فلسطين", "قطر", "كازاخستان",
+    "كرواتيا", "كمبوديا", "كندا", "كوبا", "كوريا الجنوبية", "كوريا الشمالية",
+    "كوستاريكا", "كولومبيا", "كينيا", "لبنان", "ليبيا", "مالاوي", "ماليزيا",
+    "مالطا", "مصر", "موريتانيا", "موزمبيق", "موناكو", "موريشيوس", "ميانمار",
+    "ناميبيا", "نيبال", "نيجيريا", "نيوزيلندا", "هولندا", "هنغاريا", "هايتي",
+    "الكويت", "أخرى",
   ],
   en: [
-    "Saudi", "Emirati", "Kuwaiti", "Bahraini", "Omani", "Qatari",
-    "Egyptian", "Jordanian", "Lebanese", "Syrian", "Iraqi", "Yemeni",
-    "Palestinian", "Sudanese", "Tunisian", "Moroccan", "Algerian", "Libyan",
-    "Pakistani", "Indian", "Bangladeshi", "Filipino", "Indonesian", "Other",
+    "Afghanistan", "Argentina", "Jordan", "United Arab Emirates", "Indonesia",
+    "Iran", "Eritrea", "Spain", "Australia", "Estonia", "Central Africa",
+    "Albania", "Bahrain", "Portugal", "Bosnia and Herzegovina", "Algeria", "Sudan",
+    "Sweden", "Somalia", "China", "Iraq", "Philippines", "Morocco", "Mexico",
+    "United Kingdom", "Saudi Arabia", "Norway", "India",
+    "United States of America", "Japan", "Yemen", "Greece", "Azerbaijan",
+    "Armenia", "Ukraine", "Ethiopia", "Italy", "Papua New Guinea",
+    "Pakistan", "Paraguay", "Brazil", "Bangladesh", "Panama", "Belgium", "Bulgaria",
+    "Poland", "Peru", "Thailand", "Taiwan", "Turkmenistan", "Turkey", "Chad",
+    "Chile", "Tunisia", "Djibouti", "South Africa", "South Sudan", "Georgia",
+    "Dominica", "Russia", "Rwanda", "Romania", "Zambia", "Zimbabwe",
+    "Ivory Coast", "Samoa", "Oman", "Singapore", "Syria", "Slovakia",
+    "Slovenia", "Switzerland", "Tajikistan", "Palestine", "Qatar", "Kazakhstan",
+    "Croatia", "Cambodia", "Canada", "Cuba", "South Korea", "North Korea",
+    "Costa Rica", "Colombia", "Kenya", "Lebanon", "Libya", "Malawi", "Malaysia",
+    "Malta", "Egypt", "Mauritania", "Mozambique", "Monaco", "Mauritius", "Myanmar",
+    "Namibia", "Nepal", "Nigeria", "New Zealand", "Netherlands", "Hungary", "Haiti",
+    "Kuwait", "Other",
+  ],
+};
+
+const saudiCitiesData: Record<Lang, string[]> = {
+  ar: [
+    "لا أسكن بالسعودية",
+    "الرياض", "الخرج", "المجمعة", "الدرعية", "الدوادمي", "القويعية", "وادي الدواسر",
+    "مكة المكرمة", "جدة", "الطائف", "القنفذة", "الليث", "رابغ",
+    "المدينة المنورة", "ينبع", "العلا", "بدر",
+    "الدمام", "الخبر", "الظهران", "الأحساء", "حفر الباطن", "الجبيل", "القطيف", "الخفجي",
+    "بريدة", "عنيزة", "الرس", "البكيرية",
+    "أبها", "خميس مشيط", "بيشة", "محايل عسير",
+    "تبوك", "الوجه", "ضباء",
+    "حائل",
+    "عرعر", "رفحاء", "طريف",
+    "جازان", "صبيا", "أبو عريش",
+    "نجران",
+    "الباحة",
+    "سكاكا",
+  ],
+  en: [
+    "I don't live in Saudi Arabia",
+    "Riyadh", "Al Kharj", "Al Majmaah", "Diriyah", "Al Dawadmi", "Al Quway'iyah", "Wadi Al Dawasir",
+    "Makkah", "Jeddah", "Taif", "Al Qunfudhah", "Al Lith", "Rabigh",
+    "Madinah", "Yanbu", "Al Ula", "Badr",
+    "Dammam", "Khobar", "Dhahran", "Al Ahsa", "Hafar Al Batin", "Jubail", "Qatif", "Khafji",
+    "Buraydah", "Unayzah", "Ar Rass", "Al Bukayriyah",
+    "Abha", "Khamis Mushait", "Bisha", "Muhayil Asir",
+    "Tabuk", "Al Wajh", "Duba",
+    "Hail",
+    "Arar", "Rafha", "Turaif",
+    "Jazan", "Sabya", "Abu Arish",
+    "Najran",
+    "Al Baha",
+    "Sakaka",
   ],
 };
 
@@ -124,6 +243,7 @@ const educationLevelsData: Record<Lang, string[]> = {
 };
 
 export const getNationalities = (lang: Lang) => nationalitiesData[lang];
+export const getSaudiCities = (lang: Lang) => saudiCitiesData[lang];
 export const getEducationLevels = (lang: Lang) => educationLevelsData[lang];
 
 export const getYearsOfExperience = (lang: Lang) => [
@@ -146,7 +266,7 @@ export const getSalaryRanges = (lang: Lang) => [
 
 // Keep backward compat exports
 export const nationalities = nationalitiesData.ar;
-export const cities = ["الرياض", "جدة", "المنطقة الشرقية"];
+export const cities = saudiCitiesData.ar;
 export const yearsOfExperience = getYearsOfExperience("ar");
 export const salaryRanges = getSalaryRanges("ar");
 export const educationLevels = educationLevelsData.ar;
