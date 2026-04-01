@@ -58,6 +58,11 @@ interface Applicant {
   currently_employed: string | null;
   currently_studying: string | null;
   current_study: string | null;
+  resume_url: string | null;
+  degree_url: string | null;
+  experience_cert_url: string | null;
+  training_certs_url: string | null;
+  other_docs_url: string | null;
 }
 
 const STATUSES: ApplicantStatus[] = ["new", "reviewing", "phone_interview", "in_person_interview", "accepted", "hired", "rejected", "withdrawn"];
