@@ -446,6 +446,9 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.logout": "Logout",
     "dash.all": "All",
     "dash.filterStatus": "Filter by status",
+    "dash.attachments": "Attachments",
+    "dash.viewFile": "View File",
+    "dash.noAttachments": "No attachments",
 
     // Statuses
     "status.new": "New",
