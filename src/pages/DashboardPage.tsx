@@ -529,6 +529,50 @@ const DashboardPage = () => {
                   </div>
                 )}
 
+                {selectedApplicant.current_tasks && (
+                  <div className="border border-border rounded-lg p-3">
+                    <p className="text-muted-foreground text-xs mb-1">{t("field.currentTasks")}</p>
+                    <p className="text-sm">{selectedApplicant.current_tasks}</p>
+                  </div>
+                )}
+
+                {selectedApplicant.other_experience && (
+                  <div className="border border-border rounded-lg p-3">
+                    <p className="text-muted-foreground text-xs mb-1">{t("field.otherExperience")}</p>
+                    <p className="text-sm">{selectedApplicant.other_experience}</p>
+                  </div>
+                )}
+
+                {/* Attachments */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <FileText className="w-4 h-4" />{t("dash.attachments")}
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {[
+                      ["field.resume", selectedApplicant.resume_url],
+                      ["field.degreeCopy", selectedApplicant.degree_url],
+                      ["field.experienceCert", selectedApplicant.experience_cert_url],
+                      ["field.trainingCerts", selectedApplicant.training_certs_url],
+                      ["field.otherDocs", selectedApplicant.other_docs_url],
+                    ].filter(([, val]) => val).map(([key, val]) => (
+                      <a
+                        key={key}
+                        href={val as string}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 border border-border rounded-lg p-2 hover:bg-muted/50 transition-colors text-sm"
+                      >
+                        <ExternalLink className="w-4 h-4 text-primary shrink-0" />
+                        <span className="truncate">{t(key as string)}</span>
+                      </a>
+                    ))}
+                    {![selectedApplicant.resume_url, selectedApplicant.degree_url, selectedApplicant.experience_cert_url, selectedApplicant.training_certs_url, selectedApplicant.other_docs_url].some(Boolean) && (
+                      <p className="text-muted-foreground text-xs col-span-2">{t("dash.noAttachments")}</p>
+                    )}
+                  </div>
+                </div>
+
                 {/* Notes */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">{t("dash.notes")}</label>
