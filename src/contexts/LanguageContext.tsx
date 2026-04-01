@@ -221,6 +221,9 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.logout": "تسجيل خروج",
     "dash.all": "الكل",
     "dash.filterStatus": "فلترة حسب الحالة",
+    "dash.attachments": "المرفقات",
+    "dash.viewFile": "عرض الملف",
+    "dash.noAttachments": "لا توجد مرفقات",
 
     // Statuses
     "status.new": "جديد",
@@ -443,6 +446,9 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.logout": "Logout",
     "dash.all": "All",
     "dash.filterStatus": "Filter by status",
+    "dash.attachments": "Attachments",
+    "dash.viewFile": "View File",
+    "dash.noAttachments": "No attachments",
 
     // Statuses
     "status.new": "New",

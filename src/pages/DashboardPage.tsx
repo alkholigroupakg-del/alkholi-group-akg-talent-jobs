@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Users, UserPlus, Phone, CheckCircle2, Download, LogOut, Search, Eye, BarChart3, Briefcase } from "lucide-react";
+import { Users, UserPlus, Phone, CheckCircle2, Download, LogOut, Search, Eye, BarChart3, Briefcase, FileText, ExternalLink } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import * as XLSX from "xlsx";
 import logo from "@/assets/logo.jpg";
@@ -58,6 +58,11 @@ interface Applicant {
   currently_employed: string | null;
   currently_studying: string | null;
   current_study: string | null;
+  resume_url: string | null;
+  degree_url: string | null;
+  experience_cert_url: string | null;
+  training_certs_url: string | null;
+  other_docs_url: string | null;
 }
 
 const STATUSES: ApplicantStatus[] = ["new", "reviewing", "phone_interview", "in_person_interview", "accepted", "hired", "rejected", "withdrawn"];
@@ -146,18 +151,45 @@ const DashboardPage = () => {
       [t("dash.name")]: a.full_name,
       [t("field.email")]: a.email,
       [t("field.phone")]: a.phone,
-      [t("dash.position")]: a.desired_position,
-      [t("dash.city")]: a.preferred_city,
-      [t("dash.status")]: t(`status.${a.status}`),
       [t("field.gender")]: a.gender,
       [t("field.nationality")]: a.nationality,
+      [t("field.birthDate")]: a.birth_date,
+      [t("field.maritalStatus")]: a.marital_status,
+      [t("field.dependents")]: a.dependents,
+      [t("field.currentCity")]: a.current_city,
+      [t("field.hasTransport")]: a.has_transport,
+      [t("dash.position")]: a.desired_position,
+      [t("field.jobType")]: a.job_type,
+      [t("dash.city")]: a.preferred_city,
+      [t("field.hearAbout")]: a.hear_about,
       [t("field.educationLevel")]: a.education_level,
+      [t("field.major")]: a.major,
+      [t("field.university")]: a.university,
+      [t("field.graduationYear")]: a.graduation_year,
+      [t("field.gpa")]: a.gpa,
+      [t("field.currentlyStudying")]: a.currently_studying,
+      [t("field.currentStudy")]: a.current_study,
       [t("field.yearsExperience")]: a.years_experience,
+      [t("field.currentlyEmployed")]: a.currently_employed,
+      [t("field.currentTitle")]: a.current_title,
+      [t("field.currentTasks")]: a.current_tasks,
+      [t("field.selfSummary")]: a.self_summary,
+      [t("field.otherExperience")]: a.other_experience,
+      [t("field.arabicLevel")]: a.arabic_level,
+      [t("field.englishLevel")]: a.english_level,
+      [t("field.otherLanguage")]: a.other_language,
+      [t("field.linkedin")]: a.linkedin,
       [t("field.currentSalary")]: a.current_salary,
       [t("field.expectedSalary")]: a.expected_salary,
-      [t("field.jobType")]: a.job_type,
+      [t("field.availableDate")]: a.available_date,
+      [t("dash.status")]: t(`status.${a.status}`),
       [t("dash.date")]: new Date(a.created_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US"),
       [t("dash.notes")]: a.notes,
+      [t("field.resume")]: a.resume_url,
+      [t("field.degreeCopy")]: a.degree_url,
+      [t("field.experienceCert")]: a.experience_cert_url,
+      [t("field.trainingCerts")]: a.training_certs_url,
+      [t("field.otherDocs")]: a.other_docs_url,
     }));
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
@@ -496,6 +528,50 @@ const DashboardPage = () => {
                     <p className="text-sm">{selectedApplicant.self_summary}</p>
                   </div>
                 )}
+
+                {selectedApplicant.current_tasks && (
+                  <div className="border border-border rounded-lg p-3">
+                    <p className="text-muted-foreground text-xs mb-1">{t("field.currentTasks")}</p>
+                    <p className="text-sm">{selectedApplicant.current_tasks}</p>
+                  </div>
+                )}
+
+                {selectedApplicant.other_experience && (
+                  <div className="border border-border rounded-lg p-3">
+                    <p className="text-muted-foreground text-xs mb-1">{t("field.otherExperience")}</p>
+                    <p className="text-sm">{selectedApplicant.other_experience}</p>
+                  </div>
+                )}
+
+                {/* Attachments */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <FileText className="w-4 h-4" />{t("dash.attachments")}
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {[
+                      ["field.resume", selectedApplicant.resume_url],
+                      ["field.degreeCopy", selectedApplicant.degree_url],
+                      ["field.experienceCert", selectedApplicant.experience_cert_url],
+                      ["field.trainingCerts", selectedApplicant.training_certs_url],
+                      ["field.otherDocs", selectedApplicant.other_docs_url],
+                    ].filter(([, val]) => val).map(([key, val]) => (
+                      <a
+                        key={key}
+                        href={val as string}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 border border-border rounded-lg p-2 hover:bg-muted/50 transition-colors text-sm"
+                      >
+                        <ExternalLink className="w-4 h-4 text-primary shrink-0" />
+                        <span className="truncate">{t(key as string)}</span>
+                      </a>
+                    ))}
+                    {![selectedApplicant.resume_url, selectedApplicant.degree_url, selectedApplicant.experience_cert_url, selectedApplicant.training_certs_url, selectedApplicant.other_docs_url].some(Boolean) && (
+                      <p className="text-muted-foreground text-xs col-span-2">{t("dash.noAttachments")}</p>
+                    )}
+                  </div>
+                </div>
 
                 {/* Notes */}
                 <div className="space-y-2">
