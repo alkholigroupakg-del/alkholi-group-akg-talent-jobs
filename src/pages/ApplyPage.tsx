@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import ApplicationForm from "@/components/ApplicationForm/ApplicationForm";
 import TopBar from "@/components/TopBar";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -5,6 +7,8 @@ import logo from "@/assets/logo.jpg";
 
 const ApplyPage = () => {
   const { t, dir } = useLanguage();
+  const [searchParams] = useSearchParams();
+  const preSelectedPosition = searchParams.get("position") || "";
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
@@ -25,7 +29,7 @@ const ApplyPage = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-primary mb-3">{t("apply.title")}</h1>
           <p className="text-muted-foreground text-lg">{t("apply.desc")}</p>
         </div>
-        <ApplicationForm />
+        <ApplicationForm preSelectedPosition={preSelectedPosition} />
       </main>
 
       {/* Footer */}

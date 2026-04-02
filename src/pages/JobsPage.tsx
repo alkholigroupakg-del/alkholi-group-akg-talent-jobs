@@ -4,9 +4,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import TopBar from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Briefcase, Building2, Calendar, ArrowLeft, ArrowRight } from "lucide-react";
+import { MapPin, Clock, Briefcase, ArrowLeft, ArrowRight, Search, Filter, LogIn } from "lucide-react";
 import logo from "@/assets/logo.jpg";
 
 interface JobPosting {
@@ -28,6 +28,8 @@ const JobsPage = () => {
   const { t, dir, lang } = useLanguage();
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const Arrow = lang === "ar" ? ArrowLeft : ArrowRight;
 
   useEffect(() => {
@@ -44,46 +46,106 @@ const JobsPage = () => {
     setLoading(false);
   };
 
+  const filtered = jobs.filter(job => {
+    const title = lang === "ar" ? job.title_ar : (job.title_en || job.title_ar);
+    return title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (job.department || "").toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const getJobTypeLabel = (type: string) => {
+    const map: Record<string, Record<string, string>> = {
+      "دوام كامل": { ar: "دوام كامل", en: "Full-time" },
+      "Full-time": { ar: "دوام كامل", en: "Full-time" },
+      "دوام جزئي": { ar: "دوام جزئي", en: "Part-time" },
+      "Part-time": { ar: "دوام جزئي", en: "Part-time" },
+    };
+    return map[type]?.[lang] || type;
+  };
+
+  const getLocationLabel = (loc: string) => {
+    if (loc === "الرياض، المملكة العربية السعودية" && lang === "en") return "Riyadh, Saudi Arabia";
+    if (loc === "Riyadh, Saudi Arabia" && lang === "ar") return "الرياض، المملكة العربية السعودية";
+    return loc;
+  };
+
+  const getDeptLabel = (dept: string | null) => {
+    if (!dept) return lang === "ar" ? "تصنيف عام" : "General Category";
+    return dept;
+  };
+
   return (
     <div className="min-h-screen bg-background" dir={dir}>
-      {/* Header */}
-      <header className="gradient-hero py-4 px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link to="/">
-            <img src={logo} alt="AlKholi Group" className="h-12 object-contain" />
-          </Link>
+      {/* Navbar */}
+      <nav className="sticky top-0 z-30 bg-card border-b border-border shadow-sm">
+        <div className="max-w-6xl mx-auto flex items-center justify-between py-3 px-6">
+          <div className="flex items-center gap-6">
+            <Link to="/">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-black text-primary">ALKHOLI</span>
+                <span className="text-xl font-black text-accent">GROUP</span>
+              </div>
+            </Link>
+            <div className="hidden md:flex items-center gap-4">
+              <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+                {t("nav.home")}
+              </Link>
+              <Link to="/jobs" className="text-accent font-semibold">
+                {t("nav.jobs")}
+              </Link>
+            </div>
+          </div>
           <div className="flex items-center gap-3">
             <TopBar />
-            <Link to="/apply">
-              <Button className="gradient-accent text-accent-foreground hover:opacity-90 gap-2 font-semibold">
-                {t("nav.apply")}
-                <Arrow className="w-4 h-4" />
+            <Link to="/dashboard">
+              <Button className="bg-foreground text-background hover:bg-foreground/90 gap-2 font-semibold rounded-full px-6">
+                <LogIn className="w-4 h-4" />
+                {t("dash.login")}
               </Button>
             </Link>
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Hero Section */}
-      <section className="gradient-hero py-16 px-6">
+      <section className="bg-muted/30 py-16 px-6">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl md:text-5xl font-black text-primary-foreground mb-4">{t("jobs.title")}</h1>
-          <p className="text-primary-foreground/70 text-lg max-w-2xl mx-auto">{t("jobs.desc")}</p>
+          <h1 className="text-3xl md:text-5xl font-black text-foreground mb-4">{t("jobs.title")}</h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t("jobs.desc")}</p>
         </div>
       </section>
 
+      {/* Search Bar */}
+      <div className="max-w-6xl mx-auto px-6 -mt-6">
+        <div className="bg-card rounded-xl border border-border shadow-sm p-4 flex items-center gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute top-2.5 w-5 h-5 text-muted-foreground" style={{ [dir === "rtl" ? "right" : "left"]: "0.75rem" }} />
+            <Input
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              placeholder={t("jobs.searchPlaceholder")}
+              className="border-0 bg-transparent shadow-none"
+              style={{ [dir === "rtl" ? "paddingRight" : "paddingLeft"]: "2.5rem" }}
+            />
+          </div>
+          <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="gap-2 shrink-0">
+            <Filter className="w-4 h-4" />
+            {t("jobs.filter")}
+          </Button>
+        </div>
+      </div>
+
       {/* Jobs Grid */}
-      <main className="max-w-6xl mx-auto px-6 py-12">
+      <main className="max-w-6xl mx-auto px-6 py-10">
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
           </div>
-        ) : jobs.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <Briefcase className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
             <p className="text-xl text-muted-foreground">{t("jobs.noJobs")}</p>
             <Link to="/apply" className="inline-block mt-6">
-              <Button className="gradient-accent text-accent-foreground hover:opacity-90 gap-2">
+              <Button className="bg-foreground text-background hover:bg-foreground/90 gap-2 rounded-full px-8">
                 {t("nav.apply")}
                 <Arrow className="w-4 h-4" />
               </Button>
@@ -91,62 +153,58 @@ const JobsPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {jobs.map(job => (
-              <Card key={job.id} className="group hover:shadow-elevated transition-all duration-300 border-border hover:border-accent/50 overflow-hidden">
-                <CardContent className="p-0">
-                  <div className="gradient-primary p-4">
-                    <h3 className="text-lg font-bold text-primary-foreground">
-                      {lang === "ar" ? job.title_ar : (job.title_en || job.title_ar)}
-                    </h3>
-                  </div>
-                  <div className="p-5 space-y-4">
-                    {(lang === "ar" ? job.description_ar : (job.description_en || job.description_ar)) && (
-                      <p className="text-muted-foreground text-sm line-clamp-3">
-                        {lang === "ar" ? job.description_ar : (job.description_en || job.description_ar)}
-                      </p>
-                    )}
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary" className="gap-1">
-                        <MapPin className="w-3 h-3" />{job.location}
+            {filtered.map(job => {
+              const title = lang === "ar" ? job.title_ar : (job.title_en || job.title_ar);
+              return (
+                <div key={job.id} className="bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
+                  <div className="p-6 flex-1">
+                    {/* Header with icon and badge */}
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+                        <Briefcase className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                      <Badge className="bg-accent/10 text-accent border-0 font-medium">
+                        {t("jobs.available")}
                       </Badge>
-                      <Badge variant="secondary" className="gap-1">
-                        <Briefcase className="w-3 h-3" />{job.job_type}
-                      </Badge>
-                      {job.department && (
-                        <Badge variant="secondary" className="gap-1">
-                          <Building2 className="w-3 h-3" />{job.department}
-                        </Badge>
-                      )}
                     </div>
-                    {(lang === "ar" ? job.requirements_ar : (job.requirements_en || job.requirements_ar)) && (
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {lang === "ar" ? job.requirements_ar : (job.requirements_en || job.requirements_ar)}
-                      </p>
-                    )}
-                    <div className="flex items-center justify-between pt-2 border-t border-border">
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {new Date(job.created_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US")}
-                      </span>
-                      <Link to="/apply">
-                        <Button size="sm" className="gradient-accent text-accent-foreground hover:opacity-90 gap-1 text-xs">
-                          {t("jobs.applyNow")}
-                          <Arrow className="w-3 h-3" />
-                        </Button>
-                      </Link>
+
+                    {/* Job Info */}
+                    <h3 className="text-lg font-bold text-foreground mb-1">{title}</h3>
+                    <p className="text-muted-foreground text-sm mb-4">{getDeptLabel(job.department)}</p>
+
+                    {/* Details */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <MapPin className="w-4 h-4 text-accent shrink-0" />
+                        <span>{getLocationLabel(job.location)}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Clock className="w-4 h-4 text-accent shrink-0" />
+                        <span>{getJobTypeLabel(job.job_type)}</span>
+                      </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+
+                  {/* Apply Button */}
+                  <div className="px-6 pb-6">
+                    <Link to={`/apply?position=${encodeURIComponent(title)}`} className="block">
+                      <Button className="w-full bg-foreground text-background hover:bg-foreground/90 gap-2 rounded-lg font-semibold py-5">
+                        {t("jobs.applyNow")}
+                        <Arrow className="w-4 h-4" />
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="gradient-hero py-6 px-4 mt-10">
+      <footer className="bg-card border-t border-border py-6 px-4 mt-10">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-primary-foreground/60 text-sm">
+          <p className="text-muted-foreground text-sm">
             © {new Date().getFullYear()} {t("footer.rights")}
           </p>
         </div>
