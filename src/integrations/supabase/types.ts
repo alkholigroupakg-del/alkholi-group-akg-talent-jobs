@@ -165,8 +165,11 @@ export type Database = {
           is_active: boolean
           job_type: string
           location: string
+          nationality_required: string | null
+          project_id: string | null
           requirements_ar: string | null
           requirements_en: string | null
+          salary_range: string | null
           title_ar: string
           title_en: string | null
           updated_at: string
@@ -180,8 +183,11 @@ export type Database = {
           is_active?: boolean
           job_type: string
           location: string
+          nationality_required?: string | null
+          project_id?: string | null
           requirements_ar?: string | null
           requirements_en?: string | null
+          salary_range?: string | null
           title_ar: string
           title_en?: string | null
           updated_at?: string
@@ -195,11 +201,103 @@ export type Database = {
           is_active?: boolean
           job_type?: string
           location?: string
+          nationality_required?: string | null
+          project_id?: string | null
           requirements_ar?: string | null
           requirements_en?: string | null
+          salary_range?: string | null
           title_ar?: string
           title_en?: string | null
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_postings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description_ar: string | null
+          description_en: string | null
+          id: string
+          is_active: boolean
+          name_ar: string
+          name_en: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description_ar?: string | null
+          description_en?: string | null
+          id?: string
+          is_active?: boolean
+          name_ar: string
+          name_en?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description_ar?: string | null
+          description_en?: string | null
+          id?: string
+          is_active?: boolean
+          name_ar?: string
+          name_en?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -208,9 +306,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin_or_hr: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
+      app_role:
+        | "admin"
+        | "hr_manager"
+        | "recruitment_coordinator"
+        | "project_manager"
       applicant_status:
         | "new"
         | "reviewing"
@@ -347,6 +457,12 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: [
+        "admin",
+        "hr_manager",
+        "recruitment_coordinator",
+        "project_manager",
+      ],
       applicant_status: [
         "new",
         "reviewing",
