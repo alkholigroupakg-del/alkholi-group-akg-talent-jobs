@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Users, Briefcase, Building2, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Users, Briefcase, Building2, Search, Star, Globe, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TopBar from "@/components/TopBar";
 import { useLanguage } from "@/contexts/LanguageContext";
