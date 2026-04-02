@@ -14,7 +14,11 @@ import AttachmentsStep from "./steps/AttachmentsStep";
 
 const STORAGE_KEY = "akg-application-draft";
 
-const ApplicationForm = () => {
+interface Props {
+  preSelectedPosition?: string;
+}
+
+const ApplicationForm = ({ preSelectedPosition }: Props) => {
   const { t, lang, dir } = useLanguage();
 
   const stepLabels = [
@@ -34,6 +38,13 @@ const ApplicationForm = () => {
   const [files, setFiles] = useState<Record<string, File | null>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Auto-fill position from URL
+  useEffect(() => {
+    if (preSelectedPosition && !formData.desiredPosition) {
+      setFormData(prev => ({ ...prev, desiredPosition: preSelectedPosition }));
+    }
+  }, [preSelectedPosition]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
@@ -82,13 +93,13 @@ const ApplicationForm = () => {
     const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
     const { error } = await supabase.storage.from("resumes").upload(path, file);
     if (error) return null;
-    return path;
+    // Get public URL
+    const { data } = supabase.storage.from("resumes").getPublicUrl(path);
+    return data.publicUrl;
   };
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
-
-    // Check resume file
     if (!files.resume) {
       toast.error(t("validation.required"));
       return;
@@ -96,7 +107,6 @@ const ApplicationForm = () => {
 
     setIsSubmitting(true);
     try {
-      // Upload files
       let resumeUrl = null;
       let degreeUrl = null;
       let experienceCertUrl = null;
@@ -109,7 +119,6 @@ const ApplicationForm = () => {
       if (files.trainingCerts) trainingCertsUrl = await uploadFile(files.trainingCerts, "training");
       if (files.otherDocs) otherDocsUrl = await uploadFile(files.otherDocs, "other");
 
-      // Insert to database
       const { error } = await supabase.from("applicants").insert({
         full_name: formData.fullName,
         gender: formData.gender,
