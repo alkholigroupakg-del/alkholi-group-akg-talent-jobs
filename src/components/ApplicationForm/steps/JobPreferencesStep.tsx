@@ -1,6 +1,6 @@
 import FormField from "../FormField";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { jobPositions, getSaudiCities } from "@/data/jobPositions";
+import { getJobPositions, getSaudiCities } from "@/data/jobPositions";
 
 interface Props {
   data: Record<string, string>;
