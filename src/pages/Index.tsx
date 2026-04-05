@@ -17,7 +17,7 @@ const Index = () => {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <img src={logo} alt="AlKholi Group" className="h-10 md:h-14 object-contain bg-card/80 backdrop-blur-sm rounded-lg px-4 py-2" />
           <div className="flex items-center gap-3">
-            <TopBar />
+            <TopBar variant="light" />
             <Link to="/jobs">
               <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 gap-2 font-medium">
                 <Search className="w-4 h-4" />
