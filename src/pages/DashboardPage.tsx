@@ -749,10 +749,14 @@ const DashboardPage = () => {
                       ["field.trainingCerts", selectedApplicant.training_certs_url],
                       ["field.otherDocs", selectedApplicant.other_docs_url],
                     ] as [string, string | null][]).filter(([, val]) => val).map(([key, val]) => (
-                      <a key={key} href={val!} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 border border-border rounded-lg p-2 hover:bg-muted/50 transition-colors text-sm">
+                      <button key={key} onClick={async () => {
+                        const { data } = await supabase.storage.from("resumes").createSignedUrl(val!, 3600);
+                        if (data?.signedUrl) window.open(data.signedUrl, "_blank");
+                        else toast.error("Could not open file");
+                      }} className="flex items-center gap-2 border border-border rounded-lg p-2 hover:bg-muted/50 transition-colors text-sm cursor-pointer">
                         <ExternalLink className="w-4 h-4 text-primary shrink-0" />
                         <span className="truncate">{t(key)}</span>
-                      </a>
+                      </button>
                     ))}
                     {![selectedApplicant.resume_url, selectedApplicant.degree_url, selectedApplicant.experience_cert_url, selectedApplicant.training_certs_url, selectedApplicant.other_docs_url].some(Boolean) && (
                       <p className="text-muted-foreground text-xs col-span-2">{t("dash.noAttachments")}</p>

@@ -93,9 +93,8 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
     const { error } = await supabase.storage.from("resumes").upload(path, file);
     if (error) return null;
-    // Get public URL
-    const { data } = supabase.storage.from("resumes").getPublicUrl(path);
-    return data.publicUrl;
+    // Store the path only - signed URLs will be generated when viewing
+    return path;
   };
 
   const handleSubmit = async () => {
