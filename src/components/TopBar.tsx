@@ -3,9 +3,17 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
-const TopBar = () => {
+interface TopBarProps {
+  variant?: "light" | "dark";
+}
+
+const TopBar = ({ variant = "dark" }: TopBarProps) => {
   const { lang, setLang } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+
+  const colorClass = variant === "light"
+    ? "text-primary-foreground hover:bg-white/10"
+    : "text-foreground hover:bg-muted";
 
   return (
     <div className="flex items-center gap-2">
@@ -13,7 +21,7 @@ const TopBar = () => {
         variant="ghost"
         size="icon"
         onClick={() => setLang(lang === "ar" ? "en" : "ar")}
-        className="text-primary-foreground hover:bg-white/10"
+        className={colorClass}
         title={lang === "ar" ? "English" : "العربية"}
       >
         <Globe className="w-5 h-5" />
@@ -22,7 +30,7 @@ const TopBar = () => {
         variant="ghost"
         size="icon"
         onClick={toggleTheme}
-        className="text-primary-foreground hover:bg-white/10"
+        className={colorClass}
         title={theme === "light" ? "Dark Mode" : "Light Mode"}
       >
         {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}

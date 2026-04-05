@@ -1,6 +1,6 @@
 import FormField from "../FormField";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { jobPositions, getSaudiCities } from "@/data/jobPositions";
+import { getJobPositions, getSaudiCities } from "@/data/jobPositions";
 
 interface Props {
   data: Record<string, string>;
@@ -25,7 +25,7 @@ const JobPreferencesStep = ({ data, onChange }: Props) => {
       <h3 className="text-xl font-bold text-primary mb-6">{t("step.job")}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="md:col-span-2">
-          <FormField label={t("field.desiredPosition")} name="desiredPosition" type="select" required value={data.desiredPosition || ""} onChange={onChange} options={jobPositions} />
+          <FormField label={t("field.desiredPosition")} name="desiredPosition" type="select" required value={data.desiredPosition || ""} onChange={onChange} options={getJobPositions(lang)} />
         </div>
         <FormField label={t("field.jobType")} name="jobType" type="select" required value={data.jobType || ""} onChange={onChange} options={jobTypeOptions} />
         <FormField label={t("field.preferredCity")} name="preferredCity" type="select" required value={data.preferredCity || ""} onChange={onChange} options={cityOptions} />

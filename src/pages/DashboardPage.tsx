@@ -395,7 +395,7 @@ const DashboardPage = () => {
             <Button onClick={handleLogin} className="w-full gradient-primary text-primary-foreground" disabled={loginLoading}>
               {loginLoading ? "..." : t("dash.loginBtn")}
             </Button>
-            <div className="flex justify-center pt-2"><TopBar /></div>
+            <div className="flex justify-center pt-2"><TopBar variant="dark" /></div>
           </CardContent>
         </Card>
       </div>
@@ -419,7 +419,7 @@ const DashboardPage = () => {
             <h1 className="text-primary-foreground font-bold text-lg hidden md:block">{t("dash.title")}</h1>
           </div>
           <div className="flex items-center gap-3">
-            <TopBar />
+            <TopBar variant="light" />
             <Link to="/jobs">
               <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 gap-2">
                 <Briefcase className="w-4 h-4" /><span className="hidden md:inline">{t("nav.jobs")}</span>

@@ -95,7 +95,7 @@ const JobsPage = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <TopBar />
+            <TopBar variant="dark" />
             <Link to="/dashboard">
               <Button className="bg-foreground text-background hover:bg-foreground/90 gap-2 font-semibold rounded-full px-6">
                 <LogIn className="w-4 h-4" />
