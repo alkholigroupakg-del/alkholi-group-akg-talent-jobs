@@ -18,10 +18,15 @@ const ApplyPage = () => {
       {/* Header */}
       <header className="gradient-hero py-4 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <img src={logo} alt="AlKholi Group" className="h-12 object-contain" />
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-primary-foreground hover:bg-white/10">
+              <BackArrow className="w-5 h-5" />
+            </Button>
+            <Link to="/"><img src={logo} alt="AlKholi Group" className="h-12 object-contain" /></Link>
+          </div>
           <div className="flex items-center gap-3">
             <TopBar variant="light" />
-            <span className="text-primary-foreground/80 text-sm font-medium">{t("nav.formTitle")}</span>
+            <span className="text-primary-foreground/80 text-sm font-medium hidden md:inline">{t("nav.formTitle")}</span>
           </div>
         </div>
       </header>
