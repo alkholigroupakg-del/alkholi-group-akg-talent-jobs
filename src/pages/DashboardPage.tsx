@@ -419,7 +419,7 @@ const DashboardPage = () => {
             <h1 className="text-primary-foreground font-bold text-lg hidden md:block">{t("dash.title")}</h1>
           </div>
           <div className="flex items-center gap-3">
-            <TopBar />
+            <TopBar variant="light" />
             <Link to="/jobs">
               <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 gap-2">
                 <Briefcase className="w-4 h-4" /><span className="hidden md:inline">{t("nav.jobs")}</span>
