@@ -1,8 +1,9 @@
-import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import ApplicationForm from "@/components/ApplicationForm/ApplicationForm";
 import TopBar from "@/components/TopBar";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import logo from "@/assets/logo.jpg";
 
 const ApplyPage = () => {
