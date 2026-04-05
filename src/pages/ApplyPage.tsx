@@ -7,9 +7,11 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import logo from "@/assets/logo.jpg";
 
 const ApplyPage = () => {
-  const { t, dir } = useLanguage();
+  const { t, dir, lang } = useLanguage();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const preSelectedPosition = searchParams.get("position") || "";
+  const BackArrow = lang === "ar" ? ArrowRight : ArrowLeft;
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
