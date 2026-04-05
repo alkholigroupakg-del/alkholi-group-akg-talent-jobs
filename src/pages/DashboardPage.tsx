@@ -395,7 +395,7 @@ const DashboardPage = () => {
             <Button onClick={handleLogin} className="w-full gradient-primary text-primary-foreground" disabled={loginLoading}>
               {loginLoading ? "..." : t("dash.loginBtn")}
             </Button>
-            <div className="flex justify-center pt-2"><TopBar /></div>
+            <div className="flex justify-center pt-2"><TopBar variant="dark" /></div>
           </CardContent>
         </Card>
       </div>
