@@ -6,7 +6,7 @@ import TopBar from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, Briefcase, ArrowLeft, ArrowRight, Search, Filter, LogIn } from "lucide-react";
+import { MapPin, Clock, Briefcase, ArrowLeft, ArrowRight, Search, Filter, LogIn, Flag, Hash } from "lucide-react";
 import logo from "@/assets/logo.jpg";
 
 interface JobPosting {
@@ -21,6 +21,7 @@ interface JobPosting {
   requirements_ar: string | null;
   requirements_en: string | null;
   is_active: boolean;
+  nationality_required: string | null;
   created_at: string;
 }
 
@@ -29,7 +30,6 @@ const JobsPage = () => {
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
   const Arrow = lang === "ar" ? ArrowLeft : ArrowRight;
 
   useEffect(() => {
@@ -64,13 +64,38 @@ const JobsPage = () => {
 
   const getLocationLabel = (loc: string) => {
     if (loc === "الرياض، المملكة العربية السعودية" && lang === "en") return "Riyadh, Saudi Arabia";
+    if (loc === "الرياض" && lang === "en") return "Riyadh";
     if (loc === "Riyadh, Saudi Arabia" && lang === "ar") return "الرياض، المملكة العربية السعودية";
     return loc;
   };
 
   const getDeptLabel = (dept: string | null) => {
-    if (!dept) return lang === "ar" ? "تصنيف عام" : "General Category";
-    return dept;
+    if (!dept) return lang === "ar" ? "عام" : "General";
+    const deptMap: Record<string, string> = {
+      "إدارة المشاريع": "Project Management",
+      "المشتريات": "Procurement",
+      "الهندسة": "Engineering",
+      "الخدمات": "Services",
+      "الإدارة": "Administration",
+      "النقل": "Transportation",
+      "البيئة والسلامة": "EHS",
+      "إدارة المرافق": "Facilities Management",
+      "الصيانة": "Maintenance",
+      "المالية": "Finance",
+      "الموارد البشرية": "Human Resources",
+      "تقنية المعلومات": "IT",
+    };
+    return lang === "en" ? (deptMap[dept] || dept) : dept;
+  };
+
+  const getNationalityLabel = (nat: string | null) => {
+    if (!nat) return null;
+    const natMap: Record<string, string> = {
+      "سعودي": "Saudi",
+      "غير محدد": "Any Nationality",
+      "أي جنسية": "Any Nationality",
+    };
+    return lang === "en" ? (natMap[nat] || nat) : nat;
   };
 
   return (
@@ -111,6 +136,14 @@ const JobsPage = () => {
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-3xl md:text-5xl font-black text-foreground mb-4">{t("jobs.title")}</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t("jobs.desc")}</p>
+          {/* Job Count Badge */}
+          <div className="mt-4 inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 rounded-full px-5 py-2 font-semibold">
+            <Hash className="w-4 h-4" />
+            {lang === "ar" 
+              ? `${filtered.length} وظيفة متاحة حالياً`
+              : `${filtered.length} jobs available now`
+            }
+          </div>
         </div>
       </section>
 
@@ -127,10 +160,6 @@ const JobsPage = () => {
               style={{ [dir === "rtl" ? "paddingRight" : "paddingLeft"]: "2.5rem" }}
             />
           </div>
-          <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="gap-2 shrink-0">
-            <Filter className="w-4 h-4" />
-            {t("jobs.filter")}
-          </Button>
         </div>
       </div>
 
@@ -155,6 +184,7 @@ const JobsPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map(job => {
               const title = lang === "ar" ? job.title_ar : (job.title_en || job.title_ar);
+              const natLabel = getNationalityLabel(job.nationality_required);
               return (
                 <div key={job.id} className="bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
                   <div className="p-6 flex-1">
@@ -182,6 +212,12 @@ const JobsPage = () => {
                         <Clock className="w-4 h-4 text-accent shrink-0" />
                         <span>{getJobTypeLabel(job.job_type)}</span>
                       </div>
+                      {natLabel && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Flag className="w-4 h-4 text-accent shrink-0" />
+                          <span>{natLabel}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 

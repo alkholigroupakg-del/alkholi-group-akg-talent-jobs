@@ -58,6 +58,19 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     setFiles((prev) => ({ ...prev, [name]: file }));
   }, []);
 
+  const handleAutoFill = useCallback((fields: Record<string, string>) => {
+    setFormData((prev) => {
+      const updated = { ...prev };
+      Object.entries(fields).forEach(([key, value]) => {
+        // Only fill if the field is currently empty
+        if (!updated[key]) {
+          updated[key] = value;
+        }
+      });
+      return updated;
+    });
+  }, []);
+
   const validateStep = () => {
     const requiredByStep: Record<number, string[]> = {
       1: ["fullName", "gender", "nationality", "birthDate", "maritalStatus", "dependents", "phone", "email", "currentCity", "hasTransport"],
@@ -93,7 +106,6 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
     const { error } = await supabase.storage.from("resumes").upload(path, file);
     if (error) return null;
-    // Store the path only - signed URLs will be generated when viewing
     return path;
   };
 
@@ -211,7 +223,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         {currentStep === 3 && <EducationStep data={formData} onChange={handleChange} />}
         {currentStep === 4 && <ExperienceStep data={formData} onChange={handleChange} />}
         {currentStep === 5 && <FinancialsStep data={formData} onChange={handleChange} />}
-        {currentStep === 6 && <AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} />}
+        {currentStep === 6 && <AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} onAutoFill={handleAutoFill} />}
 
         <div className="flex justify-between items-center mt-8 pt-6 border-t border-border">
           <Button variant="outline" onClick={handlePrev} disabled={currentStep === 1} className="gap-2">
