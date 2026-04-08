@@ -102,11 +102,37 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   };
 
   const uploadFile = async (file: File, folder: string) => {
-    const ext = file.name.split(".").pop();
-    const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabase.storage.from("resumes").upload(path, file);
-    if (error) return null;
-    return path;
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", folder);
+
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-file`,
+        {
+          method: "POST",
+          headers: {
+            "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
+          },
+          body: formData,
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Upload error:", err);
+        return null;
+      }
+
+      const result = await res.json();
+      return result.path;
+    } catch (err) {
+      console.error("Upload error:", err);
+      return null;
+    }
   };
 
   const handleSubmit = async () => {
