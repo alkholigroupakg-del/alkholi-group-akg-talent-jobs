@@ -39,11 +39,16 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Auto-fill position from URL
+  // Always honor an explicit job selected from the jobs page,
+  // even if a previous draft already exists in localStorage.
   useEffect(() => {
-    if (preSelectedPosition && !formData.desiredPosition) {
-      setFormData(prev => ({ ...prev, desiredPosition: preSelectedPosition }));
-    }
+    if (!preSelectedPosition) return;
+
+    setFormData((prev) =>
+      prev.desiredPosition === preSelectedPosition
+        ? prev
+        : { ...prev, desiredPosition: preSelectedPosition }
+    );
   }, [preSelectedPosition]);
 
   useEffect(() => {
