@@ -20,6 +20,23 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Validate file size (10 MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      return new Response(JSON.stringify({ error: "File too large. Maximum size is 10 MB." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate file type - only PDF allowed for parsing
+    const ext = file.name?.split(".").pop()?.toLowerCase() || "";
+    if (ext !== "pdf") {
+      return new Response(JSON.stringify({ error: "Only PDF files can be parsed." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       return new Response(JSON.stringify({ error: "API key not configured" }), {
