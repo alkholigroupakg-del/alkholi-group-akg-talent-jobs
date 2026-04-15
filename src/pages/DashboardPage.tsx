@@ -968,11 +968,14 @@ const DashboardPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* User Form Dialog */}
       <Dialog open={showUserForm} onOpenChange={setShowUserForm}>
         <DialogContent dir={dir}>
           <DialogHeader><DialogTitle>{t("dash.addUser")}</DialogTitle></DialogHeader>
           <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t("dash.displayName")}</Label>
+              <Input value={newUserName} onChange={e => setNewUserName(e.target.value)} />
+            </div>
             <div className="space-y-2">
               <Label>{t("dash.signupEmail")}</Label>
               <Input value={newUserEmail} onChange={e => setNewUserEmail(e.target.value)} type="email" dir="ltr" />
