@@ -85,8 +85,10 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     // Map form steps: step 2=basic(1), 3=job(2), 4=edu(3), 5=exp(4), 6=fin(5), 7=attach(6)
     const fieldConfigStep = currentStep - 1;
     const required = fc.getRequiredFields(fieldConfigStep);
-    const missing = required.filter((field) => !formData[field]);
+    // Check both formData and files for required fields
+    const missing = required.filter((field) => !formData[field] && !files[field]);
     if (missing.length > 0) {
+      console.log("Missing required fields:", missing);
       toast.error(t("validation.required"));
       return false;
     }
@@ -140,10 +142,6 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
-    if (!files.resume) {
-      toast.error(t("validation.required"));
-      return;
-    }
 
     setIsSubmitting(true);
     try {
