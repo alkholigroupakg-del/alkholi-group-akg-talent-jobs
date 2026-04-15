@@ -131,7 +131,10 @@ const DashboardPage = () => {
   const [showUserForm, setShowUserForm] = useState(false);
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserPassword, setNewUserPassword] = useState("");
+  const [newUserName, setNewUserName] = useState("");
   const [newUserRole, setNewUserRole] = useState<string>("recruitment_coordinator");
+  const [users, setUsers] = useState<any[]>([]);
+  const [userRoles, setUserRoles] = useState<any[]>([]);
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
