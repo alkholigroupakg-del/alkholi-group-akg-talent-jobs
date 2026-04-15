@@ -4,7 +4,7 @@ import { ArrowRight, ArrowLeft, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useFieldConfig } from "@/hooks/useFieldConfig";
+import { useFieldConfig, type FieldConfig } from "@/hooks/useFieldConfig";
 import StepIndicator from "./StepIndicator";
 import ResumeUploadStep from "./steps/ResumeUploadStep";
 import BasicInfoStep from "./steps/BasicInfoStep";
@@ -31,6 +31,14 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     t("step.basic"), t("step.job"), t("step.edu"),
     t("step.exp"), t("step.fin"), t("step.attach"),
   ];
+
+  const getFieldLabel = (fieldName: string): string => {
+    const label = fc.getLabel(fieldName, lang, "");
+    if (label) return label;
+    const key = `field.${fieldName}`;
+    const translated = t(key);
+    return translated !== key ? translated : fieldName;
+  };
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Record<string, string>>(() => {
@@ -79,24 +87,56 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         : "Failed to submit the application. Please try again.";
   };
 
-  const validateStep = () => {
+  const getMissingFieldsForStep = (stepNumber: number): string[] => {
+    const required = fc.getRequiredFields(stepNumber);
+    return required.filter((field) => !formData[field] && !files[field]);
+  };
+
+  const validateCurrentStep = (): boolean => {
     if (currentStep === 1) return true;
-
-    const fieldConfigStep = currentStep - 1;
-    const required = fc.getRequiredFields(fieldConfigStep);
-    const missing = required.filter((field) => !formData[field] && !files[field]);
-
+    const missing = getMissingFieldsForStep(currentStep - 1);
     if (missing.length > 0) {
-      console.log("Missing required fields:", missing);
-      toast.error(t("validation.required"));
+      const fieldNames = missing.map(getFieldLabel).join("، ");
+      toast.error(
+        lang === "ar"
+          ? `حقول مطلوبة ناقصة: ${fieldNames}`
+          : `Missing required fields: ${fieldNames}`
+      );
       return false;
     }
+    return true;
+  };
 
+  const validateAllSteps = (): boolean => {
+    for (let step = 1; step <= 5; step++) {
+      const missing = getMissingFieldsForStep(step);
+      if (missing.length > 0) {
+        const uiStep = step + 1; // step 1 → UI step 2
+        const fieldNames = missing.map(getFieldLabel).join("، ");
+        const stepName = stepLabels[step] || `${step}`;
+        toast.error(
+          lang === "ar"
+            ? `حقول ناقصة في "${stepName}": ${fieldNames}`
+            : `Missing fields in "${stepName}": ${fieldNames}`,
+          {
+            duration: 8000,
+            action: {
+              label: lang === "ar" ? `← الانتقال للخطوة` : `Go to step →`,
+              onClick: () => {
+                setCurrentStep(uiStep);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              },
+            },
+          }
+        );
+        return false;
+      }
+    }
     return true;
   };
 
   const handleNext = () => {
-    if (!validateStep()) return;
+    if (!validateCurrentStep()) return;
     setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -161,10 +201,15 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   };
 
   const handleSubmit = async () => {
-    if (!validateStep()) return;
+    if (!validateAllSteps()) return;
 
     if (!files.resume) {
-      toast.error(lang === "ar" ? "السيرة الذاتية مطلوبة في الخطوة الأخيرة قبل إرسال الطلب" : "Resume is required in the final step before submission");
+      toast.error(
+        lang === "ar"
+          ? "السيرة الذاتية مطلوبة — يرجى إرفاقها أعلاه قبل الإرسال"
+          : "Resume is required — please attach it above before submitting",
+        { duration: 6000 }
+      );
       return;
     }
 
