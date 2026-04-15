@@ -1,6 +1,7 @@
 import FormField from "../FormField";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDropdownOptions } from "@/hooks/useDropdownOptions";
+import { useFieldConfig } from "@/hooks/useFieldConfig";
 
 interface Props {
   data: Record<string, string>;
@@ -10,6 +11,7 @@ interface Props {
 const JobPreferencesStep = ({ data, onChange }: Props) => {
   const { t, lang } = useLanguage();
   const dd = useDropdownOptions(lang);
+  const fc = useFieldConfig();
 
   const cityOptions = dd.getCities();
   const jobTypeOptions = [
@@ -27,18 +29,26 @@ const JobPreferencesStep = ({ data, onChange }: Props) => {
     ? [currentValue, ...basePositions]
     : basePositions;
 
+  const show = fc.isVisible;
+  const req = fc.isRequired;
+  const lbl = (name: string, fallback: string) => fc.getLabel(name, lang, fallback);
+
   return (
     <div className="space-y-5 animate-fade-in">
       <h3 className="text-xl font-bold text-primary mb-6">{t("step.job")}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="md:col-span-2">
-          <FormField label={t("field.desiredPosition")} name="desiredPosition" type="select" required value={currentValue} onChange={onChange} options={positionOptions} />
-        </div>
-        <FormField label={t("field.jobType")} name="jobType" type="select" required value={data.jobType || ""} onChange={onChange} options={jobTypeOptions} />
-        <FormField label={t("field.preferredCity")} name="preferredCity" type="select" required value={data.preferredCity || ""} onChange={onChange} options={cityOptions} />
-        <div className="md:col-span-2">
-          <FormField label={t("field.hearAbout")} name="hearAbout" type="select" required value={data.hearAbout || ""} onChange={onChange} options={hearOptions} />
-        </div>
+        {show("desiredPosition") && (
+          <div className="md:col-span-2">
+            <FormField label={lbl("desiredPosition", t("field.desiredPosition"))} name="desiredPosition" type="select" required={req("desiredPosition")} value={currentValue} onChange={onChange} options={positionOptions} />
+          </div>
+        )}
+        {show("jobType") && <FormField label={lbl("jobType", t("field.jobType"))} name="jobType" type="select" required={req("jobType")} value={data.jobType || ""} onChange={onChange} options={jobTypeOptions} />}
+        {show("preferredCity") && <FormField label={lbl("preferredCity", t("field.preferredCity"))} name="preferredCity" type="select" required={req("preferredCity")} value={data.preferredCity || ""} onChange={onChange} options={cityOptions} />}
+        {show("hearAbout") && (
+          <div className="md:col-span-2">
+            <FormField label={lbl("hearAbout", t("field.hearAbout"))} name="hearAbout" type="select" required={req("hearAbout")} value={data.hearAbout || ""} onChange={onChange} options={hearOptions} />
+          </div>
+        )}
       </div>
     </div>
   );

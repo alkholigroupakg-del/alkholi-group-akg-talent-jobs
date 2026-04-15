@@ -4,6 +4,7 @@ import { ArrowRight, ArrowLeft, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useFieldConfig } from "@/hooks/useFieldConfig";
 import StepIndicator from "./StepIndicator";
 import BasicInfoStep from "./steps/BasicInfoStep";
 import JobPreferencesStep from "./steps/JobPreferencesStep";
@@ -21,6 +22,7 @@ interface Props {
 
 const ApplicationForm = ({ preSelectedPosition }: Props) => {
   const { t, lang, dir } = useLanguage();
+  const fc = useFieldConfig();
 
   const stepLabels = [
     t("step.basic"), t("step.job"), t("step.edu"),
@@ -78,16 +80,8 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   }, []);
 
   const validateStep = () => {
-    const requiredByStep: Record<number, string[]> = {
-      1: ["fullName", "gender", "nationality", "birthDate", "maritalStatus", "dependents", "phone", "email", "currentCity", "hasTransport"],
-      2: ["desiredPosition", "jobType", "preferredCity", "hearAbout"],
-      3: ["educationLevel", "major", "university", "graduationYear", "gpa", "currentlyStudying"],
-      4: ["yearsExperience", "currentlyEmployed", "currentTitle", "currentTasks", "selfSummary", "otherExperience", "arabicLevel", "englishLevel", "linkedin", "facilityManagementExp"],
-      5: ["currentSalary", "expectedSalary", "availableDate"],
-      6: [],
-    };
-
-    const required = requiredByStep[currentStep] || [];
+    // Use dynamic required fields from field config
+    const required = fc.getRequiredFields(currentStep);
     const missing = required.filter((field) => !formData[field]);
     if (missing.length > 0) {
       toast.error(t("validation.required"));
