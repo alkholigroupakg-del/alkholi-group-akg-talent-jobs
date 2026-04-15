@@ -1087,8 +1087,17 @@ const DashboardPage = () => {
               <Input value={projectForm.name_en} onChange={e => setProjectForm(p => ({ ...p, name_en: e.target.value }))} dir="ltr" />
             </div>
             <div className="space-y-2">
-              <Label>{t("dash.projectDesc")}</Label>
-              <Textarea value={projectForm.description_ar} onChange={e => setProjectForm(p => ({ ...p, description_ar: e.target.value }))} rows={3} />
+              <Label>{t("dash.projectDesc")} ({t("dash.arabic")})</Label>
+              <Textarea value={projectForm.description_ar} onChange={e => setProjectForm(p => ({ ...p, description_ar: e.target.value }))} rows={2} />
+            </div>
+            <div className="space-y-2">
+              <Label>{t("dash.projectDesc")} ({t("dash.english")})</Label>
+              <Textarea value={projectForm.description_en} onChange={e => setProjectForm(p => ({ ...p, description_en: e.target.value }))} rows={2} dir="ltr" />
+            </div>
+            <div className="space-y-2">
+              <Label>{lang === "ar" ? "رابط شعار المشروع (URL)" : "Project Logo URL"}</Label>
+              <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
+              <p className="text-xs text-muted-foreground">{lang === "ar" ? "أدخل رابط صورة الشعار أو ارفعه من قسم الهوية البصرية" : "Enter logo image URL"}</p>
             </div>
             <div className="flex gap-3 justify-end">
               <Button variant="outline" onClick={() => setShowProjectForm(false)}>{t("dash.cancel")}</Button>
