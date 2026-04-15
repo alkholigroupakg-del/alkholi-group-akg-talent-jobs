@@ -142,6 +142,10 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
+    if (!files.resume) {
+      toast.error(lang === "ar" ? "يرجى إرفاق السيرة الذاتية قبل الإرسال" : "Please attach your resume before submitting");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -272,7 +276,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         {currentStep === 4 && <><EducationStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={3} data={formData} onChange={handleChange} /></>}
         {currentStep === 5 && <><ExperienceStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={4} data={formData} onChange={handleChange} /></>}
         {currentStep === 6 && <><FinancialsStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={5} data={formData} onChange={handleChange} /></>}
-        {currentStep === 7 && <><AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} /><CustomQuestionsStep stepNumber={6} data={formData} onChange={handleChange} /></>}
+        {currentStep === 7 && <><AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} hasResume={!!files.resume} /><CustomQuestionsStep stepNumber={6} data={formData} onChange={handleChange} /></>}
 
         <div className="flex justify-between items-center mt-8 pt-6 border-t border-border">
           <Button variant="outline" onClick={handlePrev} disabled={currentStep === 1} className="gap-2">
