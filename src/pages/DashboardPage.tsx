@@ -23,6 +23,7 @@ import CustomQuestionsSettings from "@/components/Dashboard/CustomQuestionsSetti
 import DropdownOptionsSettings from "@/components/Dashboard/DropdownOptionsSettings";
 import BrandingSettings from "@/components/Dashboard/BrandingSettings";
 import BackupSettings from "@/components/Dashboard/BackupSettings";
+import FormFieldsSettings from "@/components/Dashboard/FormFieldsSettings";
 
 type ApplicantStatus = "new" | "reviewing" | "phone_interview" | "in_person_interview" | "accepted" | "hired" | "rejected" | "withdrawn";
 
@@ -766,6 +767,11 @@ const DashboardPage = () => {
           {/* SETTINGS TAB */}
           <TabsContent value="settings">
             <div className="space-y-6">
+              <Card>
+                <CardContent className="p-6">
+                  <FormFieldsSettings />
+                </CardContent>
+              </Card>
               <Card>
                 <CardContent className="p-6">
                   <BrandingSettings />
