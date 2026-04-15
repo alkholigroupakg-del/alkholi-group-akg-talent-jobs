@@ -1,7 +1,6 @@
 import FormField from "../FormField";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getJobPositions, getSaudiCities, getJobPositionTranslation } from "@/data/jobPositions";
-import { useEffect } from "react";
+import { useDropdownOptions } from "@/hooks/useDropdownOptions";
 
 interface Props {
   data: Record<string, string>;
@@ -10,8 +9,9 @@ interface Props {
 
 const JobPreferencesStep = ({ data, onChange }: Props) => {
   const { t, lang } = useLanguage();
+  const dd = useDropdownOptions(lang);
 
-  const cityOptions = getSaudiCities(lang);
+  const cityOptions = dd.getCities();
   const jobTypeOptions = [
     t("opt.fulltime"), t("opt.parttime"), t("opt.remote"),
     t("opt.contract"), t("opt.coop"), t("opt.tamheer"),
@@ -21,8 +21,7 @@ const JobPreferencesStep = ({ data, onChange }: Props) => {
     t("opt.friend"), t("opt.jobPlatform"), t("opt.other"),
   ];
 
-  // Build position options, ensuring pre-selected value is always included
-  const basePositions = getJobPositions(lang);
+  const basePositions = dd.getJobPositions();
   const currentValue = data.desiredPosition || "";
   const positionOptions = currentValue && !basePositions.includes(currentValue)
     ? [currentValue, ...basePositions]
