@@ -495,13 +495,14 @@ const DashboardPage = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-6 w-full max-w-2xl">
+          <TabsList className="grid grid-cols-7 w-full max-w-3xl">
             <TabsTrigger value="applicants">{t("dash.tab.applicants")}</TabsTrigger>
             <TabsTrigger value="jobs">{t("dash.tab.jobs")}</TabsTrigger>
             <TabsTrigger value="users">{t("dash.tab.users")}</TabsTrigger>
             <TabsTrigger value="projects">{t("dash.tab.projects")}</TabsTrigger>
             <TabsTrigger value="analytics">{t("dash.tab.analytics")}</TabsTrigger>
             <TabsTrigger value="settings">{t("dash.tab.settings")}</TabsTrigger>
+            <TabsTrigger value="backup" className="gap-1"><Database className="w-3 h-3" />{lang === "ar" ? "نسخ احتياطي" : "Backup"}</TabsTrigger>
           </TabsList>
 
           {/* APPLICANTS TAB */}
@@ -764,9 +765,30 @@ const DashboardPage = () => {
 
           {/* SETTINGS TAB */}
           <TabsContent value="settings">
+            <div className="space-y-6">
+              <Card>
+                <CardContent className="p-6">
+                  <BrandingSettings />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <DropdownOptionsSettings />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <CustomQuestionsSettings />
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* BACKUP TAB */}
+          <TabsContent value="backup">
             <Card>
               <CardContent className="p-6">
-                <CustomQuestionsSettings />
+                <BackupSettings />
               </CardContent>
             </Card>
           </TabsContent>
