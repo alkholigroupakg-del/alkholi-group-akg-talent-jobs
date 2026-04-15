@@ -14,11 +14,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Users, UserPlus, Phone, CheckCircle2, Download, LogOut, Search, Eye, BarChart3, Briefcase, FileText, ExternalLink, Plus, Pencil, Trash2, FolderOpen } from "lucide-react";
+import { Users, UserPlus, Phone, CheckCircle2, Download, LogOut, Search, Eye, BarChart3, Briefcase, FileText, ExternalLink, Plus, Pencil, Trash2, FolderOpen, Settings } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import * as XLSX from "xlsx";
 import logo from "@/assets/logo.jpg";
 import { Link } from "react-router-dom";
+import CustomQuestionsSettings from "@/components/Dashboard/CustomQuestionsSettings";
 
 type ApplicantStatus = "new" | "reviewing" | "phone_interview" | "in_person_interview" | "accepted" | "hired" | "rejected" | "withdrawn";
 
@@ -455,12 +456,13 @@ const DashboardPage = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-5 w-full max-w-xl">
+          <TabsList className="grid grid-cols-6 w-full max-w-2xl">
             <TabsTrigger value="applicants">{t("dash.tab.applicants")}</TabsTrigger>
             <TabsTrigger value="jobs">{t("dash.tab.jobs")}</TabsTrigger>
             <TabsTrigger value="users">{t("dash.tab.users")}</TabsTrigger>
             <TabsTrigger value="projects">{t("dash.tab.projects")}</TabsTrigger>
             <TabsTrigger value="analytics">{t("dash.tab.analytics")}</TabsTrigger>
+            <TabsTrigger value="settings">{t("dash.tab.settings")}</TabsTrigger>
           </TabsList>
 
           {/* APPLICANTS TAB */}
@@ -661,6 +663,15 @@ const DashboardPage = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* SETTINGS TAB */}
+          <TabsContent value="settings">
+            <Card>
+              <CardContent className="p-6">
+                <CustomQuestionsSettings />
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>

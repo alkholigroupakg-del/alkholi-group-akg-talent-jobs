@@ -58,7 +58,7 @@ const Index = () => {
                 </Button>
               </Link>
               <Link to="/jobs">
-                <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-white/10 gap-2 text-lg px-8 py-6 font-bold">
+                <Button size="lg" className="bg-white text-primary hover:bg-white/90 gap-2 text-lg px-8 py-6 font-bold border-2 border-white">
                   <Search className="w-5 h-5" />
                   {t("hero.viewJobs")}
                 </Button>

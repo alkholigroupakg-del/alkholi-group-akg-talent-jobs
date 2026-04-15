@@ -23,7 +23,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "hero.title2": "مع مجموعة الخولي",
     "hero.desc": "نبحث عن كفاءات متميزة للانضمام لفريقنا. قدّم طلبك الآن واكتشف الفرص الوظيفية المتاحة.",
     "hero.cta": "تقدم للوظيفة",
-    "hero.viewJobs": "تصفح الوظائف",
+    "hero.viewJobs": "تصفح الوظائف الشاغرة",
 
     // Features
     "features.title": "لماذا مجموعة الخولي؟",
@@ -277,6 +277,24 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.projectDesc": "وصف المشروع",
     "dash.nationalityRequired": "الجنسية المطلوبة",
 
+    // Settings / Custom Questions
+    "dash.tab.settings": "الإعدادات",
+    "dash.customQuestions": "الأسئلة المخصصة",
+    "dash.addQuestion": "إضافة سؤال",
+    "dash.editQuestion": "تعديل السؤال",
+    "dash.questionAr": "السؤال (عربي)",
+    "dash.questionEn": "السؤال (إنجليزي)",
+    "dash.questionType": "نوع الحقل",
+    "dash.questionType.text": "نص",
+    "dash.questionType.select": "اختيار من قائمة",
+    "dash.questionType.textarea": "نص طويل",
+    "dash.optionsAr": "الخيارات (عربي) - افصل بفاصلة",
+    "dash.optionsEn": "الخيارات (إنجليزي) - افصل بفاصلة",
+    "dash.questionRequired": "إلزامي",
+    "dash.questionStep": "الخطوة في النموذج",
+    "dash.questionOrder": "ترتيب العرض",
+    "dash.noQuestions": "لا توجد أسئلة مخصصة بعد",
+
     // Roles
     "role.admin": "مدير النظام",
     "role.hr_manager": "مدير الموارد البشرية",
@@ -306,7 +324,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "hero.title2": "With AlKholi Group",
     "hero.desc": "We are looking for outstanding talents to join our team. Apply now and explore available opportunities.",
     "hero.cta": "Apply for a Job",
-    "hero.viewJobs": "Browse Jobs",
+    "hero.viewJobs": "Browse Job Openings",
 
     // Features
     "features.title": "Why AlKholi Group?",
@@ -559,6 +577,24 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.projectNameEn": "Project Name (English)",
     "dash.projectDesc": "Project Description",
     "dash.nationalityRequired": "Required Nationality",
+
+    // Settings / Custom Questions
+    "dash.tab.settings": "Settings",
+    "dash.customQuestions": "Custom Questions",
+    "dash.addQuestion": "Add Question",
+    "dash.editQuestion": "Edit Question",
+    "dash.questionAr": "Question (Arabic)",
+    "dash.questionEn": "Question (English)",
+    "dash.questionType": "Field Type",
+    "dash.questionType.text": "Text",
+    "dash.questionType.select": "Dropdown",
+    "dash.questionType.textarea": "Long Text",
+    "dash.optionsAr": "Options (Arabic) - comma separated",
+    "dash.optionsEn": "Options (English) - comma separated",
+    "dash.questionRequired": "Required",
+    "dash.questionStep": "Form Step",
+    "dash.questionOrder": "Sort Order",
+    "dash.noQuestions": "No custom questions yet",
 
     // Roles
     "role.admin": "System Admin",

@@ -11,6 +11,7 @@ import EducationStep from "./steps/EducationStep";
 import ExperienceStep from "./steps/ExperienceStep";
 import FinancialsStep from "./steps/FinancialsStep";
 import AttachmentsStep from "./steps/AttachmentsStep";
+import CustomQuestionsStep from "./steps/CustomQuestionsStep";
 
 const STORAGE_KEY = "akg-application-draft";
 
@@ -161,7 +162,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
       if (files.trainingCerts) trainingCertsUrl = await uploadFile(files.trainingCerts, "training");
       if (files.otherDocs) otherDocsUrl = await uploadFile(files.otherDocs, "other");
 
-      const { error } = await supabase.from("applicants").insert({
+      const { data: insertedData, error } = await supabase.from("applicants").insert({
         full_name: formData.fullName,
         gender: formData.gender,
         nationality: formData.nationality,
@@ -202,9 +203,22 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         experience_cert_url: experienceCertUrl,
         training_certs_url: trainingCertsUrl,
         other_docs_url: otherDocsUrl,
-      });
+      }).select("id").single();
 
       if (error) throw error;
+
+      // Save custom question answers
+      const customAnswers = Object.entries(formData)
+        .filter(([key, val]) => key.startsWith("custom_") && val)
+        .map(([key, val]) => ({
+          applicant_id: insertedData.id,
+          question_id: key.replace("custom_", ""),
+          answer: val,
+        }));
+
+      if (customAnswers.length > 0) {
+        await supabase.from("custom_answers").insert(customAnswers);
+      }
 
       setIsSubmitted(true);
       localStorage.removeItem(STORAGE_KEY);
@@ -250,12 +264,12 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
       <StepIndicator currentStep={currentStep} totalSteps={6} stepLabels={stepLabels} />
 
       <div className="bg-card rounded-xl shadow-elevated p-6 md:p-8 border border-border">
-        {currentStep === 1 && <BasicInfoStep data={formData} onChange={handleChange} />}
-        {currentStep === 2 && <JobPreferencesStep data={formData} onChange={handleChange} />}
-        {currentStep === 3 && <EducationStep data={formData} onChange={handleChange} />}
-        {currentStep === 4 && <ExperienceStep data={formData} onChange={handleChange} />}
-        {currentStep === 5 && <FinancialsStep data={formData} onChange={handleChange} />}
-        {currentStep === 6 && <AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} onAutoFill={handleAutoFill} />}
+        {currentStep === 1 && <><BasicInfoStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={1} data={formData} onChange={handleChange} /></>}
+        {currentStep === 2 && <><JobPreferencesStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={2} data={formData} onChange={handleChange} /></>}
+        {currentStep === 3 && <><EducationStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={3} data={formData} onChange={handleChange} /></>}
+        {currentStep === 4 && <><ExperienceStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={4} data={formData} onChange={handleChange} /></>}
+        {currentStep === 5 && <><FinancialsStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={5} data={formData} onChange={handleChange} /></>}
+        {currentStep === 6 && <><AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} onAutoFill={handleAutoFill} /><CustomQuestionsStep stepNumber={6} data={formData} onChange={handleChange} /></>}
 
         <div className="flex justify-between items-center mt-8 pt-6 border-t border-border">
           <Button variant="outline" onClick={handlePrev} disabled={currentStep === 1} className="gap-2">
