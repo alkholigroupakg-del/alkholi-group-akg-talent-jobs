@@ -702,7 +702,16 @@ const DashboardPage = () => {
                     {projects.map((p: any) => (
                       <Card key={p.id}>
                         <CardContent className="p-4">
-                          <h3 className="font-bold">{lang === "ar" ? p.name_ar : (p.name_en || p.name_ar)}</h3>
+                          <div className="flex items-center gap-3 mb-2">
+                            {p.logo_url ? (
+                              <img src={p.logo_url} alt="" className="h-10 w-10 object-contain rounded" />
+                            ) : (
+                              <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">
+                                <FolderOpen className="w-5 h-5 text-muted-foreground" />
+                              </div>
+                            )}
+                            <h3 className="font-bold">{lang === "ar" ? p.name_ar : (p.name_en || p.name_ar)}</h3>
+                          </div>
                           {p.description_ar && <p className="text-muted-foreground text-sm mt-1">{p.description_ar}</p>}
                           <Badge className="mt-2" variant={p.is_active ? "default" : "secondary"}>{p.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Badge>
                         </CardContent>
