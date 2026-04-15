@@ -664,6 +664,15 @@ const DashboardPage = () => {
               </Card>
             </div>
           </TabsContent>
+
+          {/* SETTINGS TAB */}
+          <TabsContent value="settings">
+            <Card>
+              <CardContent className="p-6">
+                <CustomQuestionsSettings />
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
 
