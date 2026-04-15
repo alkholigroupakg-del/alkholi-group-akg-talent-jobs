@@ -246,13 +246,17 @@ export type Database = {
         Row: {
           created_at: string
           department: string | null
+          department_en: string | null
           description_ar: string | null
           description_en: string | null
           id: string
           is_active: boolean
           job_type: string
+          job_type_en: string | null
           location: string
+          location_en: string | null
           nationality_required: string | null
+          nationality_required_en: string | null
           project_id: string | null
           requirements_ar: string | null
           requirements_en: string | null
@@ -265,13 +269,17 @@ export type Database = {
         Insert: {
           created_at?: string
           department?: string | null
+          department_en?: string | null
           description_ar?: string | null
           description_en?: string | null
           id?: string
           is_active?: boolean
           job_type: string
+          job_type_en?: string | null
           location: string
+          location_en?: string | null
           nationality_required?: string | null
+          nationality_required_en?: string | null
           project_id?: string | null
           requirements_ar?: string | null
           requirements_en?: string | null
@@ -284,13 +292,17 @@ export type Database = {
         Update: {
           created_at?: string
           department?: string | null
+          department_en?: string | null
           description_ar?: string | null
           description_en?: string | null
           id?: string
           is_active?: boolean
           job_type?: string
+          job_type_en?: string | null
           location?: string
+          location_en?: string | null
           nationality_required?: string | null
+          nationality_required_en?: string | null
           project_id?: string | null
           requirements_ar?: string | null
           requirements_en?: string | null

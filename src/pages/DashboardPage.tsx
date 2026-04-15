@@ -76,12 +76,16 @@ interface JobPosting {
   description_ar: string | null;
   description_en: string | null;
   location: string;
+  location_en: string | null;
   job_type: string;
+  job_type_en: string | null;
   department: string | null;
+  department_en: string | null;
   requirements_ar: string | null;
   requirements_en: string | null;
   is_active: boolean;
   nationality_required: string | null;
+  nationality_required_en: string | null;
   vacancy_count: number;
   created_at: string;
 }
@@ -122,9 +126,10 @@ const DashboardPage = () => {
   const [editingJob, setEditingJob] = useState<JobPosting | null>(null);
   const [jobForm, setJobForm] = useState({
     title_ar: "", title_en: "", description_ar: "", description_en: "",
-    location: "الرياض، المملكة العربية السعودية", job_type: "دوام كامل",
-    department: "", requirements_ar: "", requirements_en: "",
-    is_active: true, nationality_required: "", vacancy_count: 1,
+    location: "الرياض، المملكة العربية السعودية", location_en: "Riyadh, Saudi Arabia",
+    job_type: "دوام كامل", job_type_en: "Full-time",
+    department: "", department_en: "", requirements_ar: "", requirements_en: "",
+    is_active: true, nationality_required: "", nationality_required_en: "", vacancy_count: 1,
   });
 
   // User form state
@@ -280,21 +285,26 @@ const DashboardPage = () => {
         description_ar: job.description_ar || "",
         description_en: job.description_en || "",
         location: job.location,
+        location_en: (job as any).location_en || "",
         job_type: job.job_type,
+        job_type_en: (job as any).job_type_en || "",
         department: job.department || "",
+        department_en: (job as any).department_en || "",
         requirements_ar: job.requirements_ar || "",
         requirements_en: job.requirements_en || "",
         is_active: job.is_active,
         nationality_required: job.nationality_required || "",
+        nationality_required_en: (job as any).nationality_required_en || "",
         vacancy_count: (job as any).vacancy_count || 1,
       });
     } else {
       setEditingJob(null);
       setJobForm({
         title_ar: "", title_en: "", description_ar: "", description_en: "",
-        location: "الرياض، المملكة العربية السعودية", job_type: "دوام كامل",
-        department: "", requirements_ar: "", requirements_en: "",
-        is_active: true, nationality_required: "", vacancy_count: 1,
+        location: "الرياض، المملكة العربية السعودية", location_en: "Riyadh, Saudi Arabia",
+        job_type: "دوام كامل", job_type_en: "Full-time",
+        department: "", department_en: "", requirements_ar: "", requirements_en: "",
+        is_active: true, nationality_required: "", nationality_required_en: "", vacancy_count: 1,
       });
     }
     setShowJobForm(true);
@@ -308,12 +318,16 @@ const DashboardPage = () => {
       description_ar: jobForm.description_ar || null,
       description_en: jobForm.description_en || null,
       location: jobForm.location,
+      location_en: jobForm.location_en || null,
       job_type: jobForm.job_type,
+      job_type_en: jobForm.job_type_en || null,
       department: jobForm.department || null,
+      department_en: jobForm.department_en || null,
       requirements_ar: jobForm.requirements_ar || null,
       requirements_en: jobForm.requirements_en || null,
       is_active: jobForm.is_active,
       nationality_required: jobForm.nationality_required || null,
+      nationality_required_en: jobForm.nationality_required_en || null,
       vacancy_count: jobForm.vacancy_count || 1,
     };
 
@@ -596,8 +610,8 @@ const DashboardPage = () => {
                       {jobs.map(job => (
                         <TableRow key={job.id}>
                           <TableCell className="font-medium">{lang === "ar" ? job.title_ar : (job.title_en || job.title_ar)}</TableCell>
-                          <TableCell>{job.location}</TableCell>
-                          <TableCell>{job.job_type}</TableCell>
+                          <TableCell>{lang === "ar" ? job.location : ((job as any).location_en || job.location)}</TableCell>
+                          <TableCell>{lang === "ar" ? job.job_type : ((job as any).job_type_en || job.job_type)}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Switch checked={job.is_active} onCheckedChange={(v) => toggleJobActive(job.id, v)} />
@@ -916,22 +930,42 @@ const DashboardPage = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t("dash.jobLocation")}</Label>
+                <Label>{t("dash.jobLocation")} ({t("dash.arabic")})</Label>
                 <Input value={jobForm.location} onChange={e => setJobForm(p => ({ ...p, location: e.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>{t("dash.jobType")}</Label>
-                <Input value={jobForm.job_type} onChange={e => setJobForm(p => ({ ...p, job_type: e.target.value }))} />
+                <Label>{t("dash.jobLocation")} ({t("dash.english")})</Label>
+                <Input value={jobForm.location_en} onChange={e => setJobForm(p => ({ ...p, location_en: e.target.value }))} dir="ltr" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t("dash.jobDept")}</Label>
+                <Label>{t("dash.jobType")} ({t("dash.arabic")})</Label>
+                <Input value={jobForm.job_type} onChange={e => setJobForm(p => ({ ...p, job_type: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("dash.jobType")} ({t("dash.english")})</Label>
+                <Input value={jobForm.job_type_en} onChange={e => setJobForm(p => ({ ...p, job_type_en: e.target.value }))} dir="ltr" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("dash.jobDept")} ({t("dash.arabic")})</Label>
                 <Input value={jobForm.department} onChange={e => setJobForm(p => ({ ...p, department: e.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>{t("dash.nationalityRequired")}</Label>
+                <Label>{t("dash.jobDept")} ({t("dash.english")})</Label>
+                <Input value={jobForm.department_en} onChange={e => setJobForm(p => ({ ...p, department_en: e.target.value }))} dir="ltr" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("dash.nationalityRequired")} ({t("dash.arabic")})</Label>
                 <Input value={jobForm.nationality_required} onChange={e => setJobForm(p => ({ ...p, nationality_required: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("dash.nationalityRequired")} ({t("dash.english")})</Label>
+                <Input value={jobForm.nationality_required_en} onChange={e => setJobForm(p => ({ ...p, nationality_required_en: e.target.value }))} dir="ltr" />
               </div>
             </div>
             <div className="space-y-2">

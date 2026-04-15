@@ -16,12 +16,16 @@ interface JobPosting {
   description_ar: string | null;
   description_en: string | null;
   location: string;
+  location_en: string | null;
   job_type: string;
+  job_type_en: string | null;
   department: string | null;
+  department_en: string | null;
   requirements_ar: string | null;
   requirements_en: string | null;
   is_active: boolean;
   nationality_required: string | null;
+  nationality_required_en: string | null;
   vacancy_count: number;
   created_at: string;
 }
@@ -49,55 +53,14 @@ const JobsPage = () => {
 
   const filtered = jobs.filter(job => {
     const title = lang === "ar" ? job.title_ar : (job.title_en || job.title_ar);
+    const dept = lang === "ar" ? (job.department || "") : (job.department_en || job.department || "");
     return title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (job.department || "").toLowerCase().includes(searchTerm.toLowerCase());
+      dept.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const getJobTypeLabel = (type: string) => {
-    const map: Record<string, Record<string, string>> = {
-      "دوام كامل": { ar: "دوام كامل", en: "Full-time" },
-      "Full-time": { ar: "دوام كامل", en: "Full-time" },
-      "دوام جزئي": { ar: "دوام جزئي", en: "Part-time" },
-      "Part-time": { ar: "دوام جزئي", en: "Part-time" },
-    };
-    return map[type]?.[lang] || type;
-  };
+  const biField = (ar: string | null, en: string | null) =>
+    lang === "ar" ? (ar || en || "") : (en || ar || "");
 
-  const getLocationLabel = (loc: string) => {
-    if (loc === "الرياض، المملكة العربية السعودية" && lang === "en") return "Riyadh, Saudi Arabia";
-    if (loc === "الرياض" && lang === "en") return "Riyadh";
-    if (loc === "Riyadh, Saudi Arabia" && lang === "ar") return "الرياض، المملكة العربية السعودية";
-    return loc;
-  };
-
-  const getDeptLabel = (dept: string | null) => {
-    if (!dept) return lang === "ar" ? "عام" : "General";
-    const deptMap: Record<string, string> = {
-      "إدارة المشاريع": "Project Management",
-      "المشتريات": "Procurement",
-      "الهندسة": "Engineering",
-      "الخدمات": "Services",
-      "الإدارة": "Administration",
-      "النقل": "Transportation",
-      "البيئة والسلامة": "EHS",
-      "إدارة المرافق": "Facilities Management",
-      "الصيانة": "Maintenance",
-      "المالية": "Finance",
-      "الموارد البشرية": "Human Resources",
-      "تقنية المعلومات": "IT",
-    };
-    return lang === "en" ? (deptMap[dept] || dept) : dept;
-  };
-
-  const getNationalityLabel = (nat: string | null) => {
-    if (!nat) return null;
-    const natMap: Record<string, string> = {
-      "سعودي": "Saudi",
-      "غير محدد": "Any Nationality",
-      "أي جنسية": "Any Nationality",
-    };
-    return lang === "en" ? (natMap[nat] || nat) : nat;
-  };
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
@@ -185,7 +148,7 @@ const JobsPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map(job => {
               const title = lang === "ar" ? job.title_ar : (job.title_en || job.title_ar);
-              const natLabel = getNationalityLabel(job.nationality_required);
+              const natLabel = biField(job.nationality_required, job.nationality_required_en) || null;
               return (
                 <div key={job.id} className="bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
                   <div className="p-6 flex-1">
@@ -201,7 +164,7 @@ const JobsPage = () => {
 
                     {/* Job Info */}
                     <h3 className="text-lg font-bold text-foreground mb-1">{title}</h3>
-                    <p className="text-muted-foreground text-sm mb-2">{getDeptLabel(job.department)}</p>
+                    <p className="text-muted-foreground text-sm mb-2">{biField(job.department, job.department_en) || (lang === "ar" ? "عام" : "General")}</p>
                     {(lang === "ar" ? job.description_ar : (job.description_en || job.description_ar)) && (
                       <p className="text-muted-foreground text-xs mb-4 line-clamp-2">
                         {lang === "ar" ? job.description_ar : (job.description_en || job.description_ar)}
@@ -212,11 +175,11 @@ const JobsPage = () => {
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <MapPin className="w-4 h-4 text-accent shrink-0" />
-                        <span>{getLocationLabel(job.location)}</span>
+                        <span>{biField(job.location, job.location_en)}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Clock className="w-4 h-4 text-accent shrink-0" />
-                        <span>{getJobTypeLabel(job.job_type)}</span>
+                        <span>{biField(job.job_type, job.job_type_en)}</span>
                       </div>
                       {natLabel && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
