@@ -108,17 +108,12 @@ const CHART_COLORS = ["#3b82f6", "#eab308", "#a855f7", "#6366f1", "#22c55e", "#1
 
 const DashboardPage = () => {
   const { t, dir, lang } = useLanguage();
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
   const [editNotes, setEditNotes] = useState("");
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginLoading, setLoginLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("applicants");
 
   // Job form state
@@ -150,25 +145,11 @@ const DashboardPage = () => {
   const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setLoading(false);
-    });
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-    return () => subscription.unsubscribe();
+    fetchApplicants();
+    fetchJobs();
+    fetchProjects();
+    fetchUsers();
   }, []);
-
-  useEffect(() => {
-    if (session) {
-      fetchApplicants();
-      fetchJobs();
-      fetchProjects();
-      fetchUsers();
-    }
-  }, [session]);
 
   const fetchApplicants = async () => {
     const { data, error } = await supabase
@@ -198,16 +179,9 @@ const DashboardPage = () => {
     if (rolesData) setUserRoles(rolesData);
   };
 
-  const handleLogin = async () => {
-    setLoginLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginPassword });
-    if (error) toast.error(t("dash.loginError"));
-    setLoginLoading(false);
-  };
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setSession(null);
+    window.location.href = "/admin/login";
   };
 
   const updateStatus = async (id: string, status: ApplicantStatus) => {
@@ -458,36 +432,6 @@ const DashboardPage = () => {
     return Object.entries(months).map(([name, value]) => ({ name, value })).reverse().slice(0, 12).reverse();
   })();
 
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-background"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" /></div>;
-  }
-
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center" dir={dir}>
-        <Card className="w-full max-w-md mx-4">
-          <CardHeader className="text-center">
-            <img src={logo} alt="AlKholi Group" className="h-16 mx-auto mb-4 object-contain" />
-            <CardTitle className="text-2xl">{t("dash.login")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t("dash.email")}</label>
-              <Input value={loginEmail} onChange={e => setLoginEmail(e.target.value)} type="email" dir="ltr" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t("dash.password")}</label>
-              <Input value={loginPassword} onChange={e => setLoginPassword(e.target.value)} type="password" dir="ltr" onKeyDown={e => e.key === "Enter" && handleLogin()} />
-            </div>
-            <Button onClick={handleLogin} className="w-full gradient-primary text-primary-foreground" disabled={loginLoading}>
-              {loginLoading ? "..." : t("dash.loginBtn")}
-            </Button>
-            <div className="flex justify-center pt-2"><TopBar variant="dark" /></div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const stats = [
     { label: t("dash.totalApplicants"), value: applicants.length, icon: Users, color: "text-blue-500" },
@@ -677,7 +621,7 @@ const DashboardPage = () => {
                       <TableBody>
                         {users.map((user: any) => {
                           const userRole = userRoles.find((r: any) => r.user_id === user.user_id);
-                          const isCurrentUser = session?.user?.id === user.user_id;
+                          const isCurrentUser = false; // handled by AdminGuard
                           return (
                             <TableRow key={user.id}>
                               <TableCell className="font-medium">{user.display_name || user.email}</TableCell>
