@@ -162,7 +162,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
       if (files.trainingCerts) trainingCertsUrl = await uploadFile(files.trainingCerts, "training");
       if (files.otherDocs) otherDocsUrl = await uploadFile(files.otherDocs, "other");
 
-      const { error } = await supabase.from("applicants").insert({
+      const { data: insertedData, error } = await supabase.from("applicants").insert({
         full_name: formData.fullName,
         gender: formData.gender,
         nationality: formData.nationality,
@@ -203,9 +203,22 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         experience_cert_url: experienceCertUrl,
         training_certs_url: trainingCertsUrl,
         other_docs_url: otherDocsUrl,
-      });
+      }).select("id").single();
 
       if (error) throw error;
+
+      // Save custom question answers
+      const customAnswers = Object.entries(formData)
+        .filter(([key, val]) => key.startsWith("custom_") && val)
+        .map(([key, val]) => ({
+          applicant_id: insertedData.id,
+          question_id: key.replace("custom_", ""),
+          answer: val,
+        }));
+
+      if (customAnswers.length > 0) {
+        await supabase.from("custom_answers").insert(customAnswers);
+      }
 
       setIsSubmitted(true);
       localStorage.removeItem(STORAGE_KEY);
