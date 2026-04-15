@@ -528,8 +528,9 @@ const DashboardPage = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-7 w-full max-w-3xl">
+          <TabsList className="grid grid-cols-8 w-full max-w-4xl">
             <TabsTrigger value="applicants">{t("dash.tab.applicants")}</TabsTrigger>
+            <TabsTrigger value="archive" className="gap-1"><Archive className="w-3 h-3" />{lang === "ar" ? "الأرشيف" : "Archive"}{archivedApplicants.length > 0 && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 ms-1">{archivedApplicants.length}</Badge>}</TabsTrigger>
             <TabsTrigger value="jobs">{t("dash.tab.jobs")}</TabsTrigger>
             <TabsTrigger value="users">{t("dash.tab.users")}</TabsTrigger>
             <TabsTrigger value="projects">{t("dash.tab.projects")}</TabsTrigger>
