@@ -26,7 +26,7 @@ const SiteContentSettings = () => {
     if (!settings) return;
     setSaving(true);
     const { id, created_at, updated_at, ...rest } = settings;
-    const { error } = await supabase.from("site_settings").update(rest).eq("id", id);
+    const { error } = await supabase.from("site_settings").update(rest as any).eq("id", id);
     if (error) toast.error(error.message);
     else { invalidateSiteSettingsCache(); toast.success(lang === "ar" ? "تم الحفظ" : "Saved"); }
     setSaving(false);
