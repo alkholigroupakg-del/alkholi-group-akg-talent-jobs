@@ -336,21 +336,61 @@ const DashboardPage = () => {
     if (!error) { fetchJobs(); toast.success(t("dash.saved")); }
   };
 
-  // User management
+  const callManageUser = async (body: any) => {
+    const { data: { session: s } } = await supabase.auth.getSession();
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-user`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          ...(s?.access_token ? { Authorization: `Bearer ${s.access_token}` } : {}),
+        },
+        body: JSON.stringify(body),
+      }
+    );
+    return res.json();
+  };
+
   const addUser = async () => {
     if (!newUserEmail || !newUserPassword) { toast.error(t("validation.required")); return; }
-    const { data, error } = await supabase.auth.signUp({
+    const result = await callManageUser({
+      action: "create_user",
       email: newUserEmail,
       password: newUserPassword,
+      role: newUserRole,
+      display_name: newUserName || newUserEmail,
     });
-    if (error) { toast.error(error.message); return; }
-    if (data.user) {
-      await supabase.from("user_roles").insert({ user_id: data.user.id, role: newUserRole as any });
-      toast.success(t("dash.userAdded"));
-      setShowUserForm(false);
-      setNewUserEmail("");
-      setNewUserPassword("");
-    }
+    if (result.error) { toast.error(result.error); return; }
+    toast.success(t("dash.userAdded"));
+    setShowUserForm(false);
+    setNewUserEmail("");
+    setNewUserPassword("");
+    setNewUserName("");
+    fetchUsers();
+  };
+
+  const updateUserRole = async (userId: string, role: string) => {
+    const result = await callManageUser({ action: "update_role", user_id: userId, role });
+    if (result.error) { toast.error(result.error); return; }
+    toast.success(t("dash.roleUpdated"));
+    fetchUsers();
+  };
+
+  const toggleUserActive = async (userId: string, isActive: boolean) => {
+    const result = await callManageUser({ action: "toggle_active", user_id: userId, is_active: isActive });
+    if (result.error) { toast.error(result.error); return; }
+    toast.success(t("dash.statusUpdated"));
+    fetchUsers();
+  };
+
+  const deleteUser = async (userId: string) => {
+    if (!confirm(t("dash.confirmDelete"))) return;
+    const result = await callManageUser({ action: "delete_user", user_id: userId });
+    if (result.error) { toast.error(result.error); return; }
+    toast.success(t("dash.userDeleted"));
+    fetchUsers();
   };
 
   // Project management
