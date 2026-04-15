@@ -76,12 +76,16 @@ interface JobPosting {
   description_ar: string | null;
   description_en: string | null;
   location: string;
+  location_en: string | null;
   job_type: string;
+  job_type_en: string | null;
   department: string | null;
+  department_en: string | null;
   requirements_ar: string | null;
   requirements_en: string | null;
   is_active: boolean;
   nationality_required: string | null;
+  nationality_required_en: string | null;
   vacancy_count: number;
   created_at: string;
 }
@@ -122,9 +126,10 @@ const DashboardPage = () => {
   const [editingJob, setEditingJob] = useState<JobPosting | null>(null);
   const [jobForm, setJobForm] = useState({
     title_ar: "", title_en: "", description_ar: "", description_en: "",
-    location: "الرياض، المملكة العربية السعودية", job_type: "دوام كامل",
-    department: "", requirements_ar: "", requirements_en: "",
-    is_active: true, nationality_required: "", vacancy_count: 1,
+    location: "الرياض، المملكة العربية السعودية", location_en: "Riyadh, Saudi Arabia",
+    job_type: "دوام كامل", job_type_en: "Full-time",
+    department: "", department_en: "", requirements_ar: "", requirements_en: "",
+    is_active: true, nationality_required: "", nationality_required_en: "", vacancy_count: 1,
   });
 
   // User form state
@@ -280,21 +285,26 @@ const DashboardPage = () => {
         description_ar: job.description_ar || "",
         description_en: job.description_en || "",
         location: job.location,
+        location_en: (job as any).location_en || "",
         job_type: job.job_type,
+        job_type_en: (job as any).job_type_en || "",
         department: job.department || "",
+        department_en: (job as any).department_en || "",
         requirements_ar: job.requirements_ar || "",
         requirements_en: job.requirements_en || "",
         is_active: job.is_active,
         nationality_required: job.nationality_required || "",
+        nationality_required_en: (job as any).nationality_required_en || "",
         vacancy_count: (job as any).vacancy_count || 1,
       });
     } else {
       setEditingJob(null);
       setJobForm({
         title_ar: "", title_en: "", description_ar: "", description_en: "",
-        location: "الرياض، المملكة العربية السعودية", job_type: "دوام كامل",
-        department: "", requirements_ar: "", requirements_en: "",
-        is_active: true, nationality_required: "", vacancy_count: 1,
+        location: "الرياض، المملكة العربية السعودية", location_en: "Riyadh, Saudi Arabia",
+        job_type: "دوام كامل", job_type_en: "Full-time",
+        department: "", department_en: "", requirements_ar: "", requirements_en: "",
+        is_active: true, nationality_required: "", nationality_required_en: "", vacancy_count: 1,
       });
     }
     setShowJobForm(true);
