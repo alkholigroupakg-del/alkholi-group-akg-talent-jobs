@@ -158,6 +158,90 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_answers: {
+        Row: {
+          answer: string | null
+          applicant_id: string
+          created_at: string
+          id: string
+          question_id: string
+        }
+        Insert: {
+          answer?: string | null
+          applicant_id: string
+          created_at?: string
+          id?: string
+          question_id: string
+        }
+        Update: {
+          answer?: string | null
+          applicant_id?: string
+          created_at?: string
+          id?: string
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_answers_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "applicants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "custom_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_questions: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          is_required: boolean
+          options_ar: string[] | null
+          options_en: string[] | null
+          question_ar: string
+          question_en: string | null
+          sort_order: number
+          step_number: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          options_ar?: string[] | null
+          options_en?: string[] | null
+          question_ar: string
+          question_en?: string | null
+          sort_order?: number
+          step_number?: number
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          options_ar?: string[] | null
+          options_en?: string[] | null
+          question_ar?: string
+          question_en?: string | null
+          sort_order?: number
+          step_number?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       job_postings: {
         Row: {
           created_at: string
