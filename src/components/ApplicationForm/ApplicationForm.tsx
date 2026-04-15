@@ -146,14 +146,58 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const getUploadErrorMessage = (
+    message: string | undefined,
+    fileLabel: { ar: string; en: string }
+  ) => {
+    const normalized = message?.toLowerCase() || "";
+
+    if (normalized.includes("too many upload attempts")) {
+      return lang === "ar"
+        ? "تم تجاوز عدد محاولات رفع الملفات من هذا الاتصال. انتظر بضع دقائق ثم أعد المحاولة."
+        : "Too many upload attempts from this network. Please wait a few minutes and try again.";
+    }
+
+    if (normalized.includes("failed to fetch")) {
+      return lang === "ar"
+        ? "تعذر الاتصال بخدمة رفع الملفات. حدّث الصفحة ثم أعد المحاولة."
+        : "Could not reach the upload service. Refresh the page and try again.";
+    }
+
+    if (normalized.includes("file too large")) {
+      return lang === "ar"
+        ? `حجم ${fileLabel.ar} كبير جداً. الحد الأقصى 10MB.`
+        : `The ${fileLabel.en} is too large. The maximum allowed size is 10MB.`;
+    }
+
+    if (normalized.includes("empty or unreadable")) {
+      return lang === "ar"
+        ? `ملف ${fileLabel.ar} فارغ أو غير قابل للقراءة. اختر الملف الأصلي من جهازك ثم حاول مرة أخرى.`
+        : `The ${fileLabel.en} is empty or unreadable. Please choose the original file from your device and try again.`;
+    }
+
+    if (
+      normalized.includes("file type") ||
+      normalized.includes("does not match its extension")
+    ) {
+      return lang === "ar"
+        ? `صيغة ${fileLabel.ar} غير مدعومة أو أن الملف غير صالح. استخدم ملف PDF أو DOC أو DOCX صالحاً.`
+        : `The ${fileLabel.en} type is not supported or the file is invalid. Please use a valid PDF, DOC, or DOCX file.`;
+    }
+
+    return lang === "ar"
+      ? `تعذر رفع ${fileLabel.ar}. يرجى المحاولة مرة أخرى.`
+      : `Failed to upload the ${fileLabel.en}. Please try again.`;
+  };
+
   const uploadFile = async (file: File, folder: string) => {
+    const requestBody = new FormData();
+    requestBody.append("file", file);
+    requestBody.append("folder", folder);
+
+    const { data: { session } } = await supabase.auth.getSession();
+
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("folder", folder);
-
-      const { data: { session } } = await supabase.auth.getSession();
-
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-file`,
         {
@@ -162,21 +206,33 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
             "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
           },
-          body: formData,
+          body: requestBody,
         }
       );
 
       if (!res.ok) {
-        const err = await res.json();
-        console.error("Upload error:", err);
-        return null;
+        let errorMessage: string | undefined;
+
+        try {
+          const errorData = await res.json();
+          errorMessage = typeof errorData?.error === "string" ? errorData.error : undefined;
+        } catch {
+          errorMessage = undefined;
+        }
+
+        throw new Error(errorMessage || "Upload failed");
       }
 
       const result = await res.json();
+
+      if (!result?.path || typeof result.path !== "string") {
+        throw new Error("Upload failed");
+      }
+
       return result.path;
     } catch (err) {
       console.error("Upload error:", err);
-      return null;
+      throw err instanceof Error ? err : new Error("Upload failed");
     }
   };
 
@@ -187,17 +243,16 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   ) => {
     if (!file) return null;
 
-    const uploadedPath = await uploadFile(file, folder);
-
-    if (!uploadedPath) {
+    try {
+      return await uploadFile(file, folder);
+    } catch (error) {
       throw new Error(
-        lang === "ar"
-          ? `تعذر رفع ${fileLabel.ar}. يرجى المحاولة مرة أخرى.`
-          : `Failed to upload the ${fileLabel.en}. Please try again.`
+        getUploadErrorMessage(
+          error instanceof Error ? error.message : undefined,
+          fileLabel
+        )
       );
     }
-
-    return uploadedPath;
   };
 
   const handleSubmit = async () => {
