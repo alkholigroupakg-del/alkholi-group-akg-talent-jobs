@@ -135,6 +135,13 @@ Deno.serve(async (req) => {
 
       await supabaseAdmin.from("profiles").update({ is_active }).eq("user_id", user_id);
 
+      // Ban or unban the user at the auth level to invalidate sessions
+      if (!is_active) {
+        await supabaseAdmin.auth.admin.updateUserById(user_id, { ban_duration: "876600h" });
+      } else {
+        await supabaseAdmin.auth.admin.updateUserById(user_id, { ban_duration: "none" });
+      }
+
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
