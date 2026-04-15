@@ -24,6 +24,7 @@ import DropdownOptionsSettings from "@/components/Dashboard/DropdownOptionsSetti
 import BrandingSettings from "@/components/Dashboard/BrandingSettings";
 import BackupSettings from "@/components/Dashboard/BackupSettings";
 import FormFieldsSettings from "@/components/Dashboard/FormFieldsSettings";
+import SiteContentSettings from "@/components/Dashboard/SiteContentSettings";
 
 type ApplicantStatus = "new" | "reviewing" | "phone_interview" | "in_person_interview" | "accepted" | "hired" | "rejected" | "withdrawn";
 
@@ -145,7 +146,7 @@ const DashboardPage = () => {
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
-  const [projectForm, setProjectForm] = useState({ name_ar: "", name_en: "", description_ar: "" });
+  const [projectForm, setProjectForm] = useState({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" });
   const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
@@ -419,8 +420,10 @@ const DashboardPage = () => {
       name_ar: projectForm.name_ar,
       name_en: projectForm.name_en || null,
       description_ar: projectForm.description_ar || null,
+      description_en: projectForm.description_en || null,
+      logo_url: projectForm.logo_url || null,
     });
-    if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setProjectForm({ name_ar: "", name_en: "", description_ar: "" }); }
+    if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); }
   };
 
   const filtered = applicants.filter(a => {
@@ -699,7 +702,16 @@ const DashboardPage = () => {
                     {projects.map((p: any) => (
                       <Card key={p.id}>
                         <CardContent className="p-4">
-                          <h3 className="font-bold">{lang === "ar" ? p.name_ar : (p.name_en || p.name_ar)}</h3>
+                          <div className="flex items-center gap-3 mb-2">
+                            {p.logo_url ? (
+                              <img src={p.logo_url} alt="" className="h-10 w-10 object-contain rounded" />
+                            ) : (
+                              <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">
+                                <FolderOpen className="w-5 h-5 text-muted-foreground" />
+                              </div>
+                            )}
+                            <h3 className="font-bold">{lang === "ar" ? p.name_ar : (p.name_en || p.name_ar)}</h3>
+                          </div>
                           {p.description_ar && <p className="text-muted-foreground text-sm mt-1">{p.description_ar}</p>}
                           <Badge className="mt-2" variant={p.is_active ? "default" : "secondary"}>{p.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Badge>
                         </CardContent>
@@ -767,6 +779,11 @@ const DashboardPage = () => {
           {/* SETTINGS TAB */}
           <TabsContent value="settings">
             <div className="space-y-6">
+              <Card>
+                <CardContent className="p-6">
+                  <SiteContentSettings />
+                </CardContent>
+              </Card>
               <Card>
                 <CardContent className="p-6">
                   <FormFieldsSettings />
@@ -1079,8 +1096,17 @@ const DashboardPage = () => {
               <Input value={projectForm.name_en} onChange={e => setProjectForm(p => ({ ...p, name_en: e.target.value }))} dir="ltr" />
             </div>
             <div className="space-y-2">
-              <Label>{t("dash.projectDesc")}</Label>
-              <Textarea value={projectForm.description_ar} onChange={e => setProjectForm(p => ({ ...p, description_ar: e.target.value }))} rows={3} />
+              <Label>{t("dash.projectDesc")} ({t("dash.arabic")})</Label>
+              <Textarea value={projectForm.description_ar} onChange={e => setProjectForm(p => ({ ...p, description_ar: e.target.value }))} rows={2} />
+            </div>
+            <div className="space-y-2">
+              <Label>{t("dash.projectDesc")} ({t("dash.english")})</Label>
+              <Textarea value={projectForm.description_en} onChange={e => setProjectForm(p => ({ ...p, description_en: e.target.value }))} rows={2} dir="ltr" />
+            </div>
+            <div className="space-y-2">
+              <Label>{lang === "ar" ? "رابط شعار المشروع (URL)" : "Project Logo URL"}</Label>
+              <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
+              <p className="text-xs text-muted-foreground">{lang === "ar" ? "أدخل رابط صورة الشعار أو ارفعه من قسم الهوية البصرية" : "Enter logo image URL"}</p>
             </div>
             <div className="flex gap-3 justify-end">
               <Button variant="outline" onClick={() => setShowProjectForm(false)}>{t("dash.cancel")}</Button>
