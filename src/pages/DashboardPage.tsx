@@ -464,25 +464,25 @@ const DashboardPage = () => {
 
   // Chart data
   const statusData = STATUSES.map((s, i) => ({
-    name: t(`status.${s}`), value: applicants.filter(a => a.status === s).length, fill: CHART_COLORS[i],
+    name: t(`status.${s}`), value: activeApplicants.filter(a => a.status === s).length, fill: CHART_COLORS[i],
   })).filter(d => d.value > 0);
 
   const positionData = Object.entries(
-    applicants.reduce((acc, a) => { const pos = a.desired_position || "N/A"; acc[pos] = (acc[pos] || 0) + 1; return acc; }, {} as Record<string, number>)
+    activeApplicants.reduce((acc, a) => { const pos = a.desired_position || "N/A"; acc[pos] = (acc[pos] || 0) + 1; return acc; }, {} as Record<string, number>)
   ).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([name, value]) => ({ name: name.substring(0, 20), value }));
 
   const monthlyData = (() => {
     const months: Record<string, number> = {};
-    applicants.forEach(a => { const m = new Date(a.created_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", { month: "short", year: "numeric" }); months[m] = (months[m] || 0) + 1; });
+    activeApplicants.forEach(a => { const m = new Date(a.created_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", { month: "short", year: "numeric" }); months[m] = (months[m] || 0) + 1; });
     return Object.entries(months).map(([name, value]) => ({ name, value })).reverse().slice(0, 12).reverse();
   })();
 
 
   const stats = [
-    { label: t("dash.totalApplicants"), value: applicants.length, icon: Users, color: "text-blue-500" },
-    { label: t("dash.newApplicants"), value: applicants.filter(a => a.status === "new").length, icon: UserPlus, color: "text-yellow-500" },
-    { label: t("dash.inInterview"), value: applicants.filter(a => ["phone_interview", "in_person_interview"].includes(a.status)).length, icon: Phone, color: "text-purple-500" },
-    { label: t("dash.hired"), value: applicants.filter(a => a.status === "hired").length, icon: CheckCircle2, color: "text-green-500" },
+    { label: t("dash.totalApplicants"), value: activeApplicants.length, icon: Users, color: "text-blue-500" },
+    { label: t("dash.newApplicants"), value: activeApplicants.filter(a => a.status === "new").length, icon: UserPlus, color: "text-yellow-500" },
+    { label: t("dash.inInterview"), value: activeApplicants.filter(a => ["phone_interview", "in_person_interview"].includes(a.status)).length, icon: Phone, color: "text-purple-500" },
+    { label: t("dash.hired"), value: activeApplicants.filter(a => a.status === "hired").length, icon: CheckCircle2, color: "text-green-500" },
   ];
 
   return (
