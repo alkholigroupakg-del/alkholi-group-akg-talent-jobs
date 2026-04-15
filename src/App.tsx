@@ -10,6 +10,7 @@ import ApplyPage from "./pages/ApplyPage.tsx";
 import JobsPage from "./pages/JobsPage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import JobDetailPage from "./pages/JobDetailPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/apply" element={<ApplyPage />} />
               <Route path="/jobs" element={<JobsPage />} />
+              <Route path="/jobs/:id" element={<JobDetailPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

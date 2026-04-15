@@ -190,11 +190,11 @@ const JobsPage = () => {
                     </div>
                   </div>
 
-                  {/* Apply Button */}
-                  <div className="px-6 pb-6">
-                    <Link to={`/apply?position=${encodeURIComponent(title)}`} className="block">
+                  {/* View Details & Apply */}
+                  <div className="px-6 pb-6 space-y-2">
+                    <Link to={`/jobs/${job.id}`} className="block">
                       <Button className="w-full bg-foreground text-background hover:bg-foreground/90 gap-2 rounded-lg font-semibold py-5">
-                        {t("jobs.applyNow")}
+                        {t("jobDetail.viewDetails")}
                         <Arrow className="w-4 h-4" />
                       </Button>
                     </Link>
