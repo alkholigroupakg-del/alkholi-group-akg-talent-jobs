@@ -142,6 +142,10 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
+    if (!files.resume) {
+      toast.error(lang === "ar" ? "يرجى إرفاق السيرة الذاتية قبل الإرسال" : "Please attach your resume before submitting");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
