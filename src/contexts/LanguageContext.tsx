@@ -341,8 +341,22 @@ const translations: Record<Lang, Record<string, string>> = {
     "status.rejected": "مرفوض",
     "status.withdrawn": "منسحب",
 
-    // Admin login
+    // Admin
     "admin.loginDesc": "بوابة الدخول لفريق الموارد البشرية والإدارة",
+    "admin.forgotPassword": "نسيت كلمة المرور؟",
+    "admin.forgotDesc": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور",
+    "admin.sendReset": "إرسال رابط الاستعادة",
+    "admin.resetSent": "تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد.",
+    "admin.resetError": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+    "admin.backToLogin": "العودة لتسجيل الدخول",
+    "admin.newPassword": "كلمة المرور الجديدة",
+    "admin.newPasswordLabel": "كلمة المرور الجديدة",
+    "admin.confirmPassword": "تأكيد كلمة المرور",
+    "admin.updatePassword": "تحديث كلمة المرور",
+    "admin.passwordUpdated": "تم تحديث كلمة المرور بنجاح! سيتم تحويلك لصفحة الدخول...",
+    "admin.passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "admin.passwordTooShort": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+    "admin.invalidResetLink": "رابط إعادة التعيين غير صالح أو منتهي الصلاحية",
   },
   en: {
     // Navbar & general
@@ -675,8 +689,22 @@ const translations: Record<Lang, Record<string, string>> = {
     "status.rejected": "Rejected",
     "status.withdrawn": "Withdrawn",
 
-    // Admin login
+    // Admin
     "admin.loginDesc": "HR & Management Team Portal",
+    "admin.forgotPassword": "Forgot Password?",
+    "admin.forgotDesc": "Enter your email and we'll send you a password reset link",
+    "admin.sendReset": "Send Reset Link",
+    "admin.resetSent": "A password reset link has been sent to your email. Please check your inbox.",
+    "admin.resetError": "An error occurred. Please try again.",
+    "admin.backToLogin": "Back to Login",
+    "admin.newPassword": "New Password",
+    "admin.newPasswordLabel": "New Password",
+    "admin.confirmPassword": "Confirm Password",
+    "admin.updatePassword": "Update Password",
+    "admin.passwordUpdated": "Password updated successfully! Redirecting to login...",
+    "admin.passwordMismatch": "Passwords do not match",
+    "admin.passwordTooShort": "Password must be at least 6 characters",
+    "admin.invalidResetLink": "Invalid or expired reset link",
   },
 };
 
