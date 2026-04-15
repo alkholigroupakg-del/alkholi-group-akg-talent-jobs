@@ -610,8 +610,8 @@ const DashboardPage = () => {
                       {jobs.map(job => (
                         <TableRow key={job.id}>
                           <TableCell className="font-medium">{lang === "ar" ? job.title_ar : (job.title_en || job.title_ar)}</TableCell>
-                          <TableCell>{job.location}</TableCell>
-                          <TableCell>{job.job_type}</TableCell>
+                          <TableCell>{lang === "ar" ? job.location : ((job as any).location_en || job.location)}</TableCell>
+                          <TableCell>{lang === "ar" ? job.job_type : ((job as any).job_type_en || job.job_type)}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Switch checked={job.is_active} onCheckedChange={(v) => toggleJobActive(job.id, v)} />
