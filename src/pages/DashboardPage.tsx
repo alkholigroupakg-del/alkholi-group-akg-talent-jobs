@@ -599,7 +599,54 @@ const DashboardPage = () => {
             </Card>
           </TabsContent>
 
-          {/* JOBS TAB */}
+          {/* ARCHIVE TAB */}
+          <TabsContent value="archive">
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <CardTitle className="flex items-center gap-2"><Archive className="w-5 h-5" />{lang === "ar" ? "الأرشيف" : "Archive"} ({archivedApplicants.length})</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {filteredArchived.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Archive className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                    <p>{lang === "ar" ? "لا توجد سجلات مؤرشفة" : "No archived records"}</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>{t("dash.name")}</TableHead>
+                          <TableHead>{t("dash.position")}</TableHead>
+                          <TableHead>{t("dash.status")}</TableHead>
+                          <TableHead>{lang === "ar" ? "تاريخ الأرشفة" : "Archived At"}</TableHead>
+                          <TableHead>{t("dash.actions")}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredArchived.map(a => (
+                          <TableRow key={a.id}>
+                            <TableCell className="font-medium">{a.full_name}</TableCell>
+                            <TableCell>{a.desired_position}</TableCell>
+                            <TableCell><Badge className={`${STATUS_COLORS[a.status]} border-0`}>{t(`status.${a.status}`)}</Badge></TableCell>
+                            <TableCell className="text-sm text-muted-foreground">{a.archived_at ? new Date(a.archived_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") : "-"}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <Button size="sm" variant="ghost" onClick={() => { setSelectedApplicant(a); setEditNotes(a.notes || ""); }}><Eye className="w-4 h-4" /></Button>
+                                <Button size="sm" variant="outline" className="gap-1 text-primary" onClick={() => restoreApplicant(a.id)}><RotateCcw className="w-4 h-4" />{lang === "ar" ? "استعادة" : "Restore"}</Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
           <TabsContent value="jobs">
             <Card>
               <CardHeader>
