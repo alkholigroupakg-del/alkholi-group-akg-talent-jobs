@@ -584,7 +584,12 @@ const DashboardPage = () => {
                           <TableCell>{a.preferred_city}</TableCell>
                           <TableCell><Badge className={`${STATUS_COLORS[a.status]} border-0`}>{t(`status.${a.status}`)}</Badge></TableCell>
                           <TableCell className="text-sm text-muted-foreground">{new Date(a.created_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US")}</TableCell>
-                          <TableCell><Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); setSelectedApplicant(a); setEditNotes(a.notes || ""); }}><Eye className="w-4 h-4" /></Button></TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); setSelectedApplicant(a); setEditNotes(a.notes || ""); }}><Eye className="w-4 h-4" /></Button>
+                              <Button size="sm" variant="ghost" className="text-destructive" onClick={(e) => { e.stopPropagation(); archiveApplicant(a.id); }}><Archive className="w-4 h-4" /></Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
