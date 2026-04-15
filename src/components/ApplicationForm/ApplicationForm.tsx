@@ -27,7 +27,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   const fc = useFieldConfig();
 
   const stepLabels = [
-    lang === "ar" ? "السيرة الذاتية" : "Resume",
+    lang === "ar" ? "التعبئة الذكية" : "Smart Apply",
     t("step.basic"), t("step.job"), t("step.edu"),
     t("step.exp"), t("step.fin"), t("step.attach"),
   ];
@@ -66,32 +66,19 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     setFiles((prev) => ({ ...prev, [name]: file }));
   }, []);
 
-  const handleAutoFill = useCallback((fields: Record<string, string>) => {
-    setFormData((prev) => {
-      const updated = { ...prev };
-      Object.entries(fields).forEach(([key, value]) => {
-        if (!updated[key]) {
-          updated[key] = value;
-        }
-      });
-      return updated;
-    });
-  }, []);
-
   const validateStep = () => {
-    // Step 1 (resume upload) - no validation needed, it's optional
     if (currentStep === 1) return true;
-    
-    // Map form steps: step 2=basic(1), 3=job(2), 4=edu(3), 5=exp(4), 6=fin(5), 7=attach(6)
+
     const fieldConfigStep = currentStep - 1;
     const required = fc.getRequiredFields(fieldConfigStep);
-    // Check both formData and files for required fields
     const missing = required.filter((field) => !formData[field] && !files[field]);
+
     if (missing.length > 0) {
       console.log("Missing required fields:", missing);
       toast.error(t("validation.required"));
       return false;
     }
+
     return true;
   };
 
@@ -142,8 +129,9 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
+
     if (!files.resume) {
-      toast.error(lang === "ar" ? "يرجى إرفاق السيرة الذاتية قبل الإرسال" : "Please attach your resume before submitting");
+      toast.error(lang === "ar" ? "السيرة الذاتية مطلوبة في الخطوة الأخيرة قبل إرسال الطلب" : "Resume is required in the final step before submission");
       return;
     }
 
@@ -262,21 +250,13 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
       <StepIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} stepLabels={stepLabels} />
 
       <div className="bg-card rounded-xl shadow-elevated p-6 md:p-8 border border-border">
-        {currentStep === 1 && (
-          <ResumeUploadStep
-            data={formData}
-            onChange={handleChange}
-            onFileChange={handleFileChange}
-            onAutoFill={handleAutoFill}
-            onSkip={handleNext}
-          />
-        )}
+        {currentStep === 1 && <ResumeUploadStep />}
         {currentStep === 2 && <><BasicInfoStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={1} data={formData} onChange={handleChange} /></>}
         {currentStep === 3 && <><JobPreferencesStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={2} data={formData} onChange={handleChange} /></>}
         {currentStep === 4 && <><EducationStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={3} data={formData} onChange={handleChange} /></>}
         {currentStep === 5 && <><ExperienceStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={4} data={formData} onChange={handleChange} /></>}
         {currentStep === 6 && <><FinancialsStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={5} data={formData} onChange={handleChange} /></>}
-        {currentStep === 7 && <><AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} hasResume={!!files.resume} /><CustomQuestionsStep stepNumber={6} data={formData} onChange={handleChange} /></>}
+        {currentStep === 7 && <><AttachmentsStep onChange={handleChange} onFileChange={handleFileChange} hasResume={!!files.resume} /><CustomQuestionsStep stepNumber={6} data={formData} onChange={handleChange} /></>}
 
         <div className="flex justify-between items-center mt-8 pt-6 border-t border-border">
           <Button variant="outline" onClick={handlePrev} disabled={currentStep === 1} className="gap-2">
