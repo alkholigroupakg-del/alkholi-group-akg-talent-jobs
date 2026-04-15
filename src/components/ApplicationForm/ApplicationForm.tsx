@@ -18,6 +18,52 @@ import CustomQuestionsStep from "./steps/CustomQuestionsStep";
 const STORAGE_KEY = "akg-application-draft";
 const TOTAL_STEPS = 7;
 
+const cloneFileForUpload = async (file: File) => {
+  const arrayBuffer = await file.arrayBuffer();
+
+  return new File([arrayBuffer], file.name?.trim() || `upload-${Date.now()}`, {
+    type: file.type || "application/octet-stream",
+    lastModified: Date.now(),
+  });
+};
+
+const getEdgeFunctionErrorMessage = async (error: unknown) => {
+  if (typeof error === "object" && error !== null && "context" in error) {
+    const context = (error as { context?: unknown }).context;
+
+    if (context instanceof Response) {
+      try {
+        const raw = await context.text();
+
+        if (raw.trim()) {
+          try {
+            const parsed = JSON.parse(raw) as { error?: unknown };
+
+            if (typeof parsed.error === "string" && parsed.error.trim()) {
+              return parsed.error;
+            }
+          } catch {
+            return raw;
+          }
+
+          return raw;
+        }
+      } catch {
+        // ignore parsing issues and fall back to generic messages below
+      }
+
+      return context.statusText || undefined;
+    }
+  }
+
+  if (typeof error === "object" && error !== null && "message" in error) {
+    const message = (error as { message?: string }).message;
+    return message?.trim() ? message : undefined;
+  }
+
+  return undefined;
+};
+
 interface Props {
   preSelectedPosition?: string;
 }
@@ -50,8 +96,10 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     }
   });
   const [files, setFiles] = useState<Record<string, File | null>>({});
+  const [pendingFileReads, setPendingFileReads] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const isPreparingFiles = pendingFileReads > 0;
 
   useEffect(() => {
     if (!preSelectedPosition) return;
@@ -70,9 +118,29 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }, []);
 
-  const handleFileChange = useCallback((name: string, file: File | null) => {
-    setFiles((prev) => ({ ...prev, [name]: file }));
-  }, []);
+  const handleFileChange = useCallback(async (name: string, file: File | null) => {
+    if (!file) {
+      setFiles((prev) => ({ ...prev, [name]: null }));
+      return;
+    }
+
+    setPendingFileReads((prev) => prev + 1);
+
+    try {
+      const preparedFile = await cloneFileForUpload(file);
+      setFiles((prev) => ({ ...prev, [name]: preparedFile }));
+    } catch (error) {
+      console.error("File preparation error:", error);
+      setFiles((prev) => ({ ...prev, [name]: null }));
+      toast.error(
+        lang === "ar"
+          ? `تعذر قراءة ملف ${getFieldLabel(name)} من جهازك. اختر الملف مرة أخرى من ذاكرة الجهاز ثم أعد المحاولة.`
+          : `Could not read the ${getFieldLabel(name)} from your device. Please choose it again from local storage and try again.`
+      );
+    } finally {
+      setPendingFileReads((prev) => Math.max(0, prev - 1));
+    }
+  }, [getFieldLabel, lang]);
 
   const getSubmitErrorMessage = (error: unknown) => {
     const message =
@@ -164,6 +232,16 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         : "Could not reach the upload service. Refresh the page and try again.";
     }
 
+    if (
+      normalized.includes("failed to send a request") ||
+      normalized.includes("network request failed") ||
+      normalized.includes("failed to execute 'fetch'")
+    ) {
+      return lang === "ar"
+        ? "تعذر إرسال الملف من جهازك إلى خدمة الرفع. اختر الملف مرة أخرى ثم أعد المحاولة."
+        : "Could not send the file from your device to the upload service. Please choose the file again and try once more.";
+    }
+
     if (normalized.includes("file too large")) {
       return lang === "ar"
         ? `حجم ${fileLabel.ar} كبير جداً. الحد الأقصى 10MB.`
@@ -192,40 +270,22 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
   const uploadFile = async (file: File, folder: string) => {
     const requestBody = new FormData();
-    requestBody.append("file", file);
+    requestBody.append("file", file, file.name);
     requestBody.append("folder", folder);
 
-    const { data: { session } } = await supabase.auth.getSession();
-
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-file`,
-        {
-          method: "POST",
-          headers: {
-            "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
-          },
-          body: requestBody,
-        }
-      );
+      const { data, error } = await supabase.functions.invoke("upload-file", {
+        body: requestBody,
+      });
 
-      if (!res.ok) {
-        let errorMessage: string | undefined;
-
-        try {
-          const errorData = await res.json();
-          errorMessage = typeof errorData?.error === "string" ? errorData.error : undefined;
-        } catch {
-          errorMessage = undefined;
-        }
-
-        throw new Error(errorMessage || "Upload failed");
+      if (error) {
+        const errorMessage = await getEdgeFunctionErrorMessage(error);
+        throw new Error(errorMessage || error.message || "Upload failed");
       }
 
-      const result = await res.json();
+      const result = data as { path?: unknown } | null;
 
-      if (!result?.path || typeof result.path !== "string") {
+      if (typeof result?.path !== "string") {
         throw new Error("Upload failed");
       }
 
@@ -257,6 +317,15 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
   const handleSubmit = async () => {
     if (!validateAllSteps()) return;
+
+    if (isPreparingFiles) {
+      toast.error(
+        lang === "ar"
+          ? "انتظر حتى يكتمل تجهيز الملف المرفوع، ثم أعد الإرسال."
+          : "Please wait for the selected file to finish preparing, then submit again."
+      );
+      return;
+    }
 
     if (!files.resume) {
       toast.error(
@@ -418,13 +487,15 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
           ) : (
             <Button
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isPreparingFiles}
               className="gradient-accent text-accent-foreground hover:opacity-90 gap-2 px-8"
             >
-              {isSubmitting ? (
+              {isSubmitting || isPreparingFiles ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  {t("btn.submitting")}
+                  {isPreparingFiles
+                    ? (lang === "ar" ? "جارٍ تجهيز الملف..." : "Preparing file...")
+                    : t("btn.submitting")}
                 </>
               ) : (
                 <>
