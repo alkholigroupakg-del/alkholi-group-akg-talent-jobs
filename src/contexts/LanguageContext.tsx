@@ -193,9 +193,10 @@ const translations: Record<Lang, Record<string, string>> = {
     "jobs.filter": "تصفية",
 
     // Facility management question
-    "field.facilityManagementExp": "هل سبق لك العمل في مجال الصيانة والتشغيل وإدارة المرافق؟",
+    "field.facilityManagementExp": "هل عملت في الصيانة والتشغيل والمرافق العامة؟",
     "opt.facilityYes": "نعم",
-    "opt.facilityContractor": "عملت في مجال المقاولات العامة",
+    "opt.facilityContractor": "عملت في مجال المقاولات",
+    "opt.facilityBoth": "عملت في كل من المجالين",
     "opt.facilityNo": "لا، لم أعمل في أي من المجالين",
 
     // Dashboard vacancy
@@ -548,9 +549,10 @@ const translations: Record<Lang, Record<string, string>> = {
     "jobs.filter": "Filter",
 
     // Facility management question
-    "field.facilityManagementExp": "Have you worked in maintenance, operations, or facility management?",
+    "field.facilityManagementExp": "Have you worked in maintenance, operations, or facilities management?",
     "opt.facilityYes": "Yes",
-    "opt.facilityContractor": "I worked in general contracting",
+    "opt.facilityContractor": "I worked in contracting",
+    "opt.facilityBoth": "I worked in both fields",
     "opt.facilityNo": "No, I haven't worked in either field",
 
     // Dashboard vacancy
