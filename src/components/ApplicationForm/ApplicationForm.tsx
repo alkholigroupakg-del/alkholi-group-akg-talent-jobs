@@ -4,6 +4,7 @@ import { ArrowRight, ArrowLeft, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useFieldConfig } from "@/hooks/useFieldConfig";
 import StepIndicator from "./StepIndicator";
 import BasicInfoStep from "./steps/BasicInfoStep";
 import JobPreferencesStep from "./steps/JobPreferencesStep";
