@@ -699,7 +699,7 @@ const DashboardPage = () => {
                   <p className="text-muted-foreground text-sm text-center py-8">{lang === "ar" ? "لا توجد مشاريع بعد" : "No projects yet"}</p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {projects.map((p: any) => (
+                     {projects.map((p: any) => (
                       <Card key={p.id}>
                         <CardContent className="p-4">
                           <div className="flex items-center gap-3 mb-2">
@@ -712,8 +712,26 @@ const DashboardPage = () => {
                             )}
                             <h3 className="font-bold">{lang === "ar" ? p.name_ar : (p.name_en || p.name_ar)}</h3>
                           </div>
-                          {p.description_ar && <p className="text-muted-foreground text-sm mt-1">{p.description_ar}</p>}
-                          <Badge className="mt-2" variant={p.is_active ? "default" : "secondary"}>{p.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Badge>
+                          {p.description_ar && <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{lang === "ar" ? p.description_ar : (p.description_en || p.description_ar)}</p>}
+                          <div className="flex items-center justify-between mt-3">
+                            <Badge variant={p.is_active ? "default" : "secondary"}>{p.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Badge>
+                            <div className="flex gap-1">
+                              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={async () => {
+                                await supabase.from("projects").update({ is_active: !p.is_active }).eq("id", p.id);
+                                fetchProjects();
+                              }}>
+                                <Eye className="w-3.5 h-3.5" />
+                              </Button>
+                              <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={async () => {
+                                if (!confirm(lang === "ar" ? "هل أنت متأكد من حذف هذا المشروع؟" : "Delete this project?")) return;
+                                await supabase.from("projects").delete().eq("id", p.id);
+                                fetchProjects();
+                                toast.success(lang === "ar" ? "تم الحذف" : "Deleted");
+                              }}>
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
                     ))}
