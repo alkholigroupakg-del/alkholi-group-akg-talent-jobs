@@ -930,22 +930,42 @@ const DashboardPage = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t("dash.jobLocation")}</Label>
+                <Label>{t("dash.jobLocation")} ({t("dash.arabic")})</Label>
                 <Input value={jobForm.location} onChange={e => setJobForm(p => ({ ...p, location: e.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>{t("dash.jobType")}</Label>
-                <Input value={jobForm.job_type} onChange={e => setJobForm(p => ({ ...p, job_type: e.target.value }))} />
+                <Label>{t("dash.jobLocation")} ({t("dash.english")})</Label>
+                <Input value={jobForm.location_en} onChange={e => setJobForm(p => ({ ...p, location_en: e.target.value }))} dir="ltr" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t("dash.jobDept")}</Label>
+                <Label>{t("dash.jobType")} ({t("dash.arabic")})</Label>
+                <Input value={jobForm.job_type} onChange={e => setJobForm(p => ({ ...p, job_type: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("dash.jobType")} ({t("dash.english")})</Label>
+                <Input value={jobForm.job_type_en} onChange={e => setJobForm(p => ({ ...p, job_type_en: e.target.value }))} dir="ltr" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("dash.jobDept")} ({t("dash.arabic")})</Label>
                 <Input value={jobForm.department} onChange={e => setJobForm(p => ({ ...p, department: e.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>{t("dash.nationalityRequired")}</Label>
+                <Label>{t("dash.jobDept")} ({t("dash.english")})</Label>
+                <Input value={jobForm.department_en} onChange={e => setJobForm(p => ({ ...p, department_en: e.target.value }))} dir="ltr" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("dash.nationalityRequired")} ({t("dash.arabic")})</Label>
                 <Input value={jobForm.nationality_required} onChange={e => setJobForm(p => ({ ...p, nationality_required: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("dash.nationalityRequired")} ({t("dash.english")})</Label>
+                <Input value={jobForm.nationality_required_en} onChange={e => setJobForm(p => ({ ...p, nationality_required_en: e.target.value }))} dir="ltr" />
               </div>
             </div>
             <div className="space-y-2">
