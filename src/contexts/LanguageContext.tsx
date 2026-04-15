@@ -340,6 +340,9 @@ const translations: Record<Lang, Record<string, string>> = {
     "status.hired": "تم التوظيف",
     "status.rejected": "مرفوض",
     "status.withdrawn": "منسحب",
+
+    // Admin login
+    "admin.loginDesc": "بوابة الدخول لفريق الموارد البشرية والإدارة",
   },
   en: {
     // Navbar & general
