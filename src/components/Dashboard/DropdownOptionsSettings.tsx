@@ -4,12 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Pencil, List, RotateCcw } from "lucide-react";
+import { Pencil, List, RotateCcw, Plus, Trash2, GripVertical } from "lucide-react";
 import { invalidateDropdownCache } from "@/hooks/useDropdownOptions";
 import {
   getNationalities,
@@ -28,6 +28,12 @@ interface DropdownOption {
   is_active: boolean;
 }
 
+interface EditableOption {
+  ar: string;
+  en: string;
+  enabled: boolean;
+}
+
 const FIELD_CONFIGS = [
   { key: "nationalities", labelAr: "الجنسيات", labelEn: "Nationalities", getDefaultAr: () => getNationalities("ar"), getDefaultEn: () => getNationalities("en") },
   { key: "cities", labelAr: "المدن", labelEn: "Cities", getDefaultAr: () => getSaudiCities("ar"), getDefaultEn: () => getSaudiCities("en") },
@@ -42,8 +48,9 @@ const DropdownOptionsSettings = () => {
   const [dbOptions, setDbOptions] = useState<Record<string, DropdownOption>>({});
   const [showEditor, setShowEditor] = useState(false);
   const [editingField, setEditingField] = useState<typeof FIELD_CONFIGS[0] | null>(null);
-  const [textAr, setTextAr] = useState("");
-  const [textEn, setTextEn] = useState("");
+  const [items, setItems] = useState<EditableOption[]>([]);
+  const [newAr, setNewAr] = useState("");
+  const [newEn, setNewEn] = useState("");
 
   useEffect(() => { fetchOptions(); }, []);
 
@@ -57,20 +64,67 @@ const DropdownOptionsSettings = () => {
   const openEditor = (field: typeof FIELD_CONFIGS[0]) => {
     setEditingField(field);
     const existing = dbOptions[field.key];
+    const defaultAr = field.getDefaultAr();
+    const defaultEn = field.getDefaultEn();
+
     if (existing && existing.options_ar.length > 0) {
-      setTextAr(existing.options_ar.join("\n"));
-      setTextEn(existing.options_en.join("\n"));
+      // Build items from saved data - all saved items are enabled
+      const savedItems: EditableOption[] = existing.options_ar.map((ar, i) => ({
+        ar,
+        en: existing.options_en[i] || ar,
+        enabled: true,
+      }));
+      // Add default items that are not in saved data as disabled
+      defaultAr.forEach((ar, i) => {
+        const en = defaultEn[i] || ar;
+        if (!savedItems.some(s => s.ar === ar || s.en === en)) {
+          savedItems.push({ ar, en, enabled: false });
+        }
+      });
+      setItems(savedItems);
     } else {
-      setTextAr(field.getDefaultAr().join("\n"));
-      setTextEn(field.getDefaultEn().join("\n"));
+      // All defaults enabled
+      setItems(defaultAr.map((ar, i) => ({ ar, en: defaultEn[i] || ar, enabled: true })));
     }
+    setNewAr("");
+    setNewEn("");
     setShowEditor(true);
+  };
+
+  const toggleItem = (index: number) => {
+    setItems(prev => prev.map((item, i) => i === index ? { ...item, enabled: !item.enabled } : item));
+  };
+
+  const updateItem = (index: number, field: "ar" | "en", value: string) => {
+    setItems(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item));
+  };
+
+  const removeItem = (index: number) => {
+    setItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const addItem = () => {
+    if (!newAr.trim() && !newEn.trim()) return;
+    setItems(prev => [...prev, { ar: newAr.trim(), en: newEn.trim() || newAr.trim(), enabled: true }]);
+    setNewAr("");
+    setNewEn("");
+  };
+
+  const toggleAll = (enabled: boolean) => {
+    setItems(prev => prev.map(item => ({ ...item, enabled })));
   };
 
   const saveOptions = async () => {
     if (!editingField) return;
-    const optionsAr = textAr.split("\n").map(s => s.trim()).filter(Boolean);
-    const optionsEn = textEn.split("\n").map(s => s.trim()).filter(Boolean);
+    // Only save enabled items
+    const enabledItems = items.filter(i => i.enabled);
+    const optionsAr = enabledItems.map(i => i.ar).filter(Boolean);
+    const optionsEn = enabledItems.map(i => i.en).filter(Boolean);
+
+    if (optionsAr.length === 0) {
+      toast.error(lang === "ar" ? "يجب تفعيل خيار واحد على الأقل" : "At least one option must be enabled");
+      return;
+    }
 
     const existing = dbOptions[editingField.key];
     if (existing?.id) {
@@ -94,9 +148,12 @@ const DropdownOptionsSettings = () => {
 
   const resetToDefault = () => {
     if (!editingField) return;
-    setTextAr(editingField.getDefaultAr().join("\n"));
-    setTextEn(editingField.getDefaultEn().join("\n"));
+    const defaultAr = editingField.getDefaultAr();
+    const defaultEn = editingField.getDefaultEn();
+    setItems(defaultAr.map((ar, i) => ({ ar, en: defaultEn[i] || ar, enabled: true })));
   };
+
+  const enabledCount = items.filter(i => i.enabled).length;
 
   return (
     <div className="space-y-4">
@@ -117,7 +174,7 @@ const DropdownOptionsSettings = () => {
                 <div>
                   <p className="font-medium">{lang === "ar" ? field.labelAr : field.labelEn}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs text-muted-foreground">{count} {lang === "ar" ? "خيار" : "options"}</span>
+                    <span className="text-xs text-muted-foreground">{count} {lang === "ar" ? "خيار مفعّل" : "active"}</span>
                     {isCustomized && <Badge variant="secondary" className="text-xs">{lang === "ar" ? "مخصص" : "Customized"}</Badge>}
                   </div>
                 </div>
@@ -129,7 +186,7 @@ const DropdownOptionsSettings = () => {
       </div>
 
       <Dialog open={showEditor} onOpenChange={setShowEditor}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" dir={dir}>
+        <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col" dir={dir}>
           <DialogHeader>
             <DialogTitle>
               {lang === "ar"
@@ -137,37 +194,85 @@ const DropdownOptionsSettings = () => {
                 : `Edit: ${editingField?.labelEn}`}
             </DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            {lang === "ar" ? "كل سطر يمثل خيار واحد" : "Each line represents one option"}
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>{lang === "ar" ? "الخيارات (عربي)" : "Options (Arabic)"}</Label>
-              <Textarea
-                value={textAr}
-                onChange={(e) => setTextAr(e.target.value)}
-                rows={15}
-                className="font-mono text-sm"
-                dir="rtl"
-              />
-              <span className="text-xs text-muted-foreground">
-                {textAr.split("\n").filter(Boolean).length} {lang === "ar" ? "خيار" : "options"}
-              </span>
-            </div>
-            <div className="space-y-2">
-              <Label>{lang === "ar" ? "الخيارات (إنجليزي)" : "Options (English)"}</Label>
-              <Textarea
-                value={textEn}
-                onChange={(e) => setTextEn(e.target.value)}
-                rows={15}
-                className="font-mono text-sm"
-                dir="ltr"
-              />
-              <span className="text-xs text-muted-foreground">
-                {textEn.split("\n").filter(Boolean).length} {lang === "ar" ? "خيار" : "options"}
-              </span>
+
+          {/* Toolbar */}
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <p className="text-sm text-muted-foreground">
+              {enabledCount} / {items.length} {lang === "ar" ? "مفعّل" : "enabled"}
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => toggleAll(true)}>
+                {lang === "ar" ? "تفعيل الكل" : "Enable All"}
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => toggleAll(false)}>
+                {lang === "ar" ? "تعطيل الكل" : "Disable All"}
+              </Button>
             </div>
           </div>
+
+          {/* Items list */}
+          <div className="flex-1 overflow-y-auto space-y-2 max-h-[50vh] border rounded-lg p-3">
+            {items.map((item, index) => (
+              <div
+                key={index}
+                className={`flex items-center gap-3 p-2 rounded-lg border transition-colors ${
+                  item.enabled ? "bg-background border-border" : "bg-muted/50 border-muted opacity-60"
+                }`}
+              >
+                <Switch
+                  checked={item.enabled}
+                  onCheckedChange={() => toggleItem(index)}
+                />
+                <div className="flex-1 grid grid-cols-2 gap-2">
+                  <Input
+                    value={item.ar}
+                    onChange={(e) => updateItem(index, "ar", e.target.value)}
+                    className="text-sm h-8"
+                    dir="rtl"
+                    placeholder={lang === "ar" ? "عربي" : "Arabic"}
+                  />
+                  <Input
+                    value={item.en}
+                    onChange={(e) => updateItem(index, "en", e.target.value)}
+                    className="text-sm h-8"
+                    dir="ltr"
+                    placeholder={lang === "ar" ? "إنجليزي" : "English"}
+                  />
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => removeItem(index)}>
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          {/* Add new */}
+          <div className="flex items-center gap-2 border rounded-lg p-3 bg-muted/30">
+            <Plus className="w-4 h-4 text-muted-foreground shrink-0" />
+            <div className="flex-1 grid grid-cols-2 gap-2">
+              <Input
+                value={newAr}
+                onChange={(e) => setNewAr(e.target.value)}
+                className="text-sm h-8"
+                dir="rtl"
+                placeholder={lang === "ar" ? "اسم الخيار بالعربي" : "Option in Arabic"}
+                onKeyDown={(e) => e.key === "Enter" && addItem()}
+              />
+              <Input
+                value={newEn}
+                onChange={(e) => setNewEn(e.target.value)}
+                className="text-sm h-8"
+                dir="ltr"
+                placeholder={lang === "ar" ? "اسم الخيار بالإنجليزي" : "Option in English"}
+                onKeyDown={(e) => e.key === "Enter" && addItem()}
+              />
+            </div>
+            <Button variant="outline" size="sm" onClick={addItem} className="shrink-0">
+              {lang === "ar" ? "إضافة" : "Add"}
+            </Button>
+          </div>
+
+          {/* Actions */}
           <div className="flex gap-3 justify-between">
             <Button variant="outline" onClick={resetToDefault} className="gap-2">
               <RotateCcw className="w-4 h-4" />
