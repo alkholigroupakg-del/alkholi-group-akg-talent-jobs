@@ -705,6 +705,7 @@ const DashboardPage = () => {
                     ["field.expectedSalary", selectedApplicant.expected_salary],
                     ["field.availableDate", selectedApplicant.available_date],
                     ["field.hearAbout", selectedApplicant.hear_about],
+                    ["field.facilityManagementExp", (selectedApplicant as any).facility_management_exp],
                   ] as [string, string | null][]).filter(([, val]) => val).map(([key, val]) => (
                     <div key={key} className="border border-border rounded-lg p-2">
                       <p className="text-muted-foreground text-xs">{t(key)}</p>
