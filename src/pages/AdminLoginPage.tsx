@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import TopBar from "@/components/TopBar";
@@ -63,6 +63,11 @@ const AdminLoginPage = () => {
           <Button onClick={handleLogin} className="w-full gradient-primary text-primary-foreground" disabled={loading}>
             {loading ? "..." : t("dash.loginBtn")}
           </Button>
+          <div className="flex justify-center">
+            <Link to="/admin/forgot-password" className="text-sm text-primary hover:underline">
+              {t("admin.forgotPassword")}
+            </Link>
+          </div>
           <div className="flex justify-center pt-2"><TopBar variant="dark" /></div>
         </CardContent>
       </Card>
