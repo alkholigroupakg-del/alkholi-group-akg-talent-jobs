@@ -108,17 +108,12 @@ const CHART_COLORS = ["#3b82f6", "#eab308", "#a855f7", "#6366f1", "#22c55e", "#1
 
 const DashboardPage = () => {
   const { t, dir, lang } = useLanguage();
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
   const [editNotes, setEditNotes] = useState("");
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginLoading, setLoginLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("applicants");
 
   // Job form state
@@ -150,25 +145,11 @@ const DashboardPage = () => {
   const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setLoading(false);
-    });
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-    return () => subscription.unsubscribe();
+    fetchApplicants();
+    fetchJobs();
+    fetchProjects();
+    fetchUsers();
   }, []);
-
-  useEffect(() => {
-    if (session) {
-      fetchApplicants();
-      fetchJobs();
-      fetchProjects();
-      fetchUsers();
-    }
-  }, [session]);
 
   const fetchApplicants = async () => {
     const { data, error } = await supabase
@@ -198,16 +179,9 @@ const DashboardPage = () => {
     if (rolesData) setUserRoles(rolesData);
   };
 
-  const handleLogin = async () => {
-    setLoginLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginPassword });
-    if (error) toast.error(t("dash.loginError"));
-    setLoginLoading(false);
-  };
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setSession(null);
+    window.location.href = "/admin/login";
   };
 
   const updateStatus = async (id: string, status: ApplicantStatus) => {
