@@ -699,7 +699,7 @@ const DashboardPage = () => {
                   <p className="text-muted-foreground text-sm text-center py-8">{lang === "ar" ? "لا توجد مشاريع بعد" : "No projects yet"}</p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {projects.map((p: any) => (
+                     {projects.map((p: any) => (
                       <Card key={p.id}>
                         <CardContent className="p-4">
                           <div className="flex items-center gap-3 mb-2">
@@ -712,8 +712,26 @@ const DashboardPage = () => {
                             )}
                             <h3 className="font-bold">{lang === "ar" ? p.name_ar : (p.name_en || p.name_ar)}</h3>
                           </div>
-                          {p.description_ar && <p className="text-muted-foreground text-sm mt-1">{p.description_ar}</p>}
-                          <Badge className="mt-2" variant={p.is_active ? "default" : "secondary"}>{p.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Badge>
+                          {p.description_ar && <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{lang === "ar" ? p.description_ar : (p.description_en || p.description_ar)}</p>}
+                          <div className="flex items-center justify-between mt-3">
+                            <Badge variant={p.is_active ? "default" : "secondary"}>{p.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Badge>
+                            <div className="flex gap-1">
+                              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={async () => {
+                                await supabase.from("projects").update({ is_active: !p.is_active }).eq("id", p.id);
+                                fetchProjects();
+                              }}>
+                                <Eye className="w-3.5 h-3.5" />
+                              </Button>
+                              <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={async () => {
+                                if (!confirm(lang === "ar" ? "هل أنت متأكد من حذف هذا المشروع؟" : "Delete this project?")) return;
+                                await supabase.from("projects").delete().eq("id", p.id);
+                                fetchProjects();
+                                toast.success(lang === "ar" ? "تم الحذف" : "Deleted");
+                              }}>
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
                     ))}
@@ -1104,9 +1122,49 @@ const DashboardPage = () => {
               <Textarea value={projectForm.description_en} onChange={e => setProjectForm(p => ({ ...p, description_en: e.target.value }))} rows={2} dir="ltr" />
             </div>
             <div className="space-y-2">
-              <Label>{lang === "ar" ? "رابط شعار المشروع (URL)" : "Project Logo URL"}</Label>
-              <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
-              <p className="text-xs text-muted-foreground">{lang === "ar" ? "أدخل رابط صورة الشعار أو ارفعه من قسم الهوية البصرية" : "Enter logo image URL"}</p>
+              <Label>{lang === "ar" ? "شعار المشروع" : "Project Logo"}</Label>
+              <div className="space-y-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      formData.append("folder", "project-logos");
+                      const { data: { session } } = await supabase.auth.getSession();
+                      const res = await fetch(
+                        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-file`,
+                        {
+                          method: "POST",
+                          headers: {
+                            "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                            ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
+                          },
+                          body: formData,
+                        }
+                      );
+                      if (res.ok) {
+                        const result = await res.json();
+                        setProjectForm(p => ({ ...p, logo_url: result.path }));
+                        toast.success(lang === "ar" ? "تم رفع الشعار" : "Logo uploaded");
+                      }
+                    } catch {
+                      toast.error(lang === "ar" ? "فشل رفع الشعار" : "Logo upload failed");
+                    }
+                  }}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">{lang === "ar" ? "أو أدخل رابط مباشر:" : "Or enter a direct URL:"}</p>
+                <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
+                {projectForm.logo_url && (
+                  <div className="mt-2 p-2 border rounded-md bg-muted/30">
+                    <img src={projectForm.logo_url} alt="Preview" className="h-16 w-auto object-contain mx-auto" onError={(e) => (e.currentTarget.style.display = "none")} />
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex gap-3 justify-end">
               <Button variant="outline" onClick={() => setShowProjectForm(false)}>{t("dash.cancel")}</Button>

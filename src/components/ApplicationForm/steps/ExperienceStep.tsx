@@ -39,7 +39,7 @@ const ExperienceStep = ({ data, onChange }: Props) => {
         {show("linkedin") && <FormField label={lbl("linkedin", t("field.linkedin"))} name="linkedin" type="text" required={req("linkedin")} value={data.linkedin || ""} onChange={onChange} placeholder={t("ph.linkedin")} />}
         {show("facilityManagementExp") && (
           <div className="md:col-span-2">
-            <FormField label={lbl("facilityManagementExp", t("field.facilityManagementExp"))} name="facilityManagementExp" type="select" required={req("facilityManagementExp")} value={data.facilityManagementExp || ""} onChange={onChange} options={[t("opt.facilityYes"), t("opt.facilityContractor"), t("opt.facilityNo")]} />
+            <FormField label={lbl("facilityManagementExp", t("field.facilityManagementExp"))} name="facilityManagementExp" type="select" required={req("facilityManagementExp")} value={data.facilityManagementExp || ""} onChange={onChange} options={[t("opt.facilityYes"), t("opt.facilityContractor"), t("opt.facilityBoth"), t("opt.facilityNo")]} />
           </div>
         )}
       </div>

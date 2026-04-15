@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useFieldConfig } from "@/hooks/useFieldConfig";
 import StepIndicator from "./StepIndicator";
+import ResumeUploadStep from "./steps/ResumeUploadStep";
 import BasicInfoStep from "./steps/BasicInfoStep";
 import JobPreferencesStep from "./steps/JobPreferencesStep";
 import EducationStep from "./steps/EducationStep";
@@ -15,6 +16,7 @@ import AttachmentsStep from "./steps/AttachmentsStep";
 import CustomQuestionsStep from "./steps/CustomQuestionsStep";
 
 const STORAGE_KEY = "akg-application-draft";
+const TOTAL_STEPS = 7;
 
 interface Props {
   preSelectedPosition?: string;
@@ -25,6 +27,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   const fc = useFieldConfig();
 
   const stepLabels = [
+    lang === "ar" ? "السيرة الذاتية" : "Resume",
     t("step.basic"), t("step.job"), t("step.edu"),
     t("step.exp"), t("step.fin"), t("step.attach"),
   ];
@@ -42,11 +45,8 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Always honor an explicit job selected from the jobs page,
-  // even if a previous draft already exists in localStorage.
   useEffect(() => {
     if (!preSelectedPosition) return;
-
     setFormData((prev) =>
       prev.desiredPosition === preSelectedPosition
         ? prev
@@ -70,7 +70,6 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     setFormData((prev) => {
       const updated = { ...prev };
       Object.entries(fields).forEach(([key, value]) => {
-        // Only fill if the field is currently empty
         if (!updated[key]) {
           updated[key] = value;
         }
@@ -80,8 +79,12 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   }, []);
 
   const validateStep = () => {
-    // Use dynamic required fields from field config
-    const required = fc.getRequiredFields(currentStep);
+    // Step 1 (resume upload) - no validation needed, it's optional
+    if (currentStep === 1) return true;
+    
+    // Map form steps: step 2=basic(1), 3=job(2), 4=edu(3), 5=exp(4), 6=fin(5), 7=attach(6)
+    const fieldConfigStep = currentStep - 1;
+    const required = fc.getRequiredFields(fieldConfigStep);
     const missing = required.filter((field) => !formData[field]);
     if (missing.length > 0) {
       toast.error(t("validation.required"));
@@ -92,7 +95,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
   const handleNext = () => {
     if (!validateStep()) return;
-    setCurrentStep((prev) => Math.min(prev + 1, 6));
+    setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -183,7 +186,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         current_title: formData.currentTitle,
         current_tasks: formData.currentTasks,
         self_summary: formData.selfSummary,
-        other_experience: formData.otherExperience,
+        other_experience: formData.otherExperience || null,
         arabic_level: formData.arabicLevel,
         english_level: formData.englishLevel,
         other_language: formData.otherLanguage,
@@ -201,7 +204,6 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
       if (error) throw error;
 
-      // Save custom question answers
       const customAnswers = Object.entries(formData)
         .filter(([key, val]) => key.startsWith("custom_") && val)
         .map(([key, val]) => ({
@@ -255,15 +257,24 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
   return (
     <div className="w-full max-w-3xl mx-auto" dir={dir}>
-      <StepIndicator currentStep={currentStep} totalSteps={6} stepLabels={stepLabels} />
+      <StepIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} stepLabels={stepLabels} />
 
       <div className="bg-card rounded-xl shadow-elevated p-6 md:p-8 border border-border">
-        {currentStep === 1 && <><BasicInfoStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={1} data={formData} onChange={handleChange} /></>}
-        {currentStep === 2 && <><JobPreferencesStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={2} data={formData} onChange={handleChange} /></>}
-        {currentStep === 3 && <><EducationStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={3} data={formData} onChange={handleChange} /></>}
-        {currentStep === 4 && <><ExperienceStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={4} data={formData} onChange={handleChange} /></>}
-        {currentStep === 5 && <><FinancialsStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={5} data={formData} onChange={handleChange} /></>}
-        {currentStep === 6 && <><AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} onAutoFill={handleAutoFill} /><CustomQuestionsStep stepNumber={6} data={formData} onChange={handleChange} /></>}
+        {currentStep === 1 && (
+          <ResumeUploadStep
+            data={formData}
+            onChange={handleChange}
+            onFileChange={handleFileChange}
+            onAutoFill={handleAutoFill}
+            onSkip={handleNext}
+          />
+        )}
+        {currentStep === 2 && <><BasicInfoStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={1} data={formData} onChange={handleChange} /></>}
+        {currentStep === 3 && <><JobPreferencesStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={2} data={formData} onChange={handleChange} /></>}
+        {currentStep === 4 && <><EducationStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={3} data={formData} onChange={handleChange} /></>}
+        {currentStep === 5 && <><ExperienceStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={4} data={formData} onChange={handleChange} /></>}
+        {currentStep === 6 && <><FinancialsStep data={formData} onChange={handleChange} /><CustomQuestionsStep stepNumber={5} data={formData} onChange={handleChange} /></>}
+        {currentStep === 7 && <><AttachmentsStep data={formData} onChange={handleChange} onFileChange={handleFileChange} /><CustomQuestionsStep stepNumber={6} data={formData} onChange={handleChange} /></>}
 
         <div className="flex justify-between items-center mt-8 pt-6 border-t border-border">
           <Button variant="outline" onClick={handlePrev} disabled={currentStep === 1} className="gap-2">
@@ -271,7 +282,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
             {t("btn.prev")}
           </Button>
 
-          {currentStep < 6 ? (
+          {currentStep < TOTAL_STEPS ? (
             <Button onClick={handleNext} className="gradient-primary text-primary-foreground hover:opacity-90 gap-2">
               {t("btn.next")}
               <NextArrow className="w-4 h-4" />
