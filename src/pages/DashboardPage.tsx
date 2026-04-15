@@ -1104,9 +1104,49 @@ const DashboardPage = () => {
               <Textarea value={projectForm.description_en} onChange={e => setProjectForm(p => ({ ...p, description_en: e.target.value }))} rows={2} dir="ltr" />
             </div>
             <div className="space-y-2">
-              <Label>{lang === "ar" ? "رابط شعار المشروع (URL)" : "Project Logo URL"}</Label>
-              <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
-              <p className="text-xs text-muted-foreground">{lang === "ar" ? "أدخل رابط صورة الشعار أو ارفعه من قسم الهوية البصرية" : "Enter logo image URL"}</p>
+              <Label>{lang === "ar" ? "شعار المشروع" : "Project Logo"}</Label>
+              <div className="space-y-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      formData.append("folder", "project-logos");
+                      const { data: { session } } = await supabase.auth.getSession();
+                      const res = await fetch(
+                        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-file`,
+                        {
+                          method: "POST",
+                          headers: {
+                            "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                            ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
+                          },
+                          body: formData,
+                        }
+                      );
+                      if (res.ok) {
+                        const result = await res.json();
+                        setProjectForm(p => ({ ...p, logo_url: result.path }));
+                        toast.success(lang === "ar" ? "تم رفع الشعار" : "Logo uploaded");
+                      }
+                    } catch {
+                      toast.error(lang === "ar" ? "فشل رفع الشعار" : "Logo upload failed");
+                    }
+                  }}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">{lang === "ar" ? "أو أدخل رابط مباشر:" : "Or enter a direct URL:"}</p>
+                <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
+                {projectForm.logo_url && (
+                  <div className="mt-2 p-2 border rounded-md bg-muted/30">
+                    <img src={projectForm.logo_url} alt="Preview" className="h-16 w-auto object-contain mx-auto" onError={(e) => (e.currentTarget.style.display = "none")} />
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex gap-3 justify-end">
               <Button variant="outline" onClick={() => setShowProjectForm(false)}>{t("dash.cancel")}</Button>
