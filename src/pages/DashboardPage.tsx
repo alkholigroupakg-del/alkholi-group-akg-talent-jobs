@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Users, UserPlus, Phone, CheckCircle2, Download, LogOut, Search, Eye, BarChart3, Briefcase, FileText, ExternalLink, Plus, Pencil, Trash2, FolderOpen, Settings, Database } from "lucide-react";
+import { Users, UserPlus, Phone, CheckCircle2, Download, LogOut, Search, Eye, BarChart3, Briefcase, FileText, ExternalLink, Plus, Pencil, Trash2, FolderOpen, Settings, Database, Archive, RotateCcw } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import * as XLSX from "xlsx";
 import logo from "@/assets/logo.jpg";
@@ -72,6 +72,8 @@ interface Applicant {
   experience_cert_url: string | null;
   training_certs_url: string | null;
   other_docs_url: string | null;
+  is_archived: boolean;
+  archived_at: string | null;
 }
 
 interface JobPosting {
@@ -426,34 +428,61 @@ const DashboardPage = () => {
     if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); }
   };
 
-  const filtered = applicants.filter(a => {
+  const activeApplicants = applicants.filter(a => !a.is_archived);
+  const archivedApplicants = applicants.filter(a => a.is_archived);
+
+  const filtered = activeApplicants.filter(a => {
     const matchSearch = a.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (a.desired_position || "").toLowerCase().includes(searchTerm.toLowerCase());
     const matchStatus = filterStatus === "all" || a.status === filterStatus;
     return matchSearch && matchStatus;
   });
 
+  const filteredArchived = archivedApplicants.filter(a => {
+    const matchSearch = a.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (a.desired_position || "").toLowerCase().includes(searchTerm.toLowerCase());
+    return matchSearch;
+  });
+
+  const archiveApplicant = async (id: string) => {
+    if (!confirm(lang === "ar" ? "هل تريد أرشفة هذا المتقدم؟" : "Archive this applicant?")) return;
+    const { error } = await supabase.from("applicants").update({ is_archived: true, archived_at: new Date().toISOString() }).eq("id", id);
+    if (!error) {
+      setApplicants(prev => prev.map(a => a.id === id ? { ...a, is_archived: true, archived_at: new Date().toISOString() } : a));
+      setSelectedApplicant(null);
+      toast.success(lang === "ar" ? "تم الأرشفة بنجاح" : "Archived successfully");
+    }
+  };
+
+  const restoreApplicant = async (id: string) => {
+    const { error } = await supabase.from("applicants").update({ is_archived: false, archived_at: null }).eq("id", id);
+    if (!error) {
+      setApplicants(prev => prev.map(a => a.id === id ? { ...a, is_archived: false, archived_at: null } : a));
+      toast.success(lang === "ar" ? "تمت الاستعادة بنجاح" : "Restored successfully");
+    }
+  };
+
   // Chart data
   const statusData = STATUSES.map((s, i) => ({
-    name: t(`status.${s}`), value: applicants.filter(a => a.status === s).length, fill: CHART_COLORS[i],
+    name: t(`status.${s}`), value: activeApplicants.filter(a => a.status === s).length, fill: CHART_COLORS[i],
   })).filter(d => d.value > 0);
 
   const positionData = Object.entries(
-    applicants.reduce((acc, a) => { const pos = a.desired_position || "N/A"; acc[pos] = (acc[pos] || 0) + 1; return acc; }, {} as Record<string, number>)
+    activeApplicants.reduce((acc, a) => { const pos = a.desired_position || "N/A"; acc[pos] = (acc[pos] || 0) + 1; return acc; }, {} as Record<string, number>)
   ).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([name, value]) => ({ name: name.substring(0, 20), value }));
 
   const monthlyData = (() => {
     const months: Record<string, number> = {};
-    applicants.forEach(a => { const m = new Date(a.created_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", { month: "short", year: "numeric" }); months[m] = (months[m] || 0) + 1; });
+    activeApplicants.forEach(a => { const m = new Date(a.created_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", { month: "short", year: "numeric" }); months[m] = (months[m] || 0) + 1; });
     return Object.entries(months).map(([name, value]) => ({ name, value })).reverse().slice(0, 12).reverse();
   })();
 
 
   const stats = [
-    { label: t("dash.totalApplicants"), value: applicants.length, icon: Users, color: "text-blue-500" },
-    { label: t("dash.newApplicants"), value: applicants.filter(a => a.status === "new").length, icon: UserPlus, color: "text-yellow-500" },
-    { label: t("dash.inInterview"), value: applicants.filter(a => ["phone_interview", "in_person_interview"].includes(a.status)).length, icon: Phone, color: "text-purple-500" },
-    { label: t("dash.hired"), value: applicants.filter(a => a.status === "hired").length, icon: CheckCircle2, color: "text-green-500" },
+    { label: t("dash.totalApplicants"), value: activeApplicants.length, icon: Users, color: "text-blue-500" },
+    { label: t("dash.newApplicants"), value: activeApplicants.filter(a => a.status === "new").length, icon: UserPlus, color: "text-yellow-500" },
+    { label: t("dash.inInterview"), value: activeApplicants.filter(a => ["phone_interview", "in_person_interview"].includes(a.status)).length, icon: Phone, color: "text-purple-500" },
+    { label: t("dash.hired"), value: activeApplicants.filter(a => a.status === "hired").length, icon: CheckCircle2, color: "text-green-500" },
   ];
 
   return (
@@ -499,8 +528,9 @@ const DashboardPage = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-7 w-full max-w-3xl">
+          <TabsList className="grid grid-cols-8 w-full max-w-4xl">
             <TabsTrigger value="applicants">{t("dash.tab.applicants")}</TabsTrigger>
+            <TabsTrigger value="archive" className="gap-1"><Archive className="w-3 h-3" />{lang === "ar" ? "الأرشيف" : "Archive"}{archivedApplicants.length > 0 && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 ms-1">{archivedApplicants.length}</Badge>}</TabsTrigger>
             <TabsTrigger value="jobs">{t("dash.tab.jobs")}</TabsTrigger>
             <TabsTrigger value="users">{t("dash.tab.users")}</TabsTrigger>
             <TabsTrigger value="projects">{t("dash.tab.projects")}</TabsTrigger>
@@ -554,7 +584,12 @@ const DashboardPage = () => {
                           <TableCell>{a.preferred_city}</TableCell>
                           <TableCell><Badge className={`${STATUS_COLORS[a.status]} border-0`}>{t(`status.${a.status}`)}</Badge></TableCell>
                           <TableCell className="text-sm text-muted-foreground">{new Date(a.created_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US")}</TableCell>
-                          <TableCell><Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); setSelectedApplicant(a); setEditNotes(a.notes || ""); }}><Eye className="w-4 h-4" /></Button></TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); setSelectedApplicant(a); setEditNotes(a.notes || ""); }}><Eye className="w-4 h-4" /></Button>
+                              <Button size="sm" variant="ghost" className="text-destructive" onClick={(e) => { e.stopPropagation(); archiveApplicant(a.id); }}><Archive className="w-4 h-4" /></Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -564,7 +599,54 @@ const DashboardPage = () => {
             </Card>
           </TabsContent>
 
-          {/* JOBS TAB */}
+          {/* ARCHIVE TAB */}
+          <TabsContent value="archive">
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <CardTitle className="flex items-center gap-2"><Archive className="w-5 h-5" />{lang === "ar" ? "الأرشيف" : "Archive"} ({archivedApplicants.length})</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {filteredArchived.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Archive className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                    <p>{lang === "ar" ? "لا توجد سجلات مؤرشفة" : "No archived records"}</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>{t("dash.name")}</TableHead>
+                          <TableHead>{t("dash.position")}</TableHead>
+                          <TableHead>{t("dash.status")}</TableHead>
+                          <TableHead>{lang === "ar" ? "تاريخ الأرشفة" : "Archived At"}</TableHead>
+                          <TableHead>{t("dash.actions")}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredArchived.map(a => (
+                          <TableRow key={a.id}>
+                            <TableCell className="font-medium">{a.full_name}</TableCell>
+                            <TableCell>{a.desired_position}</TableCell>
+                            <TableCell><Badge className={`${STATUS_COLORS[a.status]} border-0`}>{t(`status.${a.status}`)}</Badge></TableCell>
+                            <TableCell className="text-sm text-muted-foreground">{a.archived_at ? new Date(a.archived_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") : "-"}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <Button size="sm" variant="ghost" onClick={() => { setSelectedApplicant(a); setEditNotes(a.notes || ""); }}><Eye className="w-4 h-4" /></Button>
+                                <Button size="sm" variant="outline" className="gap-1 text-primary" onClick={() => restoreApplicant(a.id)}><RotateCcw className="w-4 h-4" />{lang === "ar" ? "استعادة" : "Restore"}</Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
           <TabsContent value="jobs">
             <Card>
               <CardHeader>
@@ -943,6 +1025,15 @@ const DashboardPage = () => {
                   <label className="text-sm font-medium">{t("dash.notes")}</label>
                   <Textarea value={editNotes} onChange={e => setEditNotes(e.target.value)} rows={3} />
                   <Button size="sm" onClick={() => saveNotes(selectedApplicant.id)} className="gradient-accent text-accent-foreground">{t("dash.saveNotes")}</Button>
+                  {!selectedApplicant.is_archived ? (
+                    <Button size="sm" variant="outline" className="gap-1 text-destructive border-destructive/30" onClick={() => archiveApplicant(selectedApplicant.id)}>
+                      <Archive className="w-4 h-4" />{lang === "ar" ? "أرشفة" : "Archive"}
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="outline" className="gap-1 text-primary" onClick={() => restoreApplicant(selectedApplicant.id)}>
+                      <RotateCcw className="w-4 h-4" />{lang === "ar" ? "استعادة" : "Restore"}
+                    </Button>
+                  )}
                 </div>
               </div>
             </>
