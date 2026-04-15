@@ -1004,6 +1004,34 @@ const DashboardPage = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
+                <Label>{t("jobDetail.experienceRequired")} ({t("dash.arabic")})</Label>
+                <Input value={jobForm.experience_required_ar} onChange={e => setJobForm(p => ({ ...p, experience_required_ar: e.target.value }))} placeholder={lang === "ar" ? "مثال: 3 سنوات" : "e.g. 3 years"} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("jobDetail.experienceRequired")} ({t("dash.english")})</Label>
+                <Input value={jobForm.experience_required_en} onChange={e => setJobForm(p => ({ ...p, experience_required_en: e.target.value }))} dir="ltr" placeholder="e.g. 3 years" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("jobDetail.degreeRequired")} ({t("dash.arabic")})</Label>
+                <Input value={jobForm.degree_required_ar} onChange={e => setJobForm(p => ({ ...p, degree_required_ar: e.target.value }))} placeholder={lang === "ar" ? "مثال: بكالوريوس هندسة" : "e.g. B.Sc Engineering"} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("jobDetail.degreeRequired")} ({t("dash.english")})</Label>
+                <Input value={jobForm.degree_required_en} onChange={e => setJobForm(p => ({ ...p, degree_required_en: e.target.value }))} dir="ltr" placeholder="e.g. B.Sc Engineering" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>{t("jobDetail.additionalDetails")} ({t("dash.arabic")})</Label>
+              <Textarea value={jobForm.additional_details_ar} onChange={e => setJobForm(p => ({ ...p, additional_details_ar: e.target.value }))} rows={3} />
+            </div>
+            <div className="space-y-2">
+              <Label>{t("jobDetail.additionalDetails")} ({t("dash.english")})</Label>
+              <Textarea value={jobForm.additional_details_en} onChange={e => setJobForm(p => ({ ...p, additional_details_en: e.target.value }))} rows={3} dir="ltr" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label>{t("dash.vacancyCount")}</Label>
                 <Input type="number" min={1} value={jobForm.vacancy_count} onChange={e => setJobForm(p => ({ ...p, vacancy_count: parseInt(e.target.value) || 1 }))} />
               </div>
