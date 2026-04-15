@@ -66,6 +66,19 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     setFiles((prev) => ({ ...prev, [name]: file }));
   }, []);
 
+  const getSubmitErrorMessage = (error: unknown) => {
+    const message =
+      typeof error === "object" && error !== null && "message" in error
+        ? (error as { message?: string }).message
+        : undefined;
+
+    return message?.trim()
+      ? message
+      : lang === "ar"
+        ? "تعذر إرسال الطلب، يرجى المحاولة مرة أخرى."
+        : "Failed to submit the application. Please try again.";
+  };
+
   const validateStep = () => {
     if (currentStep === 1) return true;
 
@@ -127,6 +140,26 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
     }
   };
 
+  const uploadSelectedFile = async (
+    file: File | null | undefined,
+    folder: string,
+    fileLabel: { ar: string; en: string }
+  ) => {
+    if (!file) return null;
+
+    const uploadedPath = await uploadFile(file, folder);
+
+    if (!uploadedPath) {
+      throw new Error(
+        lang === "ar"
+          ? `تعذر رفع ${fileLabel.ar}. يرجى المحاولة مرة أخرى.`
+          : `Failed to upload the ${fileLabel.en}. Please try again.`
+      );
+    }
+
+    return uploadedPath;
+  };
+
   const handleSubmit = async () => {
     if (!validateStep()) return;
 
@@ -137,19 +170,31 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
 
     setIsSubmitting(true);
     try {
-      let resumeUrl = null;
-      let degreeUrl = null;
-      let experienceCertUrl = null;
-      let trainingCertsUrl = null;
-      let otherDocsUrl = null;
+      const applicantId = crypto.randomUUID();
 
-      if (files.resume) resumeUrl = await uploadFile(files.resume, "resumes");
-      if (files.degreeCopy) degreeUrl = await uploadFile(files.degreeCopy, "degrees");
-      if (files.experienceCert) experienceCertUrl = await uploadFile(files.experienceCert, "experience");
-      if (files.trainingCerts) trainingCertsUrl = await uploadFile(files.trainingCerts, "training");
-      if (files.otherDocs) otherDocsUrl = await uploadFile(files.otherDocs, "other");
+      const resumeUrl = await uploadSelectedFile(files.resume, "resumes", {
+        ar: "السيرة الذاتية",
+        en: "resume",
+      });
+      const degreeUrl = await uploadSelectedFile(files.degreeCopy, "degrees", {
+        ar: "صورة المؤهل",
+        en: "degree copy",
+      });
+      const experienceCertUrl = await uploadSelectedFile(files.experienceCert, "experience", {
+        ar: "شهادة الخبرة",
+        en: "experience certificate",
+      });
+      const trainingCertsUrl = await uploadSelectedFile(files.trainingCerts, "training", {
+        ar: "شهادات التدريب",
+        en: "training certificates",
+      });
+      const otherDocsUrl = await uploadSelectedFile(files.otherDocs, "other", {
+        ar: "المستندات الأخرى",
+        en: "other documents",
+      });
 
-      const { data: insertedData, error } = await supabase.from("applicants").insert({
+      const { error } = await supabase.from("applicants").insert({
+        id: applicantId,
         full_name: formData.fullName,
         gender: formData.gender,
         nationality: formData.nationality,
@@ -190,20 +235,21 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         experience_cert_url: experienceCertUrl,
         training_certs_url: trainingCertsUrl,
         other_docs_url: otherDocsUrl,
-      }).select("id").single();
+      });
 
       if (error) throw error;
 
       const customAnswers = Object.entries(formData)
         .filter(([key, val]) => key.startsWith("custom_") && val)
         .map(([key, val]) => ({
-          applicant_id: insertedData.id,
+          applicant_id: applicantId,
           question_id: key.replace("custom_", ""),
           answer: val,
         }));
 
       if (customAnswers.length > 0) {
-        await supabase.from("custom_answers").insert(customAnswers);
+        const { error: answersError } = await supabase.from("custom_answers").insert(customAnswers);
+        if (answersError) throw answersError;
       }
 
       setIsSubmitted(true);
@@ -211,7 +257,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
       toast.success(t("validation.success"));
     } catch (err) {
       console.error("Submit error:", err);
-      toast.error(t("validation.required"));
+      toast.error(getSubmitErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
