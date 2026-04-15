@@ -92,6 +92,8 @@ const FormField = ({
           id={name}
           type="file"
           accept={accept}
+          required={required}
+          aria-required={required}
           onChange={(e) => onFileChange?.(name, e.target.files?.[0] || null)}
           className="bg-background border-input file:ml-4 file:border-0 file:bg-accent file:text-accent-foreground file:rounded-md file:px-3 file:py-1 file:text-sm file:font-medium cursor-pointer"
         />

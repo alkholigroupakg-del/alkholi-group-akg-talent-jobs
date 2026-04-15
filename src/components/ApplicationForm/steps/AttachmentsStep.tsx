@@ -51,7 +51,7 @@ const AttachmentsStep = ({ onChange, onFileChange, hasResume }: Props) => {
           label={lbl("resume", lang === "ar" ? "السيرة الذاتية" : "Resume/CV")}
           name="resume"
           type="file"
-          required={!hasResume}
+          required
           value=""
           onChange={onChange}
           onFileChange={onFileChange}
