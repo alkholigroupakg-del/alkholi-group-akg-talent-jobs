@@ -619,7 +619,6 @@ const DashboardPage = () => {
             </Card>
           </TabsContent>
 
-          {/* USERS TAB */}
           <TabsContent value="users">
             <Card>
               <CardHeader>
@@ -629,7 +628,66 @@ const DashboardPage = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground text-sm">{lang === "ar" ? "يمكنك إضافة مستخدمين جدد وتعيين أدوارهم من هنا." : "You can add new users and assign their roles here."}</p>
+                {users.length === 0 ? (
+                  <p className="text-muted-foreground text-sm text-center py-8">{t("dash.noUsers")}</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>{t("dash.userName")}</TableHead>
+                          <TableHead>{t("dash.userEmail")}</TableHead>
+                          <TableHead>{t("dash.userRole")}</TableHead>
+                          <TableHead>{t("dash.userStatus")}</TableHead>
+                          <TableHead>{t("dash.actions")}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {users.map((user: any) => {
+                          const userRole = userRoles.find((r: any) => r.user_id === user.user_id);
+                          const isCurrentUser = session?.user?.id === user.user_id;
+                          return (
+                            <TableRow key={user.id}>
+                              <TableCell className="font-medium">{user.display_name || user.email}</TableCell>
+                              <TableCell dir="ltr" className="text-sm">{user.email}</TableCell>
+                              <TableCell>
+                                <Select
+                                  value={userRole?.role || ""}
+                                  onValueChange={(v) => updateUserRole(user.user_id, v)}
+                                  disabled={isCurrentUser}
+                                >
+                                  <SelectTrigger className="w-40"><SelectValue placeholder="-" /></SelectTrigger>
+                                  <SelectContent>
+                                    {ROLES.map(r => <SelectItem key={r} value={r}>{t(`role.${r}`)}</SelectItem>)}
+                                  </SelectContent>
+                                </Select>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <Switch
+                                    checked={user.is_active !== false}
+                                    onCheckedChange={(v) => toggleUserActive(user.user_id, v)}
+                                    disabled={isCurrentUser}
+                                  />
+                                  <span className="text-xs">
+                                    {user.is_active !== false ? t("dash.userActive") : t("dash.userInactive")}
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                {!isCurrentUser && (
+                                  <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteUser(user.user_id)}>
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
