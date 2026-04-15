@@ -130,6 +130,9 @@ const DashboardPage = () => {
     job_type: "دوام كامل", job_type_en: "Full-time",
     department: "", department_en: "", requirements_ar: "", requirements_en: "",
     is_active: true, nationality_required: "", nationality_required_en: "", vacancy_count: 1,
+    experience_required_ar: "", experience_required_en: "",
+    degree_required_ar: "", degree_required_en: "",
+    additional_details_ar: "", additional_details_en: "",
   });
 
   // User form state
@@ -296,6 +299,12 @@ const DashboardPage = () => {
         nationality_required: job.nationality_required || "",
         nationality_required_en: (job as any).nationality_required_en || "",
         vacancy_count: (job as any).vacancy_count || 1,
+        experience_required_ar: (job as any).experience_required_ar || "",
+        experience_required_en: (job as any).experience_required_en || "",
+        degree_required_ar: (job as any).degree_required_ar || "",
+        degree_required_en: (job as any).degree_required_en || "",
+        additional_details_ar: (job as any).additional_details_ar || "",
+        additional_details_en: (job as any).additional_details_en || "",
       });
     } else {
       setEditingJob(null);
@@ -305,6 +314,9 @@ const DashboardPage = () => {
         job_type: "دوام كامل", job_type_en: "Full-time",
         department: "", department_en: "", requirements_ar: "", requirements_en: "",
         is_active: true, nationality_required: "", nationality_required_en: "", vacancy_count: 1,
+        experience_required_ar: "", experience_required_en: "",
+        degree_required_ar: "", degree_required_en: "",
+        additional_details_ar: "", additional_details_en: "",
       });
     }
     setShowJobForm(true);
@@ -329,6 +341,12 @@ const DashboardPage = () => {
       nationality_required: jobForm.nationality_required || null,
       nationality_required_en: jobForm.nationality_required_en || null,
       vacancy_count: jobForm.vacancy_count || 1,
+      experience_required_ar: jobForm.experience_required_ar || null,
+      experience_required_en: jobForm.experience_required_en || null,
+      degree_required_ar: jobForm.degree_required_ar || null,
+      degree_required_en: jobForm.degree_required_en || null,
+      additional_details_ar: jobForm.additional_details_ar || null,
+      additional_details_en: jobForm.additional_details_en || null,
     };
 
     if (editingJob) {
@@ -983,6 +1001,34 @@ const DashboardPage = () => {
             <div className="space-y-2">
               <Label>{t("dash.jobReqEn")}</Label>
               <Textarea value={jobForm.requirements_en} onChange={e => setJobForm(p => ({ ...p, requirements_en: e.target.value }))} rows={3} dir="ltr" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("jobDetail.experienceRequired")} ({t("dash.arabic")})</Label>
+                <Input value={jobForm.experience_required_ar} onChange={e => setJobForm(p => ({ ...p, experience_required_ar: e.target.value }))} placeholder={lang === "ar" ? "مثال: 3 سنوات" : "e.g. 3 years"} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("jobDetail.experienceRequired")} ({t("dash.english")})</Label>
+                <Input value={jobForm.experience_required_en} onChange={e => setJobForm(p => ({ ...p, experience_required_en: e.target.value }))} dir="ltr" placeholder="e.g. 3 years" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("jobDetail.degreeRequired")} ({t("dash.arabic")})</Label>
+                <Input value={jobForm.degree_required_ar} onChange={e => setJobForm(p => ({ ...p, degree_required_ar: e.target.value }))} placeholder={lang === "ar" ? "مثال: بكالوريوس هندسة" : "e.g. B.Sc Engineering"} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("jobDetail.degreeRequired")} ({t("dash.english")})</Label>
+                <Input value={jobForm.degree_required_en} onChange={e => setJobForm(p => ({ ...p, degree_required_en: e.target.value }))} dir="ltr" placeholder="e.g. B.Sc Engineering" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>{t("jobDetail.additionalDetails")} ({t("dash.arabic")})</Label>
+              <Textarea value={jobForm.additional_details_ar} onChange={e => setJobForm(p => ({ ...p, additional_details_ar: e.target.value }))} rows={3} />
+            </div>
+            <div className="space-y-2">
+              <Label>{t("jobDetail.additionalDetails")} ({t("dash.english")})</Label>
+              <Textarea value={jobForm.additional_details_en} onChange={e => setJobForm(p => ({ ...p, additional_details_en: e.target.value }))} rows={3} dir="ltr" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">

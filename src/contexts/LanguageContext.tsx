@@ -279,6 +279,20 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.arabic": "عربي",
     "dash.english": "إنجليزي",
 
+    // Job detail page
+    "jobDetail.notFound": "الوظيفة غير موجودة",
+    "jobDetail.backToJobs": "العودة للوظائف",
+    "jobDetail.viewDetails": "عرض التفاصيل",
+    "jobDetail.description": "الوصف الوظيفي",
+    "jobDetail.requirements": "المتطلبات",
+    "jobDetail.experienceRequired": "سنوات الخبرة المطلوبة",
+    "jobDetail.degreeRequired": "المؤهل العلمي المطلوب",
+    "jobDetail.additionalDetails": "تفاصيل إضافية",
+    "jobDetail.vacancies": "عدد الشواغر",
+    "jobDetail.interestedTitle": "مهتم بهذه الوظيفة؟",
+    "jobDetail.interestedDesc": "قدّم طلبك الآن وانضم لفريق مجموعة الخولي",
+    "jobDetail.postedOn": "تاريخ النشر:",
+
     // Settings / Custom Questions
     "dash.tab.settings": "الإعدادات",
     "dash.customQuestions": "الأسئلة المخصصة",
@@ -595,6 +609,20 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.nationalityRequired": "Required Nationality",
     "dash.arabic": "Arabic",
     "dash.english": "English",
+
+    // Job detail page
+    "jobDetail.notFound": "Job not found",
+    "jobDetail.backToJobs": "Back to Jobs",
+    "jobDetail.viewDetails": "View Details",
+    "jobDetail.description": "Job Description",
+    "jobDetail.requirements": "Requirements",
+    "jobDetail.experienceRequired": "Experience Required",
+    "jobDetail.degreeRequired": "Degree Required",
+    "jobDetail.additionalDetails": "Additional Details",
+    "jobDetail.vacancies": "Vacancies",
+    "jobDetail.interestedTitle": "Interested in this role?",
+    "jobDetail.interestedDesc": "Apply now and join the AlKholi Group team",
+    "jobDetail.postedOn": "Posted on:",
 
     // Settings / Custom Questions
     "dash.tab.settings": "Settings",
