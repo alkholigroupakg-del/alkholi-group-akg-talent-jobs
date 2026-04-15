@@ -23,7 +23,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "hero.title2": "مع مجموعة الخولي",
     "hero.desc": "نبحث عن كفاءات متميزة للانضمام لفريقنا. قدّم طلبك الآن واكتشف الفرص الوظيفية المتاحة.",
     "hero.cta": "تقدم للوظيفة",
-    "hero.viewJobs": "تصفح الوظائف",
+    "hero.viewJobs": "تصفح الوظائف الشاغرة",
 
     // Features
     "features.title": "لماذا مجموعة الخولي؟",
@@ -306,7 +306,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "hero.title2": "With AlKholi Group",
     "hero.desc": "We are looking for outstanding talents to join our team. Apply now and explore available opportunities.",
     "hero.cta": "Apply for a Job",
-    "hero.viewJobs": "Browse Jobs",
+    "hero.viewJobs": "Browse Job Openings",
 
     // Features
     "features.title": "Why AlKholi Group?",
