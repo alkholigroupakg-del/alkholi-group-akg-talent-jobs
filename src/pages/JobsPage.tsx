@@ -22,6 +22,7 @@ interface JobPosting {
   requirements_en: string | null;
   is_active: boolean;
   nationality_required: string | null;
+  vacancy_count: number;
   created_at: string;
 }
 
@@ -194,13 +195,18 @@ const JobsPage = () => {
                         <Briefcase className="w-6 h-6 text-muted-foreground" />
                       </div>
                       <Badge className="bg-accent/10 text-accent border-0 font-medium">
-                        {t("jobs.available")}
+                        {t("jobs.available")} · {job.vacancy_count} {t("jobs.vacancies")}
                       </Badge>
                     </div>
 
                     {/* Job Info */}
                     <h3 className="text-lg font-bold text-foreground mb-1">{title}</h3>
-                    <p className="text-muted-foreground text-sm mb-4">{getDeptLabel(job.department)}</p>
+                    <p className="text-muted-foreground text-sm mb-2">{getDeptLabel(job.department)}</p>
+                    {(lang === "ar" ? job.description_ar : (job.description_en || job.description_ar)) && (
+                      <p className="text-muted-foreground text-xs mb-4 line-clamp-2">
+                        {lang === "ar" ? job.description_ar : (job.description_en || job.description_ar)}
+                      </p>
+                    )}
 
                     {/* Details */}
                     <div className="space-y-2">

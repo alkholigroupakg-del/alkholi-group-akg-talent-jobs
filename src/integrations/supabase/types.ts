@@ -35,6 +35,7 @@ export type Database = {
           english_level: string | null
           expected_salary: string | null
           experience_cert_url: string | null
+          facility_management_exp: string | null
           full_name: string
           gender: string | null
           gpa: string | null
@@ -81,6 +82,7 @@ export type Database = {
           english_level?: string | null
           expected_salary?: string | null
           experience_cert_url?: string | null
+          facility_management_exp?: string | null
           full_name: string
           gender?: string | null
           gpa?: string | null
@@ -127,6 +129,7 @@ export type Database = {
           english_level?: string | null
           expected_salary?: string | null
           experience_cert_url?: string | null
+          facility_management_exp?: string | null
           full_name?: string
           gender?: string | null
           gpa?: string | null
@@ -173,6 +176,7 @@ export type Database = {
           title_ar: string
           title_en: string | null
           updated_at: string
+          vacancy_count: number
         }
         Insert: {
           created_at?: string
@@ -191,6 +195,7 @@ export type Database = {
           title_ar: string
           title_en?: string | null
           updated_at?: string
+          vacancy_count?: number
         }
         Update: {
           created_at?: string
@@ -209,6 +214,7 @@ export type Database = {
           title_ar?: string
           title_en?: string | null
           updated_at?: string
+          vacancy_count?: number
         }
         Relationships: [
           {

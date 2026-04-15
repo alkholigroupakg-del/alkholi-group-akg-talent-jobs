@@ -188,8 +188,18 @@ const translations: Record<Lang, Record<string, string>> = {
     "jobs.department": "القسم",
     "jobs.postedOn": "تاريخ النشر",
     "jobs.available": "متاح",
+    "jobs.vacancies": "شاغر",
     "jobs.searchPlaceholder": "ابحث عن وظيفة...",
     "jobs.filter": "تصفية",
+
+    // Facility management question
+    "field.facilityManagementExp": "هل سبق لك العمل في مجال الصيانة والتشغيل وإدارة المرافق؟",
+    "opt.facilityYes": "نعم",
+    "opt.facilityContractor": "عملت في مجال المقاولات العامة",
+    "opt.facilityNo": "لا، لم أعمل في أي من المجالين",
+
+    // Dashboard vacancy
+    "dash.vacancyCount": "عدد الشواغر",
 
     // Nav
     "nav.home": "الرئيسية",
@@ -461,8 +471,18 @@ const translations: Record<Lang, Record<string, string>> = {
     "jobs.department": "Department",
     "jobs.postedOn": "Posted on",
     "jobs.available": "Available",
+    "jobs.vacancies": "vacancy",
     "jobs.searchPlaceholder": "Search for a job...",
     "jobs.filter": "Filter",
+
+    // Facility management question
+    "field.facilityManagementExp": "Have you worked in maintenance, operations, or facility management?",
+    "opt.facilityYes": "Yes",
+    "opt.facilityContractor": "I worked in general contracting",
+    "opt.facilityNo": "No, I haven't worked in either field",
+
+    // Dashboard vacancy
+    "dash.vacancyCount": "Vacancy Count",
 
     // Nav
     "nav.home": "Home",

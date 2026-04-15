@@ -81,7 +81,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
       1: ["fullName", "gender", "nationality", "birthDate", "maritalStatus", "dependents", "phone", "email", "currentCity", "hasTransport"],
       2: ["desiredPosition", "jobType", "preferredCity", "hearAbout"],
       3: ["educationLevel", "major", "university", "graduationYear", "gpa", "currentlyStudying"],
-      4: ["yearsExperience", "currentlyEmployed", "currentTitle", "currentTasks", "selfSummary", "otherExperience", "arabicLevel", "englishLevel", "linkedin"],
+      4: ["yearsExperience", "currentlyEmployed", "currentTitle", "currentTasks", "selfSummary", "otherExperience", "arabicLevel", "englishLevel", "linkedin", "facilityManagementExp"],
       5: ["currentSalary", "expectedSalary", "availableDate"],
       6: [],
     };
@@ -193,6 +193,7 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         english_level: formData.englishLevel,
         other_language: formData.otherLanguage,
         linkedin: formData.linkedin,
+        facility_management_exp: formData.facilityManagementExp || null,
         current_salary: formData.currentSalary,
         expected_salary: formData.expectedSalary,
         available_date: formData.availableDate,
