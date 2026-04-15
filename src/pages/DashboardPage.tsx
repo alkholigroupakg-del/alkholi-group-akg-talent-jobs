@@ -24,6 +24,7 @@ import DropdownOptionsSettings from "@/components/Dashboard/DropdownOptionsSetti
 import BrandingSettings from "@/components/Dashboard/BrandingSettings";
 import BackupSettings from "@/components/Dashboard/BackupSettings";
 import FormFieldsSettings from "@/components/Dashboard/FormFieldsSettings";
+import SiteContentSettings from "@/components/Dashboard/SiteContentSettings";
 
 type ApplicantStatus = "new" | "reviewing" | "phone_interview" | "in_person_interview" | "accepted" | "hired" | "rejected" | "withdrawn";
 
@@ -145,7 +146,7 @@ const DashboardPage = () => {
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
-  const [projectForm, setProjectForm] = useState({ name_ar: "", name_en: "", description_ar: "" });
+  const [projectForm, setProjectForm] = useState({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" });
   const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
@@ -419,8 +420,10 @@ const DashboardPage = () => {
       name_ar: projectForm.name_ar,
       name_en: projectForm.name_en || null,
       description_ar: projectForm.description_ar || null,
+      description_en: projectForm.description_en || null,
+      logo_url: projectForm.logo_url || null,
     });
-    if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setProjectForm({ name_ar: "", name_en: "", description_ar: "" }); }
+    if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); }
   };
 
   const filtered = applicants.filter(a => {
@@ -767,6 +770,11 @@ const DashboardPage = () => {
           {/* SETTINGS TAB */}
           <TabsContent value="settings">
             <div className="space-y-6">
+              <Card>
+                <CardContent className="p-6">
+                  <SiteContentSettings />
+                </CardContent>
+              </Card>
               <Card>
                 <CardContent className="p-6">
                   <FormFieldsSettings />
