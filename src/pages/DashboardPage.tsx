@@ -72,6 +72,8 @@ interface Applicant {
   experience_cert_url: string | null;
   training_certs_url: string | null;
   other_docs_url: string | null;
+  is_archived: boolean;
+  archived_at: string | null;
 }
 
 interface JobPosting {
@@ -426,12 +428,39 @@ const DashboardPage = () => {
     if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); }
   };
 
-  const filtered = applicants.filter(a => {
+  const activeApplicants = applicants.filter(a => !a.is_archived);
+  const archivedApplicants = applicants.filter(a => a.is_archived);
+
+  const filtered = activeApplicants.filter(a => {
     const matchSearch = a.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (a.desired_position || "").toLowerCase().includes(searchTerm.toLowerCase());
     const matchStatus = filterStatus === "all" || a.status === filterStatus;
     return matchSearch && matchStatus;
   });
+
+  const filteredArchived = archivedApplicants.filter(a => {
+    const matchSearch = a.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (a.desired_position || "").toLowerCase().includes(searchTerm.toLowerCase());
+    return matchSearch;
+  });
+
+  const archiveApplicant = async (id: string) => {
+    if (!confirm(lang === "ar" ? "هل تريد أرشفة هذا المتقدم؟" : "Archive this applicant?")) return;
+    const { error } = await supabase.from("applicants").update({ is_archived: true, archived_at: new Date().toISOString() }).eq("id", id);
+    if (!error) {
+      setApplicants(prev => prev.map(a => a.id === id ? { ...a, is_archived: true, archived_at: new Date().toISOString() } : a));
+      setSelectedApplicant(null);
+      toast.success(lang === "ar" ? "تم الأرشفة بنجاح" : "Archived successfully");
+    }
+  };
+
+  const restoreApplicant = async (id: string) => {
+    const { error } = await supabase.from("applicants").update({ is_archived: false, archived_at: null }).eq("id", id);
+    if (!error) {
+      setApplicants(prev => prev.map(a => a.id === id ? { ...a, is_archived: false, archived_at: null } : a));
+      toast.success(lang === "ar" ? "تمت الاستعادة بنجاح" : "Restored successfully");
+    }
+  };
 
   // Chart data
   const statusData = STATUSES.map((s, i) => ({
