@@ -1025,6 +1025,15 @@ const DashboardPage = () => {
                   <label className="text-sm font-medium">{t("dash.notes")}</label>
                   <Textarea value={editNotes} onChange={e => setEditNotes(e.target.value)} rows={3} />
                   <Button size="sm" onClick={() => saveNotes(selectedApplicant.id)} className="gradient-accent text-accent-foreground">{t("dash.saveNotes")}</Button>
+                  {!selectedApplicant.is_archived ? (
+                    <Button size="sm" variant="outline" className="gap-1 text-destructive border-destructive/30" onClick={() => archiveApplicant(selectedApplicant.id)}>
+                      <Archive className="w-4 h-4" />{lang === "ar" ? "أرشفة" : "Archive"}
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="outline" className="gap-1 text-primary" onClick={() => restoreApplicant(selectedApplicant.id)}>
+                      <RotateCcw className="w-4 h-4" />{lang === "ar" ? "استعادة" : "Restore"}
+                    </Button>
+                  )}
                 </div>
               </div>
             </>
