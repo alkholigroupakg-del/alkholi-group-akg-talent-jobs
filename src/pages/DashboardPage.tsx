@@ -131,7 +131,10 @@ const DashboardPage = () => {
   const [showUserForm, setShowUserForm] = useState(false);
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserPassword, setNewUserPassword] = useState("");
+  const [newUserName, setNewUserName] = useState("");
   const [newUserRole, setNewUserRole] = useState<string>("recruitment_coordinator");
+  const [users, setUsers] = useState<any[]>([]);
+  const [userRoles, setUserRoles] = useState<any[]>([]);
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
@@ -155,6 +158,7 @@ const DashboardPage = () => {
       fetchApplicants();
       fetchJobs();
       fetchProjects();
+      fetchUsers();
     }
   }, [session]);
 
@@ -177,6 +181,13 @@ const DashboardPage = () => {
   const fetchProjects = async () => {
     const { data } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
     if (data) setProjects(data);
+  };
+
+  const fetchUsers = async () => {
+    const { data: profilesData } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+    const { data: rolesData } = await supabase.from("user_roles").select("*");
+    if (profilesData) setUsers(profilesData);
+    if (rolesData) setUserRoles(rolesData);
   };
 
   const handleLogin = async () => {
@@ -325,21 +336,61 @@ const DashboardPage = () => {
     if (!error) { fetchJobs(); toast.success(t("dash.saved")); }
   };
 
-  // User management
+  const callManageUser = async (body: any) => {
+    const { data: { session: s } } = await supabase.auth.getSession();
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-user`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          ...(s?.access_token ? { Authorization: `Bearer ${s.access_token}` } : {}),
+        },
+        body: JSON.stringify(body),
+      }
+    );
+    return res.json();
+  };
+
   const addUser = async () => {
     if (!newUserEmail || !newUserPassword) { toast.error(t("validation.required")); return; }
-    const { data, error } = await supabase.auth.signUp({
+    const result = await callManageUser({
+      action: "create_user",
       email: newUserEmail,
       password: newUserPassword,
+      role: newUserRole,
+      display_name: newUserName || newUserEmail,
     });
-    if (error) { toast.error(error.message); return; }
-    if (data.user) {
-      await supabase.from("user_roles").insert({ user_id: data.user.id, role: newUserRole as any });
-      toast.success(t("dash.userAdded"));
-      setShowUserForm(false);
-      setNewUserEmail("");
-      setNewUserPassword("");
-    }
+    if (result.error) { toast.error(result.error); return; }
+    toast.success(t("dash.userAdded"));
+    setShowUserForm(false);
+    setNewUserEmail("");
+    setNewUserPassword("");
+    setNewUserName("");
+    fetchUsers();
+  };
+
+  const updateUserRole = async (userId: string, role: string) => {
+    const result = await callManageUser({ action: "update_role", user_id: userId, role });
+    if (result.error) { toast.error(result.error); return; }
+    toast.success(t("dash.roleUpdated"));
+    fetchUsers();
+  };
+
+  const toggleUserActive = async (userId: string, isActive: boolean) => {
+    const result = await callManageUser({ action: "toggle_active", user_id: userId, is_active: isActive });
+    if (result.error) { toast.error(result.error); return; }
+    toast.success(t("dash.statusUpdated"));
+    fetchUsers();
+  };
+
+  const deleteUser = async (userId: string) => {
+    if (!confirm(t("dash.confirmDelete"))) return;
+    const result = await callManageUser({ action: "delete_user", user_id: userId });
+    if (result.error) { toast.error(result.error); return; }
+    toast.success(t("dash.userDeleted"));
+    fetchUsers();
   };
 
   // Project management
@@ -568,7 +619,6 @@ const DashboardPage = () => {
             </Card>
           </TabsContent>
 
-          {/* USERS TAB */}
           <TabsContent value="users">
             <Card>
               <CardHeader>
@@ -578,7 +628,66 @@ const DashboardPage = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground text-sm">{lang === "ar" ? "يمكنك إضافة مستخدمين جدد وتعيين أدوارهم من هنا." : "You can add new users and assign their roles here."}</p>
+                {users.length === 0 ? (
+                  <p className="text-muted-foreground text-sm text-center py-8">{t("dash.noUsers")}</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>{t("dash.userName")}</TableHead>
+                          <TableHead>{t("dash.userEmail")}</TableHead>
+                          <TableHead>{t("dash.userRole")}</TableHead>
+                          <TableHead>{t("dash.userStatus")}</TableHead>
+                          <TableHead>{t("dash.actions")}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {users.map((user: any) => {
+                          const userRole = userRoles.find((r: any) => r.user_id === user.user_id);
+                          const isCurrentUser = session?.user?.id === user.user_id;
+                          return (
+                            <TableRow key={user.id}>
+                              <TableCell className="font-medium">{user.display_name || user.email}</TableCell>
+                              <TableCell dir="ltr" className="text-sm">{user.email}</TableCell>
+                              <TableCell>
+                                <Select
+                                  value={userRole?.role || ""}
+                                  onValueChange={(v) => updateUserRole(user.user_id, v)}
+                                  disabled={isCurrentUser}
+                                >
+                                  <SelectTrigger className="w-40"><SelectValue placeholder="-" /></SelectTrigger>
+                                  <SelectContent>
+                                    {ROLES.map(r => <SelectItem key={r} value={r}>{t(`role.${r}`)}</SelectItem>)}
+                                  </SelectContent>
+                                </Select>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <Switch
+                                    checked={user.is_active !== false}
+                                    onCheckedChange={(v) => toggleUserActive(user.user_id, v)}
+                                    disabled={isCurrentUser}
+                                  />
+                                  <span className="text-xs">
+                                    {user.is_active !== false ? t("dash.userActive") : t("dash.userInactive")}
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                {!isCurrentUser && (
+                                  <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteUser(user.user_id)}>
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -859,11 +968,14 @@ const DashboardPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* User Form Dialog */}
       <Dialog open={showUserForm} onOpenChange={setShowUserForm}>
         <DialogContent dir={dir}>
           <DialogHeader><DialogTitle>{t("dash.addUser")}</DialogTitle></DialogHeader>
           <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t("dash.displayName")}</Label>
+              <Input value={newUserName} onChange={e => setNewUserName(e.target.value)} />
+            </div>
             <div className="space-y-2">
               <Label>{t("dash.signupEmail")}</Label>
               <Input value={newUserEmail} onChange={e => setNewUserEmail(e.target.value)} type="email" dir="ltr" />

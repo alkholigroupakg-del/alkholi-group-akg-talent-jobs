@@ -295,6 +295,20 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.questionOrder": "ترتيب العرض",
     "dash.noQuestions": "لا توجد أسئلة مخصصة بعد",
 
+    // User management
+    "dash.userEmail": "البريد الإلكتروني",
+    "dash.userName": "اسم العرض",
+    "dash.userRole": "الصلاحية",
+    "dash.userStatus": "الحالة",
+    "dash.userActive": "مفعّل",
+    "dash.userInactive": "معطّل",
+    "dash.noUsers": "لا يوجد مستخدمين بعد",
+    "dash.confirmDelete": "هل أنت متأكد من حذف هذا المستخدم؟",
+    "dash.userDeleted": "تم حذف المستخدم",
+    "dash.roleUpdated": "تم تحديث الصلاحية",
+    "dash.statusUpdated": "تم تحديث حالة المستخدم",
+    "dash.displayName": "اسم العرض",
+
     // Roles
     "role.admin": "مدير النظام",
     "role.hr_manager": "مدير الموارد البشرية",
@@ -595,6 +609,20 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.questionStep": "Form Step",
     "dash.questionOrder": "Sort Order",
     "dash.noQuestions": "No custom questions yet",
+
+    // User management
+    "dash.userEmail": "Email",
+    "dash.userName": "Display Name",
+    "dash.userRole": "Role",
+    "dash.userStatus": "Status",
+    "dash.userActive": "Active",
+    "dash.userInactive": "Disabled",
+    "dash.noUsers": "No users yet",
+    "dash.confirmDelete": "Are you sure you want to delete this user?",
+    "dash.userDeleted": "User deleted",
+    "dash.roleUpdated": "Role updated",
+    "dash.statusUpdated": "User status updated",
+    "dash.displayName": "Display Name",
 
     // Roles
     "role.admin": "System Admin",
