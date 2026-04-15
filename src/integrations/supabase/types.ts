@@ -242,6 +242,36 @@ export type Database = {
         }
         Relationships: []
       }
+      dropdown_options: {
+        Row: {
+          created_at: string
+          field_name: string
+          id: string
+          is_active: boolean
+          options_ar: string[]
+          options_en: string[]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          field_name: string
+          id?: string
+          is_active?: boolean
+          options_ar?: string[]
+          options_en?: string[]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          field_name?: string
+          id?: string
+          is_active?: boolean
+          options_ar?: string[]
+          options_en?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       job_postings: {
         Row: {
           additional_details_ar: string | null
@@ -399,6 +429,39 @@ export type Database = {
           is_active?: boolean
           name_ar?: string
           name_en?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          accent_color: string | null
+          created_at: string
+          id: string
+          logo_url: string | null
+          primary_color: string | null
+          site_name_ar: string | null
+          site_name_en: string | null
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          primary_color?: string | null
+          site_name_ar?: string | null
+          site_name_en?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          primary_color?: string | null
+          site_name_ar?: string | null
+          site_name_en?: string | null
           updated_at?: string
         }
         Relationships: []
