@@ -272,6 +272,45 @@ export type Database = {
         }
         Relationships: []
       }
+      form_field_config: {
+        Row: {
+          created_at: string
+          field_name: string
+          id: string
+          is_required: boolean
+          is_visible: boolean
+          label_ar: string | null
+          label_en: string | null
+          sort_order: number
+          step_number: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          field_name: string
+          id?: string
+          is_required?: boolean
+          is_visible?: boolean
+          label_ar?: string | null
+          label_en?: string | null
+          sort_order?: number
+          step_number?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          field_name?: string
+          id?: string
+          is_required?: boolean
+          is_visible?: boolean
+          label_ar?: string | null
+          label_en?: string | null
+          sort_order?: number
+          step_number?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       job_postings: {
         Row: {
           additional_details_ar: string | null
