@@ -318,12 +318,16 @@ const DashboardPage = () => {
       description_ar: jobForm.description_ar || null,
       description_en: jobForm.description_en || null,
       location: jobForm.location,
+      location_en: jobForm.location_en || null,
       job_type: jobForm.job_type,
+      job_type_en: jobForm.job_type_en || null,
       department: jobForm.department || null,
+      department_en: jobForm.department_en || null,
       requirements_ar: jobForm.requirements_ar || null,
       requirements_en: jobForm.requirements_en || null,
       is_active: jobForm.is_active,
       nationality_required: jobForm.nationality_required || null,
+      nationality_required_en: jobForm.nationality_required_en || null,
       vacancy_count: jobForm.vacancy_count || 1,
     };
 
