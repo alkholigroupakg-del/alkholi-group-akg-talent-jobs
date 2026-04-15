@@ -446,6 +446,7 @@ export type Database = {
           description_en: string | null
           id: string
           is_active: boolean
+          logo_url: string | null
           name_ar: string
           name_en: string | null
           updated_at: string
@@ -456,6 +457,7 @@ export type Database = {
           description_en?: string | null
           id?: string
           is_active?: boolean
+          logo_url?: string | null
           name_ar: string
           name_en?: string | null
           updated_at?: string
@@ -466,6 +468,7 @@ export type Database = {
           description_en?: string | null
           id?: string
           is_active?: boolean
+          logo_url?: string | null
           name_ar?: string
           name_en?: string | null
           updated_at?: string
@@ -476,31 +479,118 @@ export type Database = {
         Row: {
           accent_color: string | null
           created_at: string
+          cta_desc_ar: string | null
+          cta_desc_en: string | null
+          cta_title_ar: string | null
+          cta_title_en: string | null
+          employee_count: string | null
+          feature1_desc_ar: string | null
+          feature1_desc_en: string | null
+          feature1_title_ar: string | null
+          feature1_title_en: string | null
+          feature2_desc_ar: string | null
+          feature2_desc_en: string | null
+          feature2_title_ar: string | null
+          feature2_title_en: string | null
+          feature3_desc_ar: string | null
+          feature3_desc_en: string | null
+          feature3_title_ar: string | null
+          feature3_title_en: string | null
+          founding_year: string | null
+          hero_desc_ar: string | null
+          hero_desc_en: string | null
+          hero_title1_ar: string | null
+          hero_title1_en: string | null
+          hero_title2_ar: string | null
+          hero_title2_en: string | null
           id: string
           logo_url: string | null
           primary_color: string | null
+          projects_count: string | null
+          show_projects_section: boolean | null
+          show_stats_section: boolean | null
           site_name_ar: string | null
           site_name_en: string | null
+          stats_section_title_ar: string | null
+          stats_section_title_en: string | null
           updated_at: string
         }
         Insert: {
           accent_color?: string | null
           created_at?: string
+          cta_desc_ar?: string | null
+          cta_desc_en?: string | null
+          cta_title_ar?: string | null
+          cta_title_en?: string | null
+          employee_count?: string | null
+          feature1_desc_ar?: string | null
+          feature1_desc_en?: string | null
+          feature1_title_ar?: string | null
+          feature1_title_en?: string | null
+          feature2_desc_ar?: string | null
+          feature2_desc_en?: string | null
+          feature2_title_ar?: string | null
+          feature2_title_en?: string | null
+          feature3_desc_ar?: string | null
+          feature3_desc_en?: string | null
+          feature3_title_ar?: string | null
+          feature3_title_en?: string | null
+          founding_year?: string | null
+          hero_desc_ar?: string | null
+          hero_desc_en?: string | null
+          hero_title1_ar?: string | null
+          hero_title1_en?: string | null
+          hero_title2_ar?: string | null
+          hero_title2_en?: string | null
           id?: string
           logo_url?: string | null
           primary_color?: string | null
+          projects_count?: string | null
+          show_projects_section?: boolean | null
+          show_stats_section?: boolean | null
           site_name_ar?: string | null
           site_name_en?: string | null
+          stats_section_title_ar?: string | null
+          stats_section_title_en?: string | null
           updated_at?: string
         }
         Update: {
           accent_color?: string | null
           created_at?: string
+          cta_desc_ar?: string | null
+          cta_desc_en?: string | null
+          cta_title_ar?: string | null
+          cta_title_en?: string | null
+          employee_count?: string | null
+          feature1_desc_ar?: string | null
+          feature1_desc_en?: string | null
+          feature1_title_ar?: string | null
+          feature1_title_en?: string | null
+          feature2_desc_ar?: string | null
+          feature2_desc_en?: string | null
+          feature2_title_ar?: string | null
+          feature2_title_en?: string | null
+          feature3_desc_ar?: string | null
+          feature3_desc_en?: string | null
+          feature3_title_ar?: string | null
+          feature3_title_en?: string | null
+          founding_year?: string | null
+          hero_desc_ar?: string | null
+          hero_desc_en?: string | null
+          hero_title1_ar?: string | null
+          hero_title1_en?: string | null
+          hero_title2_ar?: string | null
+          hero_title2_en?: string | null
           id?: string
           logo_url?: string | null
           primary_color?: string | null
+          projects_count?: string | null
+          show_projects_section?: boolean | null
+          show_stats_section?: boolean | null
           site_name_ar?: string | null
           site_name_en?: string | null
+          stats_section_title_ar?: string | null
+          stats_section_title_en?: string | null
           updated_at?: string
         }
         Relationships: []
