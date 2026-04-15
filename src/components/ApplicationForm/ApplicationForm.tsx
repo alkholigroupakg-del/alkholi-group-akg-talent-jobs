@@ -22,6 +22,7 @@ interface Props {
 
 const ApplicationForm = ({ preSelectedPosition }: Props) => {
   const { t, lang, dir } = useLanguage();
+  const fc = useFieldConfig();
 
   const stepLabels = [
     t("step.basic"), t("step.job"), t("step.edu"),
