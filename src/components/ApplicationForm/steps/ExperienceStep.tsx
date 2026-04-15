@@ -36,6 +36,17 @@ const ExperienceStep = ({ data, onChange }: Props) => {
         <FormField label={t("field.englishLevel")} name="englishLevel" type="select" required value={data.englishLevel || ""} onChange={onChange} options={langLevelOptions} />
         <FormField label={t("field.otherLanguage")} name="otherLanguage" type="text" value={data.otherLanguage || ""} onChange={onChange} placeholder={t("ph.otherLanguage")} />
         <FormField label={t("field.linkedin")} name="linkedin" type="text" required value={data.linkedin || ""} onChange={onChange} placeholder={t("ph.linkedin")} />
+        <div className="md:col-span-2">
+          <FormField
+            label={t("field.facilityManagementExp")}
+            name="facilityManagementExp"
+            type="select"
+            required
+            value={data.facilityManagementExp || ""}
+            onChange={onChange}
+            options={[t("opt.facilityYes"), t("opt.facilityContractor"), t("opt.facilityNo")]}
+          />
+        </div>
       </div>
     </div>
   );

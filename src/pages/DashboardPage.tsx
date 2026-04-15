@@ -81,6 +81,7 @@ interface JobPosting {
   requirements_en: string | null;
   is_active: boolean;
   nationality_required: string | null;
+  vacancy_count: number;
   created_at: string;
 }
 
@@ -122,7 +123,7 @@ const DashboardPage = () => {
     title_ar: "", title_en: "", description_ar: "", description_en: "",
     location: "الرياض، المملكة العربية السعودية", job_type: "دوام كامل",
     department: "", requirements_ar: "", requirements_en: "",
-    is_active: true, nationality_required: "",
+    is_active: true, nationality_required: "", vacancy_count: 1,
   });
 
   // User form state
@@ -273,6 +274,7 @@ const DashboardPage = () => {
         requirements_en: job.requirements_en || "",
         is_active: job.is_active,
         nationality_required: job.nationality_required || "",
+        vacancy_count: (job as any).vacancy_count || 1,
       });
     } else {
       setEditingJob(null);
@@ -280,7 +282,7 @@ const DashboardPage = () => {
         title_ar: "", title_en: "", description_ar: "", description_en: "",
         location: "الرياض، المملكة العربية السعودية", job_type: "دوام كامل",
         department: "", requirements_ar: "", requirements_en: "",
-        is_active: true, nationality_required: "",
+        is_active: true, nationality_required: "", vacancy_count: 1,
       });
     }
     setShowJobForm(true);
@@ -300,6 +302,7 @@ const DashboardPage = () => {
       requirements_en: jobForm.requirements_en || null,
       is_active: jobForm.is_active,
       nationality_required: jobForm.nationality_required || null,
+      vacancy_count: jobForm.vacancy_count || 1,
     };
 
     if (editingJob) {
@@ -826,9 +829,15 @@ const DashboardPage = () => {
               <Label>{t("dash.jobReqEn")}</Label>
               <Textarea value={jobForm.requirements_en} onChange={e => setJobForm(p => ({ ...p, requirements_en: e.target.value }))} rows={3} dir="ltr" />
             </div>
-            <div className="flex items-center gap-3">
-              <Switch checked={jobForm.is_active} onCheckedChange={v => setJobForm(p => ({ ...p, is_active: v }))} />
-              <Label>{jobForm.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t("dash.vacancyCount")}</Label>
+                <Input type="number" min={1} value={jobForm.vacancy_count} onChange={e => setJobForm(p => ({ ...p, vacancy_count: parseInt(e.target.value) || 1 }))} />
+              </div>
+              <div className="flex items-center gap-3 pt-6">
+                <Switch checked={jobForm.is_active} onCheckedChange={v => setJobForm(p => ({ ...p, is_active: v }))} />
+                <Label>{jobForm.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Label>
+              </div>
             </div>
             <div className="flex gap-3 justify-end">
               <Button variant="outline" onClick={() => setShowJobForm(false)}>{t("dash.cancel")}</Button>
