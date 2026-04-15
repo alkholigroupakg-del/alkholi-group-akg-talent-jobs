@@ -158,6 +158,7 @@ const DashboardPage = () => {
       fetchApplicants();
       fetchJobs();
       fetchProjects();
+      fetchUsers();
     }
   }, [session]);
 
