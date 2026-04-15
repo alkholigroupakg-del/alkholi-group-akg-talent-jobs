@@ -1,6 +1,6 @@
 import FormField from "../FormField";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getNationalities, getSaudiCities } from "@/data/jobPositions";
+import { useDropdownOptions } from "@/hooks/useDropdownOptions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -11,12 +11,13 @@ interface Props {
 
 const BasicInfoStep = ({ data, onChange }: Props) => {
   const { t, lang, dir } = useLanguage();
+  const dd = useDropdownOptions(lang);
 
   const genderOptions = [t("opt.male"), t("opt.female")];
   const maritalOptions = [t("opt.single"), t("opt.married"), t("opt.divorced"), t("opt.widowed")];
   const transportOptions = [t("opt.yes"), t("opt.no")];
-  const nationalities = getNationalities(lang);
-  const cities = getSaudiCities(lang);
+  const nationalities = dd.getNationalities();
+  const cities = dd.getCities();
 
   const otherLabel = lang === "ar" ? "أخرى" : "Other";
   const isOtherNationality = data.nationality === otherLabel;

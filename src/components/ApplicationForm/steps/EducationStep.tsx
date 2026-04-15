@@ -1,6 +1,6 @@
 import FormField from "../FormField";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getEducationLevels } from "@/data/jobPositions";
+import { useDropdownOptions } from "@/hooks/useDropdownOptions";
 
 interface Props {
   data: Record<string, string>;
@@ -9,6 +9,7 @@ interface Props {
 
 const EducationStep = ({ data, onChange }: Props) => {
   const { t, lang } = useLanguage();
+  const dd = useDropdownOptions(lang);
 
   const yesNoOptions = [t("opt.yes"), t("opt.no")];
 
@@ -16,7 +17,7 @@ const EducationStep = ({ data, onChange }: Props) => {
     <div className="space-y-5 animate-fade-in">
       <h3 className="text-xl font-bold text-primary mb-6">{t("step.edu")}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <FormField label={t("field.educationLevel")} name="educationLevel" type="select" required value={data.educationLevel || ""} onChange={onChange} options={getEducationLevels(lang)} />
+        <FormField label={t("field.educationLevel")} name="educationLevel" type="select" required value={data.educationLevel || ""} onChange={onChange} options={dd.getEducationLevels()} />
         <FormField label={t("field.major")} name="major" type="text" required value={data.major || ""} onChange={onChange} placeholder={t("ph.major")} />
         <FormField label={t("field.university")} name="university" type="text" required value={data.university || ""} onChange={onChange} placeholder={t("ph.university")} />
         <FormField label={t("field.graduationYear")} name="graduationYear" type="text" required value={data.graduationYear || ""} onChange={onChange} placeholder={t("ph.graduationYear")} />
