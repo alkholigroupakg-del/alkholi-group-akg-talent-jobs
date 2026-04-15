@@ -201,6 +201,15 @@ const DashboardPage = () => {
     }
   };
 
+  const getFileUrl = (path: string | null) => {
+    if (!path) return "";
+    // Already a full URL
+    if (path.startsWith("http")) return path;
+    // Build public URL from storage path
+    const baseUrl = import.meta.env.VITE_SUPABASE_URL;
+    return `${baseUrl}/storage/v1/object/public/resumes/${path}`;
+  };
+
   const exportExcel = () => {
     const rows = applicants.map(a => ({
       [t("dash.name")]: a.full_name,
@@ -240,11 +249,11 @@ const DashboardPage = () => {
       [t("dash.status")]: t(`status.${a.status}`),
       [t("dash.date")]: new Date(a.created_at).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US"),
       [t("dash.notes")]: a.notes,
-      [t("field.resume")]: a.resume_url,
-      [t("field.degreeCopy")]: a.degree_url,
-      [t("field.experienceCert")]: a.experience_cert_url,
-      [t("field.trainingCerts")]: a.training_certs_url,
-      [t("field.otherDocs")]: a.other_docs_url,
+      [t("field.resume")]: getFileUrl(a.resume_url),
+      [t("field.degreeCopy")]: getFileUrl(a.degree_url),
+      [t("field.experienceCert")]: getFileUrl(a.experience_cert_url),
+      [t("field.trainingCerts")]: getFileUrl(a.training_certs_url),
+      [t("field.otherDocs")]: getFileUrl(a.other_docs_url),
     }));
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
