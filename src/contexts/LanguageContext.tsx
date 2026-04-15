@@ -276,6 +276,8 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.projectNameEn": "اسم المشروع (إنجليزي)",
     "dash.projectDesc": "وصف المشروع",
     "dash.nationalityRequired": "الجنسية المطلوبة",
+    "dash.arabic": "عربي",
+    "dash.english": "إنجليزي",
 
     // Settings / Custom Questions
     "dash.tab.settings": "الإعدادات",
@@ -591,6 +593,8 @@ const translations: Record<Lang, Record<string, string>> = {
     "dash.projectNameEn": "Project Name (English)",
     "dash.projectDesc": "Project Description",
     "dash.nationalityRequired": "Required Nationality",
+    "dash.arabic": "Arabic",
+    "dash.english": "English",
 
     // Settings / Custom Questions
     "dash.tab.settings": "Settings",
