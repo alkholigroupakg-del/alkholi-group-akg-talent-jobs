@@ -148,7 +148,7 @@ const JobsPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map(job => {
               const title = lang === "ar" ? job.title_ar : (job.title_en || job.title_ar);
-              const natLabel = getNationalityLabel(job.nationality_required);
+              const natLabel = biField(job.nationality_required, job.nationality_required_en) || null;
               return (
                 <div key={job.id} className="bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
                   <div className="p-6 flex-1">
@@ -164,7 +164,7 @@ const JobsPage = () => {
 
                     {/* Job Info */}
                     <h3 className="text-lg font-bold text-foreground mb-1">{title}</h3>
-                    <p className="text-muted-foreground text-sm mb-2">{getDeptLabel(job.department)}</p>
+                    <p className="text-muted-foreground text-sm mb-2">{biField(job.department, job.department_en) || (lang === "ar" ? "عام" : "General")}</p>
                     {(lang === "ar" ? job.description_ar : (job.description_en || job.description_ar)) && (
                       <p className="text-muted-foreground text-xs mb-4 line-clamp-2">
                         {lang === "ar" ? job.description_ar : (job.description_en || job.description_ar)}
@@ -175,11 +175,11 @@ const JobsPage = () => {
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <MapPin className="w-4 h-4 text-accent shrink-0" />
-                        <span>{getLocationLabel(job.location)}</span>
+                        <span>{biField(job.location, job.location_en)}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Clock className="w-4 h-4 text-accent shrink-0" />
-                        <span>{getJobTypeLabel(job.job_type)}</span>
+                        <span>{biField(job.job_type, job.job_type_en)}</span>
                       </div>
                       {natLabel && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
