@@ -130,6 +130,9 @@ const DashboardPage = () => {
     job_type: "دوام كامل", job_type_en: "Full-time",
     department: "", department_en: "", requirements_ar: "", requirements_en: "",
     is_active: true, nationality_required: "", nationality_required_en: "", vacancy_count: 1,
+    experience_required_ar: "", experience_required_en: "",
+    degree_required_ar: "", degree_required_en: "",
+    additional_details_ar: "", additional_details_en: "",
   });
 
   // User form state
@@ -296,6 +299,12 @@ const DashboardPage = () => {
         nationality_required: job.nationality_required || "",
         nationality_required_en: (job as any).nationality_required_en || "",
         vacancy_count: (job as any).vacancy_count || 1,
+        experience_required_ar: (job as any).experience_required_ar || "",
+        experience_required_en: (job as any).experience_required_en || "",
+        degree_required_ar: (job as any).degree_required_ar || "",
+        degree_required_en: (job as any).degree_required_en || "",
+        additional_details_ar: (job as any).additional_details_ar || "",
+        additional_details_en: (job as any).additional_details_en || "",
       });
     } else {
       setEditingJob(null);
@@ -305,6 +314,9 @@ const DashboardPage = () => {
         job_type: "دوام كامل", job_type_en: "Full-time",
         department: "", department_en: "", requirements_ar: "", requirements_en: "",
         is_active: true, nationality_required: "", nationality_required_en: "", vacancy_count: 1,
+        experience_required_ar: "", experience_required_en: "",
+        degree_required_ar: "", degree_required_en: "",
+        additional_details_ar: "", additional_details_en: "",
       });
     }
     setShowJobForm(true);
