@@ -244,11 +244,17 @@ export type Database = {
       }
       job_postings: {
         Row: {
+          additional_details_ar: string | null
+          additional_details_en: string | null
           created_at: string
+          degree_required_ar: string | null
+          degree_required_en: string | null
           department: string | null
           department_en: string | null
           description_ar: string | null
           description_en: string | null
+          experience_required_ar: string | null
+          experience_required_en: string | null
           id: string
           is_active: boolean
           job_type: string
@@ -267,11 +273,17 @@ export type Database = {
           vacancy_count: number
         }
         Insert: {
+          additional_details_ar?: string | null
+          additional_details_en?: string | null
           created_at?: string
+          degree_required_ar?: string | null
+          degree_required_en?: string | null
           department?: string | null
           department_en?: string | null
           description_ar?: string | null
           description_en?: string | null
+          experience_required_ar?: string | null
+          experience_required_en?: string | null
           id?: string
           is_active?: boolean
           job_type: string
@@ -290,11 +302,17 @@ export type Database = {
           vacancy_count?: number
         }
         Update: {
+          additional_details_ar?: string | null
+          additional_details_en?: string | null
           created_at?: string
+          degree_required_ar?: string | null
+          degree_required_en?: string | null
           department?: string | null
           department_en?: string | null
           description_ar?: string | null
           description_en?: string | null
+          experience_required_ar?: string | null
+          experience_required_en?: string | null
           id?: string
           is_active?: boolean
           job_type?: string
