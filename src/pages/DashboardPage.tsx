@@ -183,6 +183,13 @@ const DashboardPage = () => {
     if (data) setProjects(data);
   };
 
+  const fetchUsers = async () => {
+    const { data: profilesData } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+    const { data: rolesData } = await supabase.from("user_roles").select("*");
+    if (profilesData) setUsers(profilesData);
+    if (rolesData) setUserRoles(rolesData);
+  };
+
   const handleLogin = async () => {
     setLoginLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginPassword });
