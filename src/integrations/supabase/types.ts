@@ -17,6 +17,7 @@ export type Database = {
       applicants: {
         Row: {
           arabic_level: string | null
+          archived_at: string | null
           available_date: string | null
           birth_date: string | null
           created_at: string
@@ -43,6 +44,7 @@ export type Database = {
           has_transport: string | null
           hear_about: string | null
           id: string
+          is_archived: boolean
           job_type: string | null
           linkedin: string | null
           major: string | null
@@ -64,6 +66,7 @@ export type Database = {
         }
         Insert: {
           arabic_level?: string | null
+          archived_at?: string | null
           available_date?: string | null
           birth_date?: string | null
           created_at?: string
@@ -90,6 +93,7 @@ export type Database = {
           has_transport?: string | null
           hear_about?: string | null
           id?: string
+          is_archived?: boolean
           job_type?: string | null
           linkedin?: string | null
           major?: string | null
@@ -111,6 +115,7 @@ export type Database = {
         }
         Update: {
           arabic_level?: string | null
+          archived_at?: string | null
           available_date?: string | null
           birth_date?: string | null
           created_at?: string
@@ -137,6 +142,7 @@ export type Database = {
           has_transport?: string | null
           hear_about?: string | null
           id?: string
+          is_archived?: boolean
           job_type?: string | null
           linkedin?: string | null
           major?: string | null
