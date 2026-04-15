@@ -674,6 +674,9 @@ const translations: Record<Lang, Record<string, string>> = {
     "status.hired": "Hired",
     "status.rejected": "Rejected",
     "status.withdrawn": "Withdrawn",
+
+    // Admin login
+    "admin.loginDesc": "HR & Management Team Portal",
   },
 };
 
