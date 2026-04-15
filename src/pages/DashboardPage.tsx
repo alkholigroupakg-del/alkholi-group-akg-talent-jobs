@@ -341,6 +341,12 @@ const DashboardPage = () => {
       nationality_required: jobForm.nationality_required || null,
       nationality_required_en: jobForm.nationality_required_en || null,
       vacancy_count: jobForm.vacancy_count || 1,
+      experience_required_ar: jobForm.experience_required_ar || null,
+      experience_required_en: jobForm.experience_required_en || null,
+      degree_required_ar: jobForm.degree_required_ar || null,
+      degree_required_en: jobForm.degree_required_en || null,
+      additional_details_ar: jobForm.additional_details_ar || null,
+      additional_details_en: jobForm.additional_details_en || null,
     };
 
     if (editingJob) {
