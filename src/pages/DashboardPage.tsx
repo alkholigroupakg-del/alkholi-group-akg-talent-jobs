@@ -156,6 +156,7 @@ const DashboardPage = () => {
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [projectForm, setProjectForm] = useState({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" });
   const [projects, setProjects] = useState<any[]>([]);
 
@@ -426,14 +427,17 @@ const DashboardPage = () => {
   // Project management
   const saveProject = async () => {
     if (!projectForm.name_ar) { toast.error(t("validation.required")); return; }
-    const { error } = await supabase.from("projects").insert({
+    const payload = {
       name_ar: projectForm.name_ar,
       name_en: projectForm.name_en || null,
       description_ar: projectForm.description_ar || null,
       description_en: projectForm.description_en || null,
       logo_url: projectForm.logo_url || null,
-    });
-    if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); }
+    };
+    const { error } = editingProjectId
+      ? await supabase.from("projects").update(payload).eq("id", editingProjectId)
+      : await supabase.from("projects").insert(payload);
+    if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setEditingProjectId(null); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); }
   };
 
   const activeApplicants = applicants.filter(a => !a.is_archived);
@@ -798,7 +802,7 @@ const DashboardPage = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2"><FolderOpen className="w-5 h-5" />{t("dash.projects")}</CardTitle>
-                  <Button onClick={() => setShowProjectForm(true)} className="gradient-accent text-accent-foreground gap-2"><Plus className="w-4 h-4" />{t("dash.addProject")}</Button>
+                  <Button onClick={() => { setEditingProjectId(null); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); setShowProjectForm(true); }} className="gradient-accent text-accent-foreground gap-2"><Plus className="w-4 h-4" />{t("dash.addProject")}</Button>
                 </div>
               </CardHeader>
               <CardContent>
@@ -823,6 +827,13 @@ const DashboardPage = () => {
                           <div className="flex items-center justify-between mt-3">
                             <Badge variant={p.is_active ? "default" : "secondary"}>{p.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Badge>
                             <div className="flex gap-1">
+                              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => {
+                                setEditingProjectId(p.id);
+                                setProjectForm({ name_ar: p.name_ar, name_en: p.name_en || "", description_ar: p.description_ar || "", description_en: p.description_en || "", logo_url: p.logo_url || "" });
+                                setShowProjectForm(true);
+                              }}>
+                                <Pencil className="w-3.5 h-3.5" />
+                              </Button>
                               <Button size="icon" variant="ghost" className="h-7 w-7" onClick={async () => {
                                 await supabase.from("projects").update({ is_active: !p.is_active }).eq("id", p.id);
                                 fetchProjects();
@@ -1174,9 +1185,9 @@ const DashboardPage = () => {
       </Dialog>
 
       {/* Project Form Dialog */}
-      <Dialog open={showProjectForm} onOpenChange={setShowProjectForm}>
+      <Dialog open={showProjectForm} onOpenChange={(open) => { setShowProjectForm(open); if (!open) setEditingProjectId(null); }}>
         <DialogContent dir={dir}>
-          <DialogHeader><DialogTitle>{t("dash.addProject")}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editingProjectId ? (lang === "ar" ? "تعديل المشروع" : "Edit Project") : t("dash.addProject")}</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>{t("dash.projectName")} *</Label>

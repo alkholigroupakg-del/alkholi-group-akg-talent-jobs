@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
-import { Palette, Upload, Save } from "lucide-react";
+import { Palette, Upload, Save, Image } from "lucide-react";
 import { invalidateSiteSettingsCache } from "@/hooks/useSiteSettings";
 
 interface Settings {
@@ -16,6 +19,10 @@ interface Settings {
   accent_color: string;
   site_name_ar: string;
   site_name_en: string;
+  logo_height: string;
+  logo_alignment: string;
+  logo_border_radius: string;
+  logo_bg_enabled: boolean;
 }
 
 const BrandingSettings = () => {
@@ -33,7 +40,18 @@ const BrandingSettings = () => {
       .select("*")
       .limit(1)
       .single();
-    if (data) setSettings(data as Settings);
+    if (data) setSettings({
+      id: data.id,
+      logo_url: data.logo_url,
+      primary_color: data.primary_color || "#1a365d",
+      accent_color: data.accent_color || "#2f855a",
+      site_name_ar: data.site_name_ar || "",
+      site_name_en: data.site_name_en || "",
+      logo_height: (data as any).logo_height || "56",
+      logo_alignment: (data as any).logo_alignment || "start",
+      logo_border_radius: (data as any).logo_border_radius || "8",
+      logo_bg_enabled: (data as any).logo_bg_enabled ?? true,
+    });
   };
 
   const handleLogoUpload = async (file: File) => {
@@ -67,7 +85,11 @@ const BrandingSettings = () => {
         accent_color: settings.accent_color,
         site_name_ar: settings.site_name_ar,
         site_name_en: settings.site_name_en,
-      })
+        logo_height: settings.logo_height,
+        logo_alignment: settings.logo_alignment,
+        logo_border_radius: settings.logo_border_radius,
+        logo_bg_enabled: settings.logo_bg_enabled,
+      } as any)
       .eq("id", settings.id);
 
     if (error) {
@@ -81,6 +103,8 @@ const BrandingSettings = () => {
 
   if (!settings) return null;
 
+  const logoH = parseInt(settings.logo_height) || 56;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -88,7 +112,7 @@ const BrandingSettings = () => {
         <h3 className="text-lg font-bold">{lang === "ar" ? "تخصيص الهوية البصرية" : "Branding Settings"}</h3>
       </div>
 
-      {/* Logo */}
+      {/* Logo Upload */}
       <Card>
         <CardContent className="p-4 space-y-4">
           <Label className="font-medium">{lang === "ar" ? "الشعار" : "Logo"}</Label>
@@ -100,7 +124,7 @@ const BrandingSettings = () => {
                 {lang === "ar" ? "لا شعار" : "No logo"}
               </div>
             )}
-            <div>
+            <div className="space-y-2">
               <input
                 ref={fileRef}
                 type="file"
@@ -112,8 +136,86 @@ const BrandingSettings = () => {
                 <Upload className="w-4 h-4" />
                 {uploading ? "..." : (lang === "ar" ? "رفع شعار جديد" : "Upload new logo")}
               </Button>
+              {settings.logo_url && (
+                <Button variant="ghost" size="sm" onClick={() => setSettings({ ...settings, logo_url: null })} className="text-destructive text-xs">
+                  {lang === "ar" ? "إزالة الشعار" : "Remove logo"}
+                </Button>
+              )}
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Logo Customization */}
+      <Card>
+        <CardContent className="p-4 space-y-5">
+          <div className="flex items-center gap-2">
+            <Image className="w-4 h-4" />
+            <Label className="font-medium">{lang === "ar" ? "تخصيص الشعار في الصفحة الرئيسية" : "Homepage Logo Customization"}</Label>
+          </div>
+
+          {/* Size */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground">{lang === "ar" ? "حجم الشعار (بكسل)" : "Logo Size (px)"}: {logoH}px</Label>
+            <Slider
+              value={[logoH]}
+              onValueChange={([v]) => setSettings({ ...settings, logo_height: String(v) })}
+              min={24}
+              max={120}
+              step={4}
+            />
+          </div>
+
+          {/* Alignment */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground">{lang === "ar" ? "محاذاة الشعار" : "Logo Alignment"}</Label>
+            <Select value={settings.logo_alignment} onValueChange={v => setSettings({ ...settings, logo_alignment: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="start">{lang === "ar" ? "بداية (افتراضي)" : "Start (default)"}</SelectItem>
+                <SelectItem value="center">{lang === "ar" ? "وسط" : "Center"}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Border Radius */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground">{lang === "ar" ? "استدارة الزوايا" : "Border Radius"}: {settings.logo_border_radius}px</Label>
+            <Slider
+              value={[parseInt(settings.logo_border_radius) || 8]}
+              onValueChange={([v]) => setSettings({ ...settings, logo_border_radius: String(v) })}
+              min={0}
+              max={32}
+              step={2}
+            />
+          </div>
+
+          {/* Background */}
+          <div className="flex items-center justify-between">
+            <Label className="text-sm">{lang === "ar" ? "خلفية شفافة للشعار" : "Logo Background"}</Label>
+            <div className="flex items-center gap-2">
+              <Switch checked={settings.logo_bg_enabled} onCheckedChange={v => setSettings({ ...settings, logo_bg_enabled: v })} />
+              <span className="text-xs text-muted-foreground">{settings.logo_bg_enabled ? (lang === "ar" ? "مفعّل" : "On") : (lang === "ar" ? "معطّل" : "Off")}</span>
+            </div>
+          </div>
+
+          {/* Preview */}
+          {settings.logo_url && (
+            <div className="mt-3 p-4 rounded-lg border bg-muted/30">
+              <p className="text-xs text-muted-foreground mb-2">{lang === "ar" ? "معاينة" : "Preview"}</p>
+              <div className={`flex ${settings.logo_alignment === "center" ? "justify-center" : "justify-start"}`}>
+                <img
+                  src={settings.logo_url}
+                  alt="Preview"
+                  style={{
+                    height: `${logoH}px`,
+                    borderRadius: `${settings.logo_border_radius}px`,
+                  }}
+                  className={`object-contain ${settings.logo_bg_enabled ? "bg-card/80 backdrop-blur-sm px-4 py-2" : ""}`}
+                />
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
