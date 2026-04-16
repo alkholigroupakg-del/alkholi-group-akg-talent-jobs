@@ -54,6 +54,7 @@ const DropdownOptionsSettings = () => {
   const [newAr, setNewAr] = useState("");
   const [newEn, setNewEn] = useState("");
   const [locked, setLocked] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
