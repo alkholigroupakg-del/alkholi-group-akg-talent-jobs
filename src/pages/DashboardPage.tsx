@@ -26,6 +26,7 @@ import BackupSettings from "@/components/Dashboard/BackupSettings";
 import FormFieldsSettings from "@/components/Dashboard/FormFieldsSettings";
 import SiteContentSettings from "@/components/Dashboard/SiteContentSettings";
 import AdvancedAnalytics from "@/components/Dashboard/AdvancedAnalytics";
+import UIStylingSettings from "@/components/Dashboard/UIStylingSettings";
 
 type ApplicantStatus = "new" | "reviewing" | "phone_interview" | "in_person_interview" | "accepted" | "hired" | "rejected" | "withdrawn";
 
@@ -867,6 +868,11 @@ const DashboardPage = () => {
               <Card>
                 <CardContent className="p-6">
                   <CustomQuestionsSettings />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <UIStylingSettings />
                 </CardContent>
               </Card>
             </div>

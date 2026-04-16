@@ -527,6 +527,7 @@ export type Database = {
           success_desc_en: string | null
           success_title_ar: string | null
           success_title_en: string | null
+          ui_styles: Json | null
           updated_at: string
         }
         Insert: {
@@ -574,6 +575,7 @@ export type Database = {
           success_desc_en?: string | null
           success_title_ar?: string | null
           success_title_en?: string | null
+          ui_styles?: Json | null
           updated_at?: string
         }
         Update: {
@@ -621,6 +623,7 @@ export type Database = {
           success_desc_en?: string | null
           success_title_ar?: string | null
           success_title_en?: string | null
+          ui_styles?: Json | null
           updated_at?: string
         }
         Relationships: []
