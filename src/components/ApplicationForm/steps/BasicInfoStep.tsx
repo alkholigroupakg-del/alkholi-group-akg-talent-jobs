@@ -19,7 +19,7 @@ const BasicInfoStep = ({ data, onChange }: Props) => {
   const maritalOptions = dd.getMaritalStatusOptions();
   const transportOptions = dd.getYesNoOptions();
   const nationalities = dd.getNationalities();
-  const cities = dd.getCities();
+  const cities = dd.getCurrentCities();
 
   const otherLabel = lang === "ar" ? "أخرى" : "Other";
   const isOtherNationality = data.nationality === otherLabel;
