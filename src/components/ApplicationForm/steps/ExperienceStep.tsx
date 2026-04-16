@@ -13,11 +13,8 @@ const ExperienceStep = ({ data, onChange }: Props) => {
   const dd = useDropdownOptions(lang);
   const fc = useFieldConfig();
 
-  const yesNoOptions = [t("opt.yes"), t("opt.no")];
-  const langLevelOptions = [
-    t("opt.excellent"), t("opt.veryGood"), t("opt.good"),
-    t("opt.average"), t("opt.beginner"),
-  ];
+  const yesNoOptions = dd.getYesNoOptions();
+  const langLevelOptions = dd.getLanguageLevels();
 
   const show = fc.isVisible;
   const req = fc.isRequired;
@@ -39,7 +36,7 @@ const ExperienceStep = ({ data, onChange }: Props) => {
         {show("linkedin") && <FormField label={lbl("linkedin", t("field.linkedin"))} name="linkedin" type="text" required={req("linkedin")} value={data.linkedin || ""} onChange={onChange} placeholder={t("ph.linkedin")} />}
         {show("facilityManagementExp") && (
           <div className="md:col-span-2">
-            <FormField label={lbl("facilityManagementExp", t("field.facilityManagementExp"))} name="facilityManagementExp" type="select" required={req("facilityManagementExp")} value={data.facilityManagementExp || ""} onChange={onChange} options={[t("opt.facilityYes"), t("opt.facilityContractor"), t("opt.facilityBoth"), t("opt.facilityNo")]} />
+            <FormField label={lbl("facilityManagementExp", t("field.facilityManagementExp"))} name="facilityManagementExp" type="select" required={req("facilityManagementExp")} value={data.facilityManagementExp || ""} onChange={onChange} options={dd.getFacilityMgmtOptions()} />
           </div>
         )}
       </div>
