@@ -39,7 +39,7 @@ const SortableItem = ({ item, locked, lang, onToggle, onUpdate, onRemove }: Sort
       }`}
     >
       {!locked && (
-        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground" style={{ touchAction: "none" }}>
           <GripVertical className="w-4 h-4" />
         </button>
       )}
