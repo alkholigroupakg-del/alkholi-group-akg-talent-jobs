@@ -225,7 +225,12 @@ const Index = () => {
       <footer className="bg-card py-8 px-6 border-t border-border">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           {content.logo_url ? (
-            <img src={content.logo_url} alt={bi(content.site_name_ar, content.site_name_en)} className="h-8 object-contain" />
+            <img 
+              src={content.logo_url} 
+              alt={bi(content.site_name_ar, content.site_name_en)} 
+              style={{ borderRadius: `${parseInt(content.logo_border_radius) || 8}px` }}
+              className="h-8 object-contain" 
+            />
           ) : (
             <img src={logo} alt="AlKholi Group" className="h-8 object-contain" />
           )}
