@@ -13,7 +13,7 @@ const JobPreferencesStep = ({ data, onChange }: Props) => {
   const dd = useDropdownOptions(lang);
   const fc = useFieldConfig();
 
-  const cityOptions = dd.getCities();
+  const cityOptions = dd.getPreferredCities();
   const jobTypeOptions = dd.getJobTypes();
   const hearOptions = dd.getHearAboutOptions();
 

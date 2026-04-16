@@ -61,6 +61,8 @@ export const useDropdownOptions = (lang: Lang) => {
     loaded,
     getNationalities: () => getOptions("nationalities", getDefaultNationalities("ar"), getDefaultNationalities("en")),
     getCities: () => getOptions("cities", getDefaultCities("ar"), getDefaultCities("en")),
+    getCurrentCities: () => getOptions("current_cities", getDefaultCities("ar"), getDefaultCities("en")),
+    getPreferredCities: () => getOptions("preferred_cities", getDefaultCities("ar"), getDefaultCities("en")),
     getEducationLevels: () => getOptions("education_levels", getDefaultEducation("ar"), getDefaultEducation("en")),
     getJobPositions: () => getOptions("job_positions", getDefaultPositions("ar"), getDefaultPositions("en")),
     getYearsOfExperience: () => getOptions("years_experience", getDefaultYears("ar"), getDefaultYears("en")),
