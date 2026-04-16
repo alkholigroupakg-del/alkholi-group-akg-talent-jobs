@@ -115,6 +115,32 @@ const SiteContentSettings = () => {
         </CardContent>
       </Card>
 
+      {/* Apply Page Text */}
+      <Card>
+        <CardContent className="p-4 space-y-4">
+          <h4 className="font-semibold text-sm text-accent">{lang === "ar" ? "صفحة التقديم" : "Apply Page"}</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label={lang === "ar" ? "عنوان صفحة التقديم (عربي)" : "Apply Page Title (AR)"} k="apply_title_ar" />
+            <Field label={lang === "ar" ? "عنوان صفحة التقديم (إنجليزي)" : "Apply Page Title (EN)"} k="apply_title_en" dir="ltr" />
+            <Field label={lang === "ar" ? "وصف صفحة التقديم (عربي)" : "Apply Page Desc (AR)"} k="apply_desc_ar" multiline />
+            <Field label={lang === "ar" ? "وصف صفحة التقديم (إنجليزي)" : "Apply Page Desc (EN)"} k="apply_desc_en" dir="ltr" multiline />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Success Screen */}
+      <Card>
+        <CardContent className="p-4 space-y-4">
+          <h4 className="font-semibold text-sm text-accent">{lang === "ar" ? "شاشة نجاح التقديم" : "Submission Success Screen"}</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label={lang === "ar" ? "عنوان النجاح (عربي)" : "Success Title (AR)"} k="success_title_ar" />
+            <Field label={lang === "ar" ? "عنوان النجاح (إنجليزي)" : "Success Title (EN)"} k="success_title_en" dir="ltr" />
+            <Field label={lang === "ar" ? "وصف النجاح (عربي)" : "Success Desc (AR)"} k="success_desc_ar" multiline />
+            <Field label={lang === "ar" ? "وصف النجاح (إنجليزي)" : "Success Desc (EN)"} k="success_desc_en" dir="ltr" multiline />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* CTA */}
       <Card>
         <CardContent className="p-4 space-y-4">
