@@ -22,7 +22,14 @@ const queryClient = new QueryClient();
 
 const UIStylesLoader = () => {
   useEffect(() => {
-    loadUIStyles().then(applyUIStyles);
+    loadUIStyles().then((styles) => {
+      console.log("[UIStylesLoader] Applying styles:", styles);
+      applyUIStyles(styles);
+      // Verify CSS variables are set
+      const root = document.documentElement;
+      console.log("[UIStylesLoader] --switch-thumb-checked-x:", root.style.getPropertyValue("--switch-thumb-checked-x"));
+      console.log("[UIStylesLoader] --switch-track-width:", root.style.getPropertyValue("--switch-track-width"));
+    });
   }, []);
   return null;
 };

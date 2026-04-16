@@ -120,16 +120,16 @@
   }
 }
 
-/* Switch custom sizing and positioning */
-.switch-custom .switch-thumb-custom {
+/* Switch custom sizing and positioning — target thumb's own data-state */
+.switch-thumb-custom {
   width: var(--switch-thumb-size, 14px) !important;
   height: var(--switch-thumb-size, 14px) !important;
 }
 
-.switch-custom[data-state="checked"] .switch-thumb-custom {
+.switch-thumb-custom[data-state="checked"] {
   transform: translateX(var(--switch-thumb-checked-x, 16px)) !important;
 }
 
-.switch-custom[data-state="unchecked"] .switch-thumb-custom {
+.switch-thumb-custom[data-state="unchecked"] {
   transform: translateX(var(--switch-thumb-unchecked-x, 2px)) !important;
 }
