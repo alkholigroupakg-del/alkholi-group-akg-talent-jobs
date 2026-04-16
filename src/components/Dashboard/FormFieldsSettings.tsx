@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Pencil, Eye, EyeOff, GripVertical, FormInput } from "lucide-react";
+import { Pencil, Eye, EyeOff, GripVertical, FormInput, Lock, LockOpen } from "lucide-react";
 import { invalidateFieldConfigCache, type FieldConfig } from "@/hooks/useFieldConfig";
 import {
   DndContext,
@@ -171,9 +171,22 @@ const FormFieldsSettings = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <FormInput className="w-5 h-5" />
-        <h3 className="text-lg font-bold">{lang === "ar" ? "إدارة حقول نموذج التقديم" : "Manage Application Form Fields"}</h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <FormInput className="w-5 h-5" />
+          <h3 className="text-lg font-bold">{lang === "ar" ? "إدارة حقول نموذج التقديم" : "Manage Application Form Fields"}</h3>
+        </div>
+        <Button
+          variant={isReorderLocked ? "outline" : "default"}
+          size="sm"
+          onClick={() => setIsReorderLocked(!isReorderLocked)}
+          className="gap-2"
+        >
+          {isReorderLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}
+          {isReorderLocked
+            ? (lang === "ar" ? "الترتيب مقفل" : "Reorder Locked")
+            : (lang === "ar" ? "الترتيب مفتوح" : "Reorder Unlocked")}
+        </Button>
       </div>
 
       <Tabs value={activeStep} onValueChange={setActiveStep} dir={dir}>
