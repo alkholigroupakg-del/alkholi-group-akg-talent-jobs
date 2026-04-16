@@ -551,15 +551,10 @@ const DashboardPage = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className={`grid w-full max-w-4xl ${isAdmin ? "grid-cols-8" : "grid-cols-6"}`}>
-            <TabsTrigger value="applicants">{t("dash.tab.applicants")}</TabsTrigger>
-            <TabsTrigger value="archive" className="gap-1"><Archive className="w-3 h-3" />{lang === "ar" ? "الأرشيف" : "Archive"}{archivedApplicants.length > 0 && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 ms-1">{archivedApplicants.length}</Badge>}</TabsTrigger>
-            <TabsTrigger value="jobs">{t("dash.tab.jobs")}</TabsTrigger>
-            {isAdmin && <TabsTrigger value="users">{t("dash.tab.users")}</TabsTrigger>}
-            <TabsTrigger value="projects">{t("dash.tab.projects")}</TabsTrigger>
-            <TabsTrigger value="analytics">{t("dash.tab.analytics")}</TabsTrigger>
-            {isAdmin && <TabsTrigger value="settings">{t("dash.tab.settings")}</TabsTrigger>}
-            {isAdmin && <TabsTrigger value="backup" className="gap-1"><Database className="w-3 h-3" />{lang === "ar" ? "نسخ احتياطي" : "Backup"}</TabsTrigger>}
+          <TabsList className="flex flex-wrap w-full max-w-5xl gap-1">
+            {visibleTabs.map(tab => (
+              <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
+            ))}
           </TabsList>
 
           {/* APPLICANTS TAB */}
