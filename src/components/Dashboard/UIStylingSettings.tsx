@@ -155,26 +155,14 @@ const UIStylingSettings = () => {
           <Label className="text-sm mb-3 block">
             {isAr ? "معاينة مباشرة" : "Live Preview"}
           </Label>
-          <div className="flex items-center justify-center gap-6 py-4 bg-muted/30 rounded-lg">
-            <div
-              className="flex items-center rounded-lg bg-muted/50"
-              style={{
-                padding: `${styles.containerPadY}px ${styles.containerPadX}px`,
-                gap: `${styles.containerGap}px`,
-              }}
-            >
+          <div className="flex flex-wrap items-center justify-center gap-4 py-4 bg-muted/30 rounded-lg">
+            <div className="ui-switch-chip bg-muted/50 rounded-lg" dir="ltr">
               <Switch checked={demoChecked} onCheckedChange={setDemoChecked} />
-              <span className="text-xs font-medium">{isAr ? "ظاهر" : "Visible"}</span>
+              <span className="ui-switch-label" dir={isAr ? "rtl" : "ltr"}>{isAr ? "ظاهر" : "Visible"}</span>
             </div>
-            <div
-              className="flex items-center rounded-lg bg-muted/50"
-              style={{
-                padding: `${styles.containerPadY}px ${styles.containerPadX}px`,
-                gap: `${styles.containerGap}px`,
-              }}
-            >
+            <div className="ui-switch-chip bg-muted/50 rounded-lg" dir="ltr">
               <Switch checked={!demoChecked} onCheckedChange={(v) => setDemoChecked(!v)} />
-              <span className="text-xs font-medium">{isAr ? "إلزامي" : "Required"}</span>
+              <span className="ui-switch-label" dir={isAr ? "rtl" : "ltr"}>{isAr ? "إلزامي" : "Required"}</span>
             </div>
           </div>
         </CardContent>
