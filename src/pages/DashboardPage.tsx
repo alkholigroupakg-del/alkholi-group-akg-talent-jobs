@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Users, UserPlus, Phone, CheckCircle2, Download, LogOut, Search, Eye, BarChart3, Briefcase, FileText, ExternalLink, Plus, Pencil, Trash2, FolderOpen, Settings, Database, Archive, RotateCcw } from "lucide-react";
+import { Users, UserPlus, Phone, CheckCircle2, Download, LogOut, Search, Eye, BarChart3, Briefcase, FileText, ExternalLink, Plus, Pencil, Trash2, FolderOpen, Settings, Database, Archive, RotateCcw, Shield } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import * as XLSX from "xlsx";
 import logo from "@/assets/logo.jpg";
@@ -27,6 +27,8 @@ import FormFieldsSettings from "@/components/Dashboard/FormFieldsSettings";
 import SiteContentSettings from "@/components/Dashboard/SiteContentSettings";
 import AdvancedAnalytics from "@/components/Dashboard/AdvancedAnalytics";
 import UIStylingSettings from "@/components/Dashboard/UIStylingSettings";
+import UserPermissionsDialog from "@/components/Dashboard/UserPermissionsDialog";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
 
 type ApplicantStatus = "new" | "reviewing" | "phone_interview" | "in_person_interview" | "accepted" | "hired" | "rejected" | "withdrawn";
 
@@ -117,6 +119,7 @@ const CHART_COLORS = ["#3b82f6", "#eab308", "#a855f7", "#6366f1", "#22c55e", "#1
 
 const DashboardPage = () => {
   const { t, dir, lang } = useLanguage();
+  const { permissions, hasPermission, role: currentUserRole, loading: permsLoading } = useUserPermissions();
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -147,7 +150,9 @@ const DashboardPage = () => {
   const [newUserRole, setNewUserRole] = useState<string>("recruitment_coordinator");
   const [users, setUsers] = useState<any[]>([]);
   const [userRoles, setUserRoles] = useState<any[]>([]);
-  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
+
+  // Permissions dialog state
+  const [permDialogUser, setPermDialogUser] = useState<{ id: string; name: string; role: string } | null>(null);
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
@@ -159,16 +164,7 @@ const DashboardPage = () => {
     fetchJobs();
     fetchProjects();
     fetchUsers();
-    fetchCurrentUserRole();
   }, []);
-
-  const fetchCurrentUserRole = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
-      setCurrentUserRole(data?.role || null);
-    }
-  };
 
   const fetchApplicants = async () => {
     const { data, error } = await supabase
@@ -499,6 +495,19 @@ const DashboardPage = () => {
 
   const isAdmin = currentUserRole === "admin";
 
+  // Build visible tabs based on permissions
+  const visibleTabs: { value: string; label: React.ReactNode }[] = [];
+  if (hasPermission("view_applicants")) {
+    visibleTabs.push({ value: "applicants", label: t("dash.tab.applicants") });
+    visibleTabs.push({ value: "archive", label: <span className="flex items-center gap-1"><Archive className="w-3 h-3" />{lang === "ar" ? "الأرشيف" : "Archive"}{archivedApplicants.length > 0 && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 ms-1">{archivedApplicants.length}</Badge>}</span> });
+  }
+  if (hasPermission("view_jobs")) visibleTabs.push({ value: "jobs", label: t("dash.tab.jobs") });
+  if (hasPermission("manage_users")) visibleTabs.push({ value: "users", label: t("dash.tab.users") });
+  if (hasPermission("view_projects")) visibleTabs.push({ value: "projects", label: t("dash.tab.projects") });
+  if (hasPermission("view_analytics")) visibleTabs.push({ value: "analytics", label: t("dash.tab.analytics") });
+  if (hasPermission("manage_settings")) visibleTabs.push({ value: "settings", label: t("dash.tab.settings") });
+  if (hasPermission("manage_backup")) visibleTabs.push({ value: "backup", label: <span className="flex items-center gap-1"><Database className="w-3 h-3" />{lang === "ar" ? "نسخ احتياطي" : "Backup"}</span> });
+
   return (
     <div className="min-h-screen bg-background" dir={dir}>
       {/* Header */}
@@ -542,15 +551,10 @@ const DashboardPage = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className={`grid w-full max-w-4xl ${isAdmin ? "grid-cols-8" : "grid-cols-6"}`}>
-            <TabsTrigger value="applicants">{t("dash.tab.applicants")}</TabsTrigger>
-            <TabsTrigger value="archive" className="gap-1"><Archive className="w-3 h-3" />{lang === "ar" ? "الأرشيف" : "Archive"}{archivedApplicants.length > 0 && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 ms-1">{archivedApplicants.length}</Badge>}</TabsTrigger>
-            <TabsTrigger value="jobs">{t("dash.tab.jobs")}</TabsTrigger>
-            {isAdmin && <TabsTrigger value="users">{t("dash.tab.users")}</TabsTrigger>}
-            <TabsTrigger value="projects">{t("dash.tab.projects")}</TabsTrigger>
-            <TabsTrigger value="analytics">{t("dash.tab.analytics")}</TabsTrigger>
-            {isAdmin && <TabsTrigger value="settings">{t("dash.tab.settings")}</TabsTrigger>}
-            {isAdmin && <TabsTrigger value="backup" className="gap-1"><Database className="w-3 h-3" />{lang === "ar" ? "نسخ احتياطي" : "Backup"}</TabsTrigger>}
+          <TabsList className="flex flex-wrap w-full max-w-5xl gap-1">
+            {visibleTabs.map(tab => (
+              <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
+            ))}
           </TabsList>
 
           {/* APPLICANTS TAB */}
@@ -764,11 +768,18 @@ const DashboardPage = () => {
                                 </div>
                               </TableCell>
                               <TableCell>
-                                {!isCurrentUser && (
-                                  <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteUser(user.user_id)}>
-                                    <Trash2 className="w-4 h-4" />
-                                  </Button>
-                                )}
+                                <div className="flex items-center gap-1">
+                                  {!isCurrentUser && (
+                                    <>
+                                      <Button size="sm" variant="ghost" onClick={() => setPermDialogUser({ id: user.user_id, name: user.display_name || user.email, role: userRole?.role || "" })}>
+                                        <Shield className="w-4 h-4" />
+                                      </Button>
+                                      <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteUser(user.user_id)}>
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
                               </TableCell>
                             </TableRow>
                           );
@@ -1235,6 +1246,17 @@ const DashboardPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Permissions Dialog */}
+      {permDialogUser && (
+        <UserPermissionsDialog
+          open={!!permDialogUser}
+          onOpenChange={(open) => !open && setPermDialogUser(null)}
+          userId={permDialogUser.id}
+          userName={permDialogUser.name}
+          userRole={permDialogUser.role}
+        />
+      )}
     </div>
   );
 };
