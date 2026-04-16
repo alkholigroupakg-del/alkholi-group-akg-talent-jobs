@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Pencil, List, RotateCcw, Plus, Lock, Unlock } from "lucide-react";
+import { Pencil, List, RotateCcw, Plus, Lock, Unlock, Search } from "lucide-react";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { invalidateDropdownCache } from "@/hooks/useDropdownOptions";
@@ -54,6 +54,7 @@ const DropdownOptionsSettings = () => {
   const [newAr, setNewAr] = useState("");
   const [newEn, setNewEn] = useState("");
   const [locked, setLocked] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -69,6 +70,7 @@ const DropdownOptionsSettings = () => {
   const openEditor = (field: typeof FIELD_CONFIGS[0]) => {
     setEditingField(field);
     setLocked(true);
+    setSearchQuery("");
     const existing = dbOptions[field.key];
     const defaultAr = field.getDefaultAr();
     const defaultEn = field.getDefaultEn();
@@ -233,11 +235,30 @@ const DropdownOptionsSettings = () => {
             onImport={(imported) => { if (!locked) setItems(imported); else toast.error(lang === "ar" ? "افتح القفل أولاً" : "Unlock first"); }}
           />
 
+          {/* Search filter */}
+          {items.length > 10 && (
+            <div className="relative">
+              <Search className="w-4 h-4 absolute top-2.5 text-muted-foreground" style={{ [dir === "rtl" ? "right" : "left"]: "0.75rem" }} />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={lang === "ar" ? "بحث في الخيارات..." : "Search options..."}
+                className="h-9 text-sm"
+                style={{ [dir === "rtl" ? "paddingRight" : "paddingLeft"]: "2.25rem" }}
+                dir={dir}
+              />
+            </div>
+          )}
+
           {/* Items list with drag and drop */}
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
               <div className="flex-1 overflow-y-auto space-y-2 max-h-[40vh] border rounded-lg p-3">
-                {items.map((item) => (
+                {items.filter(item => {
+                  if (!searchQuery.trim()) return true;
+                  const q = searchQuery.toLowerCase();
+                  return item.ar.toLowerCase().includes(q) || item.en.toLowerCase().includes(q);
+                }).map((item) => (
                   <SortableItem
                     key={item.id}
                     item={item}
