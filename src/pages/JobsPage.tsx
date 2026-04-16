@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import TopBar from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, Briefcase, ArrowLeft, ArrowRight, Search, Filter, LogIn, Flag, Hash } from "lucide-react";
-import logo from "@/assets/logo.jpg";
 
 interface JobPosting {
   id: string;
@@ -32,10 +32,12 @@ interface JobPosting {
 
 const JobsPage = () => {
   const { t, dir, lang } = useLanguage();
+  const { settings } = useSiteSettings();
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const Arrow = lang === "ar" ? ArrowLeft : ArrowRight;
+  const siteName = lang === "ar" ? settings.site_name_ar : settings.site_name_en;
 
   useEffect(() => {
     fetchJobs();
@@ -70,8 +72,11 @@ const JobsPage = () => {
           <div className="flex items-center gap-6">
             <Link to="/">
               <div className="flex items-center gap-2">
-                <span className="text-xl font-black text-primary">ALKHOLI</span>
-                <span className="text-xl font-black text-accent">GROUP</span>
+                {settings.logo_url ? (
+                  <img src={settings.logo_url} alt={siteName || ""} className="h-10 w-auto object-contain" />
+                ) : (
+                  <span className="text-xl font-black" style={{ color: settings.primary_color }}>{siteName}</span>
+                )}
               </div>
             </Link>
             <div className="hidden md:flex items-center gap-4">
@@ -204,7 +209,7 @@ const JobsPage = () => {
       <footer className="bg-card border-t border-border py-6 px-4 mt-10">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} {t("footer.rights")}
+            © {new Date().getFullYear()} {siteName} - {t("footer.rights")}
           </p>
         </div>
       </footer>
