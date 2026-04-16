@@ -15,8 +15,17 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { useEffect } from "react";
+import { loadUIStyles, applyUIStyles } from "@/components/Dashboard/UIStylingSettings";
 
 const queryClient = new QueryClient();
+
+const UIStylesLoader = () => {
+  useEffect(() => {
+    loadUIStyles().then(applyUIStyles);
+  }, []);
+  return null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
