@@ -768,11 +768,18 @@ const DashboardPage = () => {
                                 </div>
                               </TableCell>
                               <TableCell>
-                                {!isCurrentUser && (
-                                  <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteUser(user.user_id)}>
-                                    <Trash2 className="w-4 h-4" />
-                                  </Button>
-                                )}
+                                <div className="flex items-center gap-1">
+                                  {!isCurrentUser && (
+                                    <>
+                                      <Button size="sm" variant="ghost" onClick={() => setPermDialogUser({ id: user.user_id, name: user.display_name || user.email, role: userRole?.role || "" })}>
+                                        <Shield className="w-4 h-4" />
+                                      </Button>
+                                      <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteUser(user.user_id)}>
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
                               </TableCell>
                             </TableRow>
                           );
