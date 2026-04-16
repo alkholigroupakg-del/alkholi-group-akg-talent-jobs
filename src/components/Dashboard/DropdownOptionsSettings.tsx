@@ -70,6 +70,7 @@ const DropdownOptionsSettings = () => {
   const openEditor = (field: typeof FIELD_CONFIGS[0]) => {
     setEditingField(field);
     setLocked(true);
+    setSearchQuery("");
     const existing = dbOptions[field.key];
     const defaultAr = field.getDefaultAr();
     const defaultEn = field.getDefaultEn();
