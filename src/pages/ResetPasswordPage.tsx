@@ -20,16 +20,35 @@ const ResetPasswordPage = () => {
 
   useEffect(() => {
     // Listen for PASSWORD_RECOVERY event
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") {
         setReady(true);
       }
+      // If user has a session (from recovery link), allow password update
+      if (session && (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "PASSWORD_RECOVERY")) {
+        setReady(true);
+      }
     });
-    // Also check hash for recovery type
+
+    // Check hash for recovery type
     const hash = window.location.hash;
     if (hash.includes("type=recovery")) {
       setReady(true);
     }
+
+    // Check URL search params (some flows use query params)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("type") === "recovery") {
+      setReady(true);
+    }
+
+    // Also check if there's already a valid session (user clicked recovery link)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setReady(true);
+      }
+    });
+
     return () => subscription.unsubscribe();
   }, []);
 
