@@ -213,6 +213,7 @@ const FormFieldsSettings = () => {
                       onToggleVisible={toggleVisible}
                       onToggleRequired={toggleRequired}
                       onEdit={openEdit}
+                      isLocked={isReorderLocked}
                     />
                   ))}
                 </SortableContext>
