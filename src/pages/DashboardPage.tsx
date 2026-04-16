@@ -427,14 +427,17 @@ const DashboardPage = () => {
   // Project management
   const saveProject = async () => {
     if (!projectForm.name_ar) { toast.error(t("validation.required")); return; }
-    const { error } = await supabase.from("projects").insert({
+    const payload = {
       name_ar: projectForm.name_ar,
       name_en: projectForm.name_en || null,
       description_ar: projectForm.description_ar || null,
       description_en: projectForm.description_en || null,
       logo_url: projectForm.logo_url || null,
-    });
-    if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); }
+    };
+    const { error } = editingProjectId
+      ? await supabase.from("projects").update(payload).eq("id", editingProjectId)
+      : await supabase.from("projects").insert(payload);
+    if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setEditingProjectId(null); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); }
   };
 
   const activeApplicants = applicants.filter(a => !a.is_archived);
