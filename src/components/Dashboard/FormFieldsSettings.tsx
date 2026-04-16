@@ -39,10 +39,11 @@ interface SortableFieldProps {
   onToggleVisible: (id: string, v: boolean) => void;
   onToggleRequired: (id: string, v: boolean) => void;
   onEdit: (f: FieldConfig) => void;
+  isLocked: boolean;
 }
 
-const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEdit }: SortableFieldProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: f.id });
+const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEdit, isLocked }: SortableFieldProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: f.id, disabled: isLocked });
 
   const style = {
     transform: CSS.Transform.toString(transform),
