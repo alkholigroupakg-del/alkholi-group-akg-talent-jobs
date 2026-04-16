@@ -1206,13 +1206,13 @@ const DashboardPage = () => {
       <Dialog open={showProjectForm} onOpenChange={(open) => { setShowProjectForm(open); if (!open) setEditingProjectId(null); }}>
         <DialogContent
           dir={dir}
-          className="flex max-h-[92svh] w-[calc(100vw-1rem)] max-w-2xl flex-col overflow-hidden p-0"
+          className="flex h-[calc(100vh-1rem)] max-h-[calc(100vh-1rem)] w-[calc(100vw-1rem)] max-w-2xl flex-col overflow-hidden p-0"
         >
           <DialogHeader className="shrink-0 border-b px-4 py-4 sm:px-6">
             <DialogTitle>{editingProjectId ? (lang === "ar" ? "تعديل المشروع" : "Edit Project") : t("dash.addProject")}</DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
             <div className="space-y-4 pb-4">
               <div className="space-y-2">
                 <Label>{t("dash.projectName")} *</Label>
