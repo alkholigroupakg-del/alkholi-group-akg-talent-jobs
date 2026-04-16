@@ -156,6 +156,7 @@ const DashboardPage = () => {
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [projectForm, setProjectForm] = useState({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" });
   const [projects, setProjects] = useState<any[]>([]);
 
