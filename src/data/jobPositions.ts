@@ -292,3 +292,52 @@ export const salaryRanges = getSalaryRanges("ar");
 export const educationLevels = educationLevelsData.ar;
 export const languageLevels = ["ممتاز", "جيد جداً", "جيد", "متوسط", "مبتدئ"];
 export const hearAboutUs = ["LinkedIn", "تويتر / X", "موقع الشركة", "صديق أو معارف", "منصة توظيف", "أخرى"];
+
+// Additional dropdown defaults for admin management
+const genderData: Record<Lang, string[]> = {
+  ar: ["ذكر", "أنثى"],
+  en: ["Male", "Female"],
+};
+export const getGenderOptions = (lang: Lang) => genderData[lang];
+
+const maritalStatusData: Record<Lang, string[]> = {
+  ar: ["أعزب/عزباء", "متزوج/ة", "مطلق/ة", "أرمل/ة"],
+  en: ["Single", "Married", "Divorced", "Widowed"],
+};
+export const getMaritalStatusOptions = (lang: Lang) => maritalStatusData[lang];
+
+const yesNoData: Record<Lang, string[]> = {
+  ar: ["نعم", "لا"],
+  en: ["Yes", "No"],
+};
+export const getYesNoOptions = (lang: Lang) => yesNoData[lang];
+
+const languageLevelData: Record<Lang, string[]> = {
+  ar: ["ممتاز", "جيد جداً", "جيد", "متوسط", "مبتدئ"],
+  en: ["Excellent", "Very Good", "Good", "Average", "Beginner"],
+};
+export const getLanguageLevels = (lang: Lang) => languageLevelData[lang];
+
+const jobTypeData: Record<Lang, string[]> = {
+  ar: ["دوام كامل", "دوام جزئي", "عن بُعد", "عقد مؤقت", "تدريب تعاوني", "تمهير"],
+  en: ["Full-time", "Part-time", "Remote", "Contract", "Co-op Training", "Tamheer"],
+};
+export const getJobTypes = (lang: Lang) => jobTypeData[lang];
+
+const hearAboutData: Record<Lang, string[]> = {
+  ar: ["LinkedIn", "تويتر / X", "موقع الشركة", "صديق أو معارف", "منصة توظيف", "أخرى"],
+  en: ["LinkedIn", "Twitter / X", "Company Website", "Friend or Acquaintance", "Job Platform", "Other"],
+};
+export const getHearAboutOptions = (lang: Lang) => hearAboutData[lang];
+
+const availableDateData: Record<Lang, string[]> = {
+  ar: ["فوري", "خلال أسبوع", "خلال أسبوعين", "خلال شهر", "خلال شهرين", "أكثر من شهرين"],
+  en: ["Immediate", "Within a week", "Within two weeks", "Within a month", "Within two months", "More than two months"],
+};
+export const getAvailableDates = (lang: Lang) => availableDateData[lang];
+
+const facilityMgmtData: Record<Lang, string[]> = {
+  ar: ["نعم", "عملت في مجال المقاولات", "عملت في كل من المجالين", "لا، لم أعمل في أي من المجالين"],
+  en: ["Yes", "I worked in contracting", "I worked in both fields", "No, I haven't worked in either field"],
+};
+export const getFacilityMgmtOptions = (lang: Lang) => facilityMgmtData[lang];

@@ -13,10 +13,7 @@ const FinancialsStep = ({ data, onChange }: Props) => {
   const dd = useDropdownOptions(lang);
   const fc = useFieldConfig();
 
-  const dateOptions = [
-    t("opt.immediate"), t("opt.oneWeek"), t("opt.twoWeeks"),
-    t("opt.oneMonth"), t("opt.twoMonths"), t("opt.moreThanTwo"),
-  ];
+  const dateOptions = dd.getAvailableDates();
 
   const show = fc.isVisible;
   const req = fc.isRequired;

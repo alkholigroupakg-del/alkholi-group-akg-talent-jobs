@@ -15,9 +15,9 @@ const BasicInfoStep = ({ data, onChange }: Props) => {
   const dd = useDropdownOptions(lang);
   const fc = useFieldConfig();
 
-  const genderOptions = [t("opt.male"), t("opt.female")];
-  const maritalOptions = [t("opt.single"), t("opt.married"), t("opt.divorced"), t("opt.widowed")];
-  const transportOptions = [t("opt.yes"), t("opt.no")];
+  const genderOptions = dd.getGenderOptions();
+  const maritalOptions = dd.getMaritalStatusOptions();
+  const transportOptions = dd.getYesNoOptions();
   const nationalities = dd.getNationalities();
   const cities = dd.getCities();
 

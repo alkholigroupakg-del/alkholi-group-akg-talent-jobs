@@ -13,7 +13,7 @@ const EducationStep = ({ data, onChange }: Props) => {
   const dd = useDropdownOptions(lang);
   const fc = useFieldConfig();
 
-  const yesNoOptions = [t("opt.yes"), t("opt.no")];
+  const yesNoOptions = dd.getYesNoOptions();
   const show = fc.isVisible;
   const req = fc.isRequired;
   const lbl = (name: string, fallback: string) => fc.getLabel(name, lang, fallback);

@@ -14,14 +14,8 @@ const JobPreferencesStep = ({ data, onChange }: Props) => {
   const fc = useFieldConfig();
 
   const cityOptions = dd.getCities();
-  const jobTypeOptions = [
-    t("opt.fulltime"), t("opt.parttime"), t("opt.remote"),
-    t("opt.contract"), t("opt.coop"), t("opt.tamheer"),
-  ];
-  const hearOptions = [
-    t("opt.linkedin"), t("opt.twitter"), t("opt.website"),
-    t("opt.friend"), t("opt.jobPlatform"), t("opt.other"),
-  ];
+  const jobTypeOptions = dd.getJobTypes();
+  const hearOptions = dd.getHearAboutOptions();
 
   const basePositions = dd.getJobPositions();
   const currentValue = data.desiredPosition || "";
