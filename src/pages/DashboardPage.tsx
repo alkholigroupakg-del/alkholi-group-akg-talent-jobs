@@ -1246,6 +1246,17 @@ const DashboardPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Permissions Dialog */}
+      {permDialogUser && (
+        <UserPermissionsDialog
+          open={!!permDialogUser}
+          onOpenChange={(open) => !open && setPermDialogUser(null)}
+          userId={permDialogUser.id}
+          userName={permDialogUser.name}
+          userRole={permDialogUser.role}
+        />
+      )}
     </div>
   );
 };
