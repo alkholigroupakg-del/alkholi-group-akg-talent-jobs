@@ -91,6 +91,7 @@ const FormFieldsSettings = () => {
   const [activeStep, setActiveStep] = useState("1");
   const [editField, setEditField] = useState<FieldConfig | null>(null);
   const [editForm, setEditForm] = useState({ label_ar: "", label_en: "", sort_order: 0 });
+  const [isReorderLocked, setIsReorderLocked] = useState(true);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
