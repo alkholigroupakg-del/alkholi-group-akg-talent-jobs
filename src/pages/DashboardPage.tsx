@@ -802,7 +802,7 @@ const DashboardPage = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2"><FolderOpen className="w-5 h-5" />{t("dash.projects")}</CardTitle>
-                  <Button onClick={() => setShowProjectForm(true)} className="gradient-accent text-accent-foreground gap-2"><Plus className="w-4 h-4" />{t("dash.addProject")}</Button>
+                  <Button onClick={() => { setEditingProjectId(null); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); setShowProjectForm(true); }} className="gradient-accent text-accent-foreground gap-2"><Plus className="w-4 h-4" />{t("dash.addProject")}</Button>
                 </div>
               </CardHeader>
               <CardContent>
@@ -827,6 +827,13 @@ const DashboardPage = () => {
                           <div className="flex items-center justify-between mt-3">
                             <Badge variant={p.is_active ? "default" : "secondary"}>{p.is_active ? t("dash.jobActive") : t("dash.jobInactive")}</Badge>
                             <div className="flex gap-1">
+                              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => {
+                                setEditingProjectId(p.id);
+                                setProjectForm({ name_ar: p.name_ar, name_en: p.name_en || "", description_ar: p.description_ar || "", description_en: p.description_en || "", logo_url: p.logo_url || "" });
+                                setShowProjectForm(true);
+                              }}>
+                                <Pencil className="w-3.5 h-3.5" />
+                              </Button>
                               <Button size="icon" variant="ghost" className="h-7 w-7" onClick={async () => {
                                 await supabase.from("projects").update({ is_active: !p.is_active }).eq("id", p.id);
                                 fetchProjects();
