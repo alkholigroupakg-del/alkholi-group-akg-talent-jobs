@@ -18,6 +18,14 @@ import {
   getJobPositions,
   getYearsOfExperience,
   getSalaryRanges,
+  getGenderOptions,
+  getMaritalStatusOptions,
+  getYesNoOptions,
+  getLanguageLevels,
+  getJobTypes,
+  getHearAboutOptions,
+  getAvailableDates,
+  getFacilityMgmtOptions,
 } from "@/data/jobPositions";
 
 interface DropdownOption {
