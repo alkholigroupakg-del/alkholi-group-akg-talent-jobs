@@ -234,11 +234,30 @@ const DropdownOptionsSettings = () => {
             onImport={(imported) => { if (!locked) setItems(imported); else toast.error(lang === "ar" ? "افتح القفل أولاً" : "Unlock first"); }}
           />
 
+          {/* Search filter */}
+          {items.length > 10 && (
+            <div className="relative">
+              <Search className="w-4 h-4 absolute top-2.5 text-muted-foreground" style={{ [dir === "rtl" ? "right" : "left"]: "0.75rem" }} />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={lang === "ar" ? "بحث في الخيارات..." : "Search options..."}
+                className="h-9 text-sm"
+                style={{ [dir === "rtl" ? "paddingRight" : "paddingLeft"]: "2.25rem" }}
+                dir={dir}
+              />
+            </div>
+          )}
+
           {/* Items list with drag and drop */}
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
               <div className="flex-1 overflow-y-auto space-y-2 max-h-[40vh] border rounded-lg p-3">
-                {items.map((item) => (
+                {items.filter(item => {
+                  if (!searchQuery.trim()) return true;
+                  const q = searchQuery.toLowerCase();
+                  return item.ar.toLowerCase().includes(q) || item.en.toLowerCase().includes(q);
+                }).map((item) => (
                   <SortableItem
                     key={item.id}
                     item={item}
