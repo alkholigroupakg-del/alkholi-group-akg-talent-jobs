@@ -1204,62 +1204,71 @@ const DashboardPage = () => {
 
       {/* Project Form Dialog */}
       <Dialog open={showProjectForm} onOpenChange={(open) => { setShowProjectForm(open); if (!open) setEditingProjectId(null); }}>
-        <DialogContent dir={dir} className="max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editingProjectId ? (lang === "ar" ? "تعديل المشروع" : "Edit Project") : t("dash.addProject")}</DialogTitle></DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>{t("dash.projectName")} *</Label>
-              <Input value={projectForm.name_ar} onChange={e => setProjectForm(p => ({ ...p, name_ar: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("dash.projectNameEn")}</Label>
-              <Input value={projectForm.name_en} onChange={e => setProjectForm(p => ({ ...p, name_en: e.target.value }))} dir="ltr" />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("dash.projectDesc")} ({t("dash.arabic")})</Label>
-              <Textarea value={projectForm.description_ar} onChange={e => setProjectForm(p => ({ ...p, description_ar: e.target.value }))} rows={2} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("dash.projectDesc")} ({t("dash.english")})</Label>
-              <Textarea value={projectForm.description_en} onChange={e => setProjectForm(p => ({ ...p, description_en: e.target.value }))} rows={2} dir="ltr" />
-            </div>
-            <div className="space-y-2">
-              <Label>{lang === "ar" ? "شعار المشروع" : "Project Logo"}</Label>
-              <div className="space-y-2">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-                    if (file.size > MAX_INLINE_IMAGE_SIZE) {
-                      toast.error(lang === "ar" ? "حجم الصورة كبير، اختر صورة أصغر من 4MB" : "Image is too large, choose one under 4MB");
-                      return;
-                    }
+        <DialogContent
+          dir={dir}
+          className="flex max-h-[92svh] w-[calc(100vw-1rem)] max-w-2xl flex-col overflow-hidden p-0"
+        >
+          <DialogHeader className="shrink-0 border-b px-4 py-4 sm:px-6">
+            <DialogTitle>{editingProjectId ? (lang === "ar" ? "تعديل المشروع" : "Edit Project") : t("dash.addProject")}</DialogTitle>
+          </DialogHeader>
 
-                    try {
-                      const imageUrl = await readImageAsDataUrl(file);
-                      setProjectForm(p => ({ ...p, logo_url: imageUrl }));
-                      toast.success(lang === "ar" ? "تم تجهيز الشعار" : "Logo ready");
-                    } catch {
-                      toast.error(lang === "ar" ? "فشل رفع الشعار" : "Logo upload failed");
-                    }
-                  }}
-                  className="cursor-pointer"
-                />
-                <p className="text-xs text-muted-foreground">{lang === "ar" ? "أو أدخل رابط مباشر:" : "Or enter a direct URL:"}</p>
-                <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
-                {projectForm.logo_url && (
-                  <div className="mt-2 p-2 border rounded-md bg-muted/30">
-                    <StorageImage path={projectForm.logo_url} alt="Preview" className="h-16 w-auto object-contain mx-auto" />
-                  </div>
-                )}
+          <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6">
+            <div className="space-y-4 pb-4">
+              <div className="space-y-2">
+                <Label>{t("dash.projectName")} *</Label>
+                <Input value={projectForm.name_ar} onChange={e => setProjectForm(p => ({ ...p, name_ar: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("dash.projectNameEn")}</Label>
+                <Input value={projectForm.name_en} onChange={e => setProjectForm(p => ({ ...p, name_en: e.target.value }))} dir="ltr" />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("dash.projectDesc")} ({t("dash.arabic")})</Label>
+                <Textarea value={projectForm.description_ar} onChange={e => setProjectForm(p => ({ ...p, description_ar: e.target.value }))} rows={2} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t("dash.projectDesc")} ({t("dash.english")})</Label>
+                <Textarea value={projectForm.description_en} onChange={e => setProjectForm(p => ({ ...p, description_en: e.target.value }))} rows={2} dir="ltr" />
+              </div>
+              <div className="space-y-2">
+                <Label>{lang === "ar" ? "شعار المشروع" : "Project Logo"}</Label>
+                <div className="space-y-2">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > MAX_INLINE_IMAGE_SIZE) {
+                        toast.error(lang === "ar" ? "حجم الصورة كبير، اختر صورة أصغر من 4MB" : "Image is too large, choose one under 4MB");
+                        return;
+                      }
+
+                      try {
+                        const imageUrl = await readImageAsDataUrl(file);
+                        setProjectForm(p => ({ ...p, logo_url: imageUrl }));
+                        toast.success(lang === "ar" ? "تم تجهيز الشعار" : "Logo ready");
+                      } catch {
+                        toast.error(lang === "ar" ? "فشل رفع الشعار" : "Logo upload failed");
+                      }
+                    }}
+                    className="cursor-pointer"
+                  />
+                  <p className="text-xs text-muted-foreground">{lang === "ar" ? "أو أدخل رابط مباشر:" : "Or enter a direct URL:"}</p>
+                  <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
+                  {projectForm.logo_url && (
+                    <div className="mt-2 rounded-md border bg-muted/30 p-2">
+                      <StorageImage path={projectForm.logo_url} alt="Preview" className="mx-auto h-16 w-auto object-contain" />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="flex gap-3 justify-end">
-              <Button variant="outline" onClick={() => setShowProjectForm(false)}>{t("dash.cancel")}</Button>
-              <Button onClick={saveProject} className="gradient-accent text-accent-foreground">{t("dash.save")}</Button>
-            </div>
+          </div>
+
+          <div className="flex shrink-0 justify-end gap-3 border-t bg-background px-4 py-4 sm:px-6">
+            <Button variant="outline" onClick={() => setShowProjectForm(false)}>{t("dash.cancel")}</Button>
+            <Button onClick={saveProject} className="gradient-accent text-accent-foreground">{t("dash.save")}</Button>
           </div>
         </DialogContent>
       </Dialog>
