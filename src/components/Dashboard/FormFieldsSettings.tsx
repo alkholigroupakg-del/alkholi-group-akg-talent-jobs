@@ -55,28 +55,35 @@ const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEd
   return (
     <div ref={setNodeRef} style={style}>
       <Card className={!f.is_visible ? "opacity-50" : ""}>
-        <CardContent className="p-3 flex items-center gap-3">
-          <button {...attributes} {...listeners} className={`touch-none ${isLocked ? "cursor-not-allowed opacity-30" : "cursor-grab active:cursor-grabbing"}`} disabled={isLocked}>
-            <GripVertical className="w-4 h-4 text-muted-foreground shrink-0" />
-          </button>
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm truncate">
-              {lang === "ar" ? (f.label_ar || f.field_name) : (f.label_en || f.field_name)}
-            </p>
-            <p className="text-xs text-muted-foreground">{f.field_name}</p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0 flex-wrap">
-            <label className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-1.5 cursor-pointer">
-              <Switch checked={f.is_visible} onCheckedChange={(v) => onToggleVisible(f.id, v)} />
-              <span className="text-xs font-medium whitespace-nowrap">{lang === "ar" ? "ظاهر" : "Visible"}</span>
-            </label>
-            <label className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-1.5 cursor-pointer">
-              <Switch checked={f.is_required} onCheckedChange={(v) => onToggleRequired(f.id, v)} />
-              <span className="text-xs font-medium whitespace-nowrap">{lang === "ar" ? "إلزامي" : "Required"}</span>
-            </label>
-            <Button size="sm" variant="ghost" onClick={() => onEdit(f)}>
-              <Pencil className="w-3.5 h-3.5" />
-            </Button>
+        <CardContent className="p-3">
+          <div className="flex items-center gap-2">
+            {/* Drag handle */}
+            <button {...attributes} {...listeners} className={`touch-none shrink-0 ${isLocked ? "cursor-not-allowed opacity-30" : "cursor-grab active:cursor-grabbing"}`} disabled={isLocked}>
+              <GripVertical className="w-4 h-4 text-muted-foreground" />
+            </button>
+
+            {/* Field name */}
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm truncate">
+                {lang === "ar" ? (f.label_ar || f.field_name) : (f.label_en || f.field_name)}
+              </p>
+              <p className="text-xs text-muted-foreground">{f.field_name}</p>
+            </div>
+
+            {/* Controls */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <div className="flex items-center gap-1 bg-muted/50 rounded-md px-2 py-1 overflow-hidden">
+                <span className="text-[11px] font-medium leading-none">{lang === "ar" ? "ظاهر" : "Vis"}</span>
+                <Switch className="scale-75 origin-center" checked={f.is_visible} onCheckedChange={(v) => onToggleVisible(f.id, v)} />
+              </div>
+              <div className="flex items-center gap-1 bg-muted/50 rounded-md px-2 py-1 overflow-hidden">
+                <span className="text-[11px] font-medium leading-none">{lang === "ar" ? "إلزامي" : "Req"}</span>
+                <Switch className="scale-75 origin-center" checked={f.is_required} onCheckedChange={(v) => onToggleRequired(f.id, v)} />
+              </div>
+              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onEdit(f)}>
+                <Pencil className="w-3.5 h-3.5" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
