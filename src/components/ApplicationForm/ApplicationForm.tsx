@@ -72,6 +72,7 @@ interface Props {
 const ApplicationForm = ({ preSelectedPosition }: Props) => {
   const { t, lang, dir } = useLanguage();
   const fc = useFieldConfig();
+  const { content: siteContent } = useSiteContent();
 
   const stepLabels = [
     lang === "ar" ? "التعبئة الذكية" : "Smart Apply",
