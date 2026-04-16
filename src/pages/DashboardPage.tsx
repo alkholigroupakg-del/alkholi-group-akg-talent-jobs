@@ -495,6 +495,8 @@ const DashboardPage = () => {
     { label: t("dash.hired"), value: activeApplicants.filter(a => a.status === "hired").length, icon: CheckCircle2, color: "text-green-500" },
   ];
 
+  const isAdmin = currentUserRole === "admin";
+
   return (
     <div className="min-h-screen bg-background" dir={dir}>
       {/* Header */}
