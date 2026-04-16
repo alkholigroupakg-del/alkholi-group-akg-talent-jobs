@@ -484,6 +484,10 @@ export type Database = {
       site_settings: {
         Row: {
           accent_color: string | null
+          apply_desc_ar: string | null
+          apply_desc_en: string | null
+          apply_title_ar: string | null
+          apply_title_en: string | null
           created_at: string
           cta_desc_ar: string | null
           cta_desc_en: string | null
@@ -519,10 +523,18 @@ export type Database = {
           site_name_en: string | null
           stats_section_title_ar: string | null
           stats_section_title_en: string | null
+          success_desc_ar: string | null
+          success_desc_en: string | null
+          success_title_ar: string | null
+          success_title_en: string | null
           updated_at: string
         }
         Insert: {
           accent_color?: string | null
+          apply_desc_ar?: string | null
+          apply_desc_en?: string | null
+          apply_title_ar?: string | null
+          apply_title_en?: string | null
           created_at?: string
           cta_desc_ar?: string | null
           cta_desc_en?: string | null
@@ -558,10 +570,18 @@ export type Database = {
           site_name_en?: string | null
           stats_section_title_ar?: string | null
           stats_section_title_en?: string | null
+          success_desc_ar?: string | null
+          success_desc_en?: string | null
+          success_title_ar?: string | null
+          success_title_en?: string | null
           updated_at?: string
         }
         Update: {
           accent_color?: string | null
+          apply_desc_ar?: string | null
+          apply_desc_en?: string | null
+          apply_title_ar?: string | null
+          apply_title_en?: string | null
           created_at?: string
           cta_desc_ar?: string | null
           cta_desc_en?: string | null
@@ -597,6 +617,10 @@ export type Database = {
           site_name_en?: string | null
           stats_section_title_ar?: string | null
           stats_section_title_en?: string | null
+          success_desc_ar?: string | null
+          success_desc_en?: string | null
+          success_title_ar?: string | null
+          success_title_en?: string | null
           updated_at?: string
         }
         Relationships: []
