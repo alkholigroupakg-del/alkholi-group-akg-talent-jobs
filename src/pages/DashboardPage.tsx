@@ -495,6 +495,19 @@ const DashboardPage = () => {
 
   const isAdmin = currentUserRole === "admin";
 
+  // Build visible tabs based on permissions
+  const visibleTabs: { value: string; label: React.ReactNode }[] = [];
+  if (hasPermission("view_applicants")) {
+    visibleTabs.push({ value: "applicants", label: t("dash.tab.applicants") });
+    visibleTabs.push({ value: "archive", label: <span className="flex items-center gap-1"><Archive className="w-3 h-3" />{lang === "ar" ? "الأرشيف" : "Archive"}{archivedApplicants.length > 0 && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 ms-1">{archivedApplicants.length}</Badge>}</span> });
+  }
+  if (hasPermission("view_jobs")) visibleTabs.push({ value: "jobs", label: t("dash.tab.jobs") });
+  if (hasPermission("manage_users")) visibleTabs.push({ value: "users", label: t("dash.tab.users") });
+  if (hasPermission("view_projects")) visibleTabs.push({ value: "projects", label: t("dash.tab.projects") });
+  if (hasPermission("view_analytics")) visibleTabs.push({ value: "analytics", label: t("dash.tab.analytics") });
+  if (hasPermission("manage_settings")) visibleTabs.push({ value: "settings", label: t("dash.tab.settings") });
+  if (hasPermission("manage_backup")) visibleTabs.push({ value: "backup", label: <span className="flex items-center gap-1"><Database className="w-3 h-3" />{lang === "ar" ? "نسخ احتياطي" : "Backup"}</span> });
+
   return (
     <div className="min-h-screen bg-background" dir={dir}>
       {/* Header */}
