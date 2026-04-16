@@ -870,6 +870,11 @@ const DashboardPage = () => {
                   <CustomQuestionsSettings />
                 </CardContent>
               </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <UIStylingSettings />
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 

@@ -34,6 +34,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <UIStylesLoader />
           <BrowserRouter>
             <Routes>
               {/* Public applicant-facing routes */}
