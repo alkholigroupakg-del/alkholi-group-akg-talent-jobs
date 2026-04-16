@@ -1251,7 +1251,7 @@ const DashboardPage = () => {
                 <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
                 {projectForm.logo_url && (
                   <div className="mt-2 p-2 border rounded-md bg-muted/30">
-                    <img src={projectForm.logo_url} alt="Preview" className="h-16 w-auto object-contain mx-auto" onError={(e) => (e.currentTarget.style.display = "none")} />
+                    <StorageImage path={projectForm.logo_url} alt="Preview" className="h-16 w-auto object-contain mx-auto" />
                   </div>
                 )}
               </div>
