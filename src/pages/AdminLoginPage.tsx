@@ -16,8 +16,7 @@ const AdminLoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [otpCode, setOtpCode] = useState("");
-  const [step, setStep] = useState<"credentials" | "otp">("credentials");
+  const [step, setStep] = useState<"credentials" | "waiting">("credentials");
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const [resendTimer, setResendTimer] = useState(0);
