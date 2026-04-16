@@ -29,20 +29,20 @@ interface DropdownOption {
 }
 
 const FIELD_CONFIGS = [
-  { key: "gender", labelAr: "الجنس", labelEn: "Gender", getDefaultAr: () => getGenderOptions("ar"), getDefaultEn: () => getGenderOptions("en") },
-  { key: "marital_status", labelAr: "الحالة الاجتماعية", labelEn: "Marital Status", getDefaultAr: () => getMaritalStatusOptions("ar"), getDefaultEn: () => getMaritalStatusOptions("en") },
-  { key: "yes_no", labelAr: "نعم / لا", labelEn: "Yes / No", getDefaultAr: () => getYesNoOptions("ar"), getDefaultEn: () => getYesNoOptions("en") },
-  { key: "nationalities", labelAr: "الجنسيات", labelEn: "Nationalities", getDefaultAr: () => getNationalities("ar"), getDefaultEn: () => getNationalities("en") },
-  { key: "cities", labelAr: "المدن", labelEn: "Cities", getDefaultAr: () => getSaudiCities("ar"), getDefaultEn: () => getSaudiCities("en") },
-  { key: "education_levels", labelAr: "المؤهلات العلمية", labelEn: "Education Levels", getDefaultAr: () => getEducationLevels("ar"), getDefaultEn: () => getEducationLevels("en") },
-  { key: "job_positions", labelAr: "المسميات الوظيفية", labelEn: "Job Positions", getDefaultAr: () => getJobPositions("ar"), getDefaultEn: () => getJobPositions("en") },
-  { key: "years_experience", labelAr: "سنوات الخبرة", labelEn: "Years of Experience", getDefaultAr: () => getYearsOfExperience("ar"), getDefaultEn: () => getYearsOfExperience("en") },
-  { key: "salary_ranges", labelAr: "نطاقات الرواتب", labelEn: "Salary Ranges", getDefaultAr: () => getSalaryRanges("ar"), getDefaultEn: () => getSalaryRanges("en") },
-  { key: "language_levels", labelAr: "مستويات اللغة", labelEn: "Language Levels", getDefaultAr: () => getLanguageLevels("ar"), getDefaultEn: () => getLanguageLevels("en") },
-  { key: "job_types", labelAr: "أنواع الوظائف", labelEn: "Job Types", getDefaultAr: () => getJobTypes("ar"), getDefaultEn: () => getJobTypes("en") },
-  { key: "hear_about", labelAr: "كيف سمعت عنا", labelEn: "How Did You Hear About Us", getDefaultAr: () => getHearAboutOptions("ar"), getDefaultEn: () => getHearAboutOptions("en") },
-  { key: "available_dates", labelAr: "مواعيد الانضمام", labelEn: "Available Dates", getDefaultAr: () => getAvailableDates("ar"), getDefaultEn: () => getAvailableDates("en") },
-  { key: "facility_mgmt", labelAr: "خبرة إدارة المرافق", labelEn: "Facility Management Experience", getDefaultAr: () => getFacilityMgmtOptions("ar"), getDefaultEn: () => getFacilityMgmtOptions("en") },
+  { key: "gender", labelAr: "الجنس", labelEn: "Gender", descAr: "ذكر / أنثى", descEn: "Male / Female", getDefaultAr: () => getGenderOptions("ar"), getDefaultEn: () => getGenderOptions("en") },
+  { key: "marital_status", labelAr: "الحالة الاجتماعية", labelEn: "Marital Status", descAr: "أعزب / متزوج ...", descEn: "Single / Married ...", getDefaultAr: () => getMaritalStatusOptions("ar"), getDefaultEn: () => getMaritalStatusOptions("en") },
+  { key: "yes_no", labelAr: "خيارات نعم / لا", labelEn: "Yes / No Options", descAr: "تُستخدم في: هل لديك مواصلات، هل تعمل حالياً، هل تدرس حالياً", descEn: "Used in: Transport, Currently Employed, Currently Studying", getDefaultAr: () => getYesNoOptions("ar"), getDefaultEn: () => getYesNoOptions("en") },
+  { key: "nationalities", labelAr: "الجنسيات", labelEn: "Nationalities", descAr: "", descEn: "", getDefaultAr: () => getNationalities("ar"), getDefaultEn: () => getNationalities("en") },
+  { key: "cities", labelAr: "المدن (المدينة الحالية والمفضلة)", labelEn: "Cities (Current & Preferred)", descAr: "تُستخدم في: المدينة الحالية والمدينة المفضلة", descEn: "Used in: Current City & Preferred City", getDefaultAr: () => getSaudiCities("ar"), getDefaultEn: () => getSaudiCities("en") },
+  { key: "education_levels", labelAr: "المؤهلات العلمية", labelEn: "Education Levels", descAr: "", descEn: "", getDefaultAr: () => getEducationLevels("ar"), getDefaultEn: () => getEducationLevels("en") },
+  { key: "job_positions", labelAr: "المسميات الوظيفية", labelEn: "Job Positions", descAr: "", descEn: "", getDefaultAr: () => getJobPositions("ar"), getDefaultEn: () => getJobPositions("en") },
+  { key: "years_experience", labelAr: "سنوات الخبرة", labelEn: "Years of Experience", descAr: "", descEn: "", getDefaultAr: () => getYearsOfExperience("ar"), getDefaultEn: () => getYearsOfExperience("en") },
+  { key: "salary_ranges", labelAr: "نطاقات الرواتب", labelEn: "Salary Ranges", descAr: "تُستخدم في: الراتب الحالي والمتوقع", descEn: "Used in: Current & Expected Salary", getDefaultAr: () => getSalaryRanges("ar"), getDefaultEn: () => getSalaryRanges("en") },
+  { key: "language_levels", labelAr: "مستويات اللغة", labelEn: "Language Levels", descAr: "تُستخدم في: مستوى العربية والإنجليزية", descEn: "Used in: Arabic & English Level", getDefaultAr: () => getLanguageLevels("ar"), getDefaultEn: () => getLanguageLevels("en") },
+  { key: "job_types", labelAr: "أنواع الوظائف", labelEn: "Job Types", descAr: "دوام كامل / جزئي ...", descEn: "Full-time / Part-time ...", getDefaultAr: () => getJobTypes("ar"), getDefaultEn: () => getJobTypes("en") },
+  { key: "hear_about", labelAr: "كيف سمعت عنا", labelEn: "How Did You Hear About Us", descAr: "", descEn: "", getDefaultAr: () => getHearAboutOptions("ar"), getDefaultEn: () => getHearAboutOptions("en") },
+  { key: "available_dates", labelAr: "مواعيد الانضمام", labelEn: "Available Dates", descAr: "", descEn: "", getDefaultAr: () => getAvailableDates("ar"), getDefaultEn: () => getAvailableDates("en") },
+  { key: "facility_mgmt", labelAr: "خبرة إدارة المرافق", labelEn: "Facility Management Experience", descAr: "", descEn: "", getDefaultAr: () => getFacilityMgmtOptions("ar"), getDefaultEn: () => getFacilityMgmtOptions("en") },
 ];
 
 const DropdownOptionsSettings = () => {
