@@ -21,20 +21,22 @@ const AdminLoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const [resendTimer, setResendTimer] = useState(0);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session && step === "credentials") {
+      // Don't auto-redirect during the login flow (credentials → OTP)
+      if (session && !isLoggingIn && step !== "otp") {
         navigate("/admin", { replace: true });
       }
       setChecking(false);
     });
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/admin", { replace: true });
+      if (session && !isLoggingIn) navigate("/admin", { replace: true });
       setChecking(false);
     });
     return () => subscription.unsubscribe();
-  }, [navigate, step]);
+  }, [navigate, step, isLoggingIn]);
 
   // Resend timer countdown
   useEffect(() => {
@@ -46,12 +48,14 @@ const AdminLoginPage = () => {
   const handleLogin = async () => {
     if (!email || !password) { toast.error(t("validation.required")); return; }
     setLoading(true);
+    setIsLoggingIn(true);
 
     // Step 1: Verify credentials
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       toast.error(t("dash.loginError"));
       setLoading(false);
+      setIsLoggingIn(false);
       return;
     }
 
@@ -66,6 +70,7 @@ const AdminLoginPage = () => {
     if (otpError) {
       toast.error(t("admin.otpSendError"));
       setLoading(false);
+      setIsLoggingIn(false);
       return;
     }
 
