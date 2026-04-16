@@ -120,11 +120,4 @@
   }
 }
 
-/* Switch thumb position via CSS variables */
-[data-state="checked"] > [data-radix-collection-item] ,
-button[data-state="checked"][role="switch"] > span {
-  transform: translateX(var(--switch-thumb-checked-x, 16px)) !important;
-}
-button[data-state="unchecked"][role="switch"] > span {
-  transform: translateX(var(--switch-thumb-unchecked-x, 2px)) !important;
-}
+/* Switch thumb positions are now handled via inline styles in the Switch component */
