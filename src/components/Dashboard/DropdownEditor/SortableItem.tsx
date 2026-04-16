@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2, GripVertical } from "lucide-react";
 
 export interface EditableOption {
+  id: string;
   ar: string;
   en: string;
   enabled: boolean;
@@ -13,16 +14,15 @@ export interface EditableOption {
 
 interface SortableItemProps {
   item: EditableOption;
-  index: number;
   locked: boolean;
   lang: string;
-  onToggle: (index: number) => void;
-  onUpdate: (index: number, field: "ar" | "en", value: string) => void;
-  onRemove: (index: number) => void;
+  onToggle: (id: string) => void;
+  onUpdate: (id: string, field: "ar" | "en", value: string) => void;
+  onRemove: (id: string) => void;
 }
 
-const SortableItem = ({ item, index, locked, lang, onToggle, onUpdate, onRemove }: SortableItemProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: `item-${index}` });
+const SortableItem = ({ item, locked, lang, onToggle, onUpdate, onRemove }: SortableItemProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -43,13 +43,13 @@ const SortableItem = ({ item, index, locked, lang, onToggle, onUpdate, onRemove 
           <GripVertical className="w-4 h-4" />
         </button>
       )}
-      <Switch checked={item.enabled} onCheckedChange={() => onToggle(index)} disabled={locked} />
+      <Switch checked={item.enabled} onCheckedChange={() => onToggle(item.id)} disabled={locked} />
       <div className="flex-1 grid grid-cols-2 gap-2">
-        <Input value={item.ar} onChange={(e) => onUpdate(index, "ar", e.target.value)} className="text-sm h-8" dir="rtl" placeholder={lang === "ar" ? "عربي" : "Arabic"} disabled={locked} />
-        <Input value={item.en} onChange={(e) => onUpdate(index, "en", e.target.value)} className="text-sm h-8" dir="ltr" placeholder={lang === "ar" ? "إنجليزي" : "English"} disabled={locked} />
+        <Input value={item.ar} onChange={(e) => onUpdate(item.id, "ar", e.target.value)} className="text-sm h-8" dir="rtl" placeholder={lang === "ar" ? "عربي" : "Arabic"} disabled={locked} />
+        <Input value={item.en} onChange={(e) => onUpdate(item.id, "en", e.target.value)} className="text-sm h-8" dir="ltr" placeholder={lang === "ar" ? "إنجليزي" : "English"} disabled={locked} />
       </div>
       {!locked && (
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => onRemove(index)}>
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => onRemove(item.id)}>
           <Trash2 className="w-4 h-4" />
         </Button>
       )}
