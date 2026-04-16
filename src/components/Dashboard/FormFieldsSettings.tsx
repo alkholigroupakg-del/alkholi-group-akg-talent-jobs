@@ -72,13 +72,13 @@ const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEd
 
             {/* Controls */}
             <div className="flex items-center gap-1.5 shrink-0">
-              <div className="flex items-center gap-1 bg-muted/50 rounded-md px-2 py-1 overflow-hidden">
+              <div className="flex items-center gap-1.5 bg-muted/50 rounded-md px-2 py-1.5">
                 <span className="text-[11px] font-medium leading-none">{lang === "ar" ? "ظاهر" : "Vis"}</span>
-                <Switch className="scale-75 origin-center" checked={f.is_visible} onCheckedChange={(v) => onToggleVisible(f.id, v)} />
+                <Switch checked={f.is_visible} onCheckedChange={(v) => onToggleVisible(f.id, v)} />
               </div>
-              <div className="flex items-center gap-1 bg-muted/50 rounded-md px-2 py-1 overflow-hidden">
+              <div className="flex items-center gap-1.5 bg-muted/50 rounded-md px-2 py-1.5">
                 <span className="text-[11px] font-medium leading-none">{lang === "ar" ? "إلزامي" : "Req"}</span>
-                <Switch className="scale-75 origin-center" checked={f.is_required} onCheckedChange={(v) => onToggleRequired(f.id, v)} />
+                <Switch checked={f.is_required} onCheckedChange={(v) => onToggleRequired(f.id, v)} />
               </div>
               <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onEdit(f)}>
                 <Pencil className="w-3.5 h-3.5" />
