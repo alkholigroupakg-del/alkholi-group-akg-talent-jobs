@@ -97,6 +97,7 @@ const AdminLoginPage = () => {
       return;
     }
 
+    setIsLoggingIn(false);
     navigate("/admin", { replace: true });
   };
 
