@@ -42,6 +42,23 @@ interface SortableFieldProps {
   isLocked: boolean;
 }
 
+const ToggleChip = ({
+  label,
+  checked,
+  onCheckedChange,
+  labelDir,
+}: {
+  label: string;
+  checked: boolean;
+  onCheckedChange: (value: boolean) => void;
+  labelDir: "rtl" | "ltr";
+}) => (
+  <div className="ui-switch-chip bg-muted/50 rounded-md" dir="ltr">
+    <Switch checked={checked} onCheckedChange={onCheckedChange} />
+    <span className="ui-switch-label" dir={labelDir}>{label}</span>
+  </div>
+);
+
 const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEdit, isLocked }: SortableFieldProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: f.id, disabled: isLocked });
 
@@ -56,13 +73,11 @@ const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEd
     <div ref={setNodeRef} style={style}>
       <Card className={!f.is_visible ? "opacity-50" : ""}>
         <CardContent className="p-3">
-          <div className="flex items-center gap-2">
-            {/* Drag handle */}
+          <div className="flex flex-wrap items-center gap-2">
             <button {...attributes} {...listeners} className={`touch-none shrink-0 ${isLocked ? "cursor-not-allowed opacity-30" : "cursor-grab active:cursor-grabbing"}`} disabled={isLocked}>
               <GripVertical className="w-4 h-4 text-muted-foreground" />
             </button>
 
-            {/* Field name */}
             <div className="flex-1 min-w-0">
               <p className="font-medium text-sm truncate">
                 {lang === "ar" ? (f.label_ar || f.field_name) : (f.label_en || f.field_name)}
@@ -70,17 +85,20 @@ const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEd
               <p className="text-xs text-muted-foreground">{f.field_name}</p>
             </div>
 
-            {/* Controls */}
-            <div className="flex items-center gap-1.5 shrink-0">
-              <div className="flex items-center gap-1.5 bg-muted/50 rounded-md px-2 py-1.5">
-                <span className="text-[11px] font-medium leading-none">{lang === "ar" ? "ظاهر" : "Vis"}</span>
-                <Switch checked={f.is_visible} onCheckedChange={(v) => onToggleVisible(f.id, v)} />
-              </div>
-              <div className="flex items-center gap-1.5 bg-muted/50 rounded-md px-2 py-1.5">
-                <span className="text-[11px] font-medium leading-none">{lang === "ar" ? "إلزامي" : "Req"}</span>
-                <Switch checked={f.is_required} onCheckedChange={(v) => onToggleRequired(f.id, v)} />
-              </div>
-              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onEdit(f)}>
+            <div className="ui-switch-row shrink-0">
+              <ToggleChip
+                label={lang === "ar" ? "ظاهر" : "Vis"}
+                checked={f.is_visible}
+                onCheckedChange={(v) => onToggleVisible(f.id, v)}
+                labelDir={lang === "ar" ? "rtl" : "ltr"}
+              />
+              <ToggleChip
+                label={lang === "ar" ? "إلزامي" : "Req"}
+                checked={f.is_required}
+                onCheckedChange={(v) => onToggleRequired(f.id, v)}
+                labelDir={lang === "ar" ? "rtl" : "ltr"}
+              />
+              <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0" onClick={() => onEdit(f)}>
                 <Pencil className="w-3.5 h-3.5" />
               </Button>
             </div>

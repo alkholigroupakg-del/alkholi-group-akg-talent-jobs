@@ -120,16 +120,46 @@
   }
 }
 
-/* Switch custom sizing and positioning — target thumb's own data-state */
+/* Switch custom sizing, positioning, and labeled wrappers */
+.switch-custom {
+  width: var(--switch-track-width, 36px) !important;
+  height: var(--switch-track-height, 20px) !important;
+}
+
 .switch-thumb-custom {
   width: var(--switch-thumb-size, 14px) !important;
   height: var(--switch-thumb-size, 14px) !important;
 }
 
+.switch-custom[data-state="checked"] .switch-thumb-custom,
 .switch-thumb-custom[data-state="checked"] {
   transform: translateX(var(--switch-thumb-checked-x, 16px)) !important;
 }
 
+.switch-custom[data-state="unchecked"] .switch-thumb-custom,
 .switch-thumb-custom[data-state="unchecked"] {
   transform: translateX(var(--switch-thumb-unchecked-x, 2px)) !important;
+}
+
+.ui-switch-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ui-switch-chip {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: var(--switch-container-gap, 6px);
+  padding: var(--switch-container-pad-y, 4px) var(--switch-container-pad-x, 8px);
+}
+
+.ui-switch-label {
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
 }
