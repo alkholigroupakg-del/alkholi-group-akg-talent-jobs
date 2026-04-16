@@ -39,6 +39,7 @@ const ExcelImportExport = ({ fieldLabel, items, lang, onImport }: ExcelImportExp
         const imported: EditableOption[] = rows
           .filter((r) => r["Arabic (عربي)"] || r["English (إنجليزي)"])
           .map((r) => ({
+            id: crypto.randomUUID(),
             ar: String(r["Arabic (عربي)"] || "").trim(),
             en: String(r["English (إنجليزي)"] || "").trim(),
             enabled: String(r["Enabled (مفعّل)"] || "Yes").toLowerCase() !== "no",
