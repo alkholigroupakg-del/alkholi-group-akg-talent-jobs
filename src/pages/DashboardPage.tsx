@@ -220,11 +220,17 @@ const DashboardPage = () => {
 
   const getFileUrl = (path: string | null) => {
     if (!path) return "";
-    // Already a full URL
-    if (path.startsWith("http")) return path;
-    // Build public URL from storage path
-    const baseUrl = import.meta.env.VITE_SUPABASE_URL;
-    return `${baseUrl}/storage/v1/object/public/resumes/${path}`;
+    // Already a full URL or data URI
+    if (path.startsWith("http") || path.startsWith("data:")) return path;
+    // Build signed URL for private bucket paths
+    return ""; // Will use async version below
+  };
+
+  const getSignedFileUrl = async (path: string): Promise<string> => {
+    if (!path) return "";
+    if (path.startsWith("http") || path.startsWith("data:")) return path;
+    const { data } = await supabase.storage.from("resumes").createSignedUrl(path, 3600);
+    return data?.signedUrl || "";
   };
 
   const exportExcel = () => {
