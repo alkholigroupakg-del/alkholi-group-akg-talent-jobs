@@ -41,21 +41,23 @@ const Index = () => {
     <div className="min-h-screen bg-background" dir={dir}>
       {/* Navbar */}
       <nav className="absolute top-0 left-0 right-0 z-20 py-5 px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          {content.logo_url ? (
-            <img 
-              src={content.logo_url} 
-              alt={bi(content.site_name_ar, content.site_name_en)} 
-              style={{ 
-                height: `${parseInt(content.logo_height) || 56}px`,
-                borderRadius: `${parseInt(content.logo_border_radius) || 8}px`,
-              }}
-              className={`object-contain ${content.logo_bg_enabled ? "bg-card/80 backdrop-blur-sm px-4 py-2" : ""}`}
-            />
-          ) : (
-            <img src={logo} alt="AlKholi Group" className="h-10 md:h-14 object-contain bg-card/80 backdrop-blur-sm rounded-lg px-4 py-2" />
-          )}
-          <div className="flex items-center gap-3">
+        <div className="max-w-6xl mx-auto flex items-center justify-between relative">
+          <div className={content.logo_alignment === "center" ? "absolute left-1/2 -translate-x-1/2" : ""}>
+            {content.logo_url ? (
+              <img 
+                src={content.logo_url} 
+                alt={bi(content.site_name_ar, content.site_name_en)} 
+                style={{ 
+                  height: `${parseInt(content.logo_height) || 56}px`,
+                  borderRadius: `${parseInt(content.logo_border_radius) || 8}px`,
+                }}
+                className={`object-contain ${content.logo_bg_enabled ? "bg-card/80 backdrop-blur-sm px-4 py-2" : ""}`}
+              />
+            ) : (
+              <img src={logo} alt="AlKholi Group" className="h-10 md:h-14 object-contain bg-card/80 backdrop-blur-sm rounded-lg px-4 py-2" />
+            )}
+          </div>
+          <div className="flex items-center gap-3 ms-auto">
             <TopBar variant="light" />
             <Link to="/jobs">
               <Button variant="ghost" className="text-primary-foreground hover:bg-white/10 gap-2 font-medium">

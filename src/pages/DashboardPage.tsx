@@ -18,6 +18,7 @@ import { Users, UserPlus, Phone, CheckCircle2, Download, LogOut, Search, Eye, Ba
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
 import * as XLSX from "xlsx";
 import logo from "@/assets/logo.jpg";
+import { MAX_INLINE_IMAGE_SIZE, readImageAsDataUrl } from "@/lib/imageUpload";
 import { Link } from "react-router-dom";
 import CustomQuestionsSettings from "@/components/Dashboard/CustomQuestionsSettings";
 import DropdownOptionsSettings from "@/components/Dashboard/DropdownOptionsSettings";
@@ -437,7 +438,17 @@ const DashboardPage = () => {
     const { error } = editingProjectId
       ? await supabase.from("projects").update(payload).eq("id", editingProjectId)
       : await supabase.from("projects").insert(payload);
-    if (!error) { toast.success(t("dash.saved")); fetchProjects(); setShowProjectForm(false); setEditingProjectId(null); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); }
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    toast.success(t("dash.saved"));
+    fetchProjects();
+    setShowProjectForm(false);
+    setEditingProjectId(null);
+    setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" });
   };
 
   const activeApplicants = applicants.filter(a => !a.is_archived);
@@ -1214,27 +1225,15 @@ const DashboardPage = () => {
                   onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
+                    if (file.size > MAX_INLINE_IMAGE_SIZE) {
+                      toast.error(lang === "ar" ? "حجم الصورة كبير، اختر صورة أصغر من 4MB" : "Image is too large, choose one under 4MB");
+                      return;
+                    }
+
                     try {
-                      const formData = new FormData();
-                      formData.append("file", file);
-                      formData.append("folder", "project-logos");
-                      const { data: { session } } = await supabase.auth.getSession();
-                      const res = await fetch(
-                        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-file`,
-                        {
-                          method: "POST",
-                          headers: {
-                            "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-                            ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
-                          },
-                          body: formData,
-                        }
-                      );
-                      if (res.ok) {
-                        const result = await res.json();
-                        setProjectForm(p => ({ ...p, logo_url: result.path }));
-                        toast.success(lang === "ar" ? "تم رفع الشعار" : "Logo uploaded");
-                      }
+                      const imageUrl = await readImageAsDataUrl(file);
+                      setProjectForm(p => ({ ...p, logo_url: imageUrl }));
+                      toast.success(lang === "ar" ? "تم تجهيز الشعار" : "Logo ready");
                     } catch {
                       toast.error(lang === "ar" ? "فشل رفع الشعار" : "Logo upload failed");
                     }
