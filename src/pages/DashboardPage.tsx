@@ -164,16 +164,7 @@ const DashboardPage = () => {
     fetchJobs();
     fetchProjects();
     fetchUsers();
-    fetchCurrentUserRole();
   }, []);
-
-  const fetchCurrentUserRole = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
-      setCurrentUserRole(data?.role || null);
-    }
-  };
 
   const fetchApplicants = async () => {
     const { data, error } = await supabase
