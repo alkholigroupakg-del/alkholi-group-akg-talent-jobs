@@ -21,6 +21,7 @@ import logo from "@/assets/logo.jpg";
 import { MAX_INLINE_IMAGE_SIZE, readImageAsDataUrl } from "@/lib/imageUpload";
 import { Link } from "react-router-dom";
 import CustomQuestionsSettings from "@/components/Dashboard/CustomQuestionsSettings";
+import StorageImage from "@/components/StorageImage";
 import DropdownOptionsSettings from "@/components/Dashboard/DropdownOptionsSettings";
 import BrandingSettings from "@/components/Dashboard/BrandingSettings";
 import BackupSettings from "@/components/Dashboard/BackupSettings";
@@ -832,7 +833,7 @@ const DashboardPage = () => {
                         <CardContent className="p-4">
                           <div className="flex items-center gap-3 mb-2">
                             {p.logo_url ? (
-                              <img src={p.logo_url} alt="" className="h-10 w-10 object-contain rounded" />
+                              <StorageImage path={p.logo_url} alt="" className="h-10 w-10 object-contain rounded" />
                             ) : (
                               <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">
                                 <FolderOpen className="w-5 h-5 text-muted-foreground" />
