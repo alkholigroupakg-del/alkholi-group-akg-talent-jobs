@@ -145,6 +145,7 @@ const DashboardPage = () => {
   const [newUserRole, setNewUserRole] = useState<string>("recruitment_coordinator");
   const [users, setUsers] = useState<any[]>([]);
   const [userRoles, setUserRoles] = useState<any[]>([]);
+  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
