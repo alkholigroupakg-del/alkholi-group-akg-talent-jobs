@@ -174,6 +174,9 @@ const DropdownOptionsSettings = () => {
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
                   <p className="font-medium">{lang === "ar" ? field.labelAr : field.labelEn}</p>
+                  {(lang === "ar" ? field.descAr : field.descEn) && (
+                    <p className="text-xs text-muted-foreground mt-0.5">{lang === "ar" ? field.descAr : field.descEn}</p>
+                  )}
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs text-muted-foreground">{count} {lang === "ar" ? "خيار مفعّل" : "active"}</span>
                     {isCustomized && <Badge variant="secondary" className="text-xs">{lang === "ar" ? "مخصص" : "Customized"}</Badge>}
