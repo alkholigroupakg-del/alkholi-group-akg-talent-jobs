@@ -438,14 +438,17 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
   const PrevArrow = lang === "ar" ? ArrowRight : ArrowLeft;
 
   if (isSubmitted) {
+    const successTitle = lang === "ar" ? siteContent.success_title_ar : siteContent.success_title_en;
+    const successDesc = lang === "ar" ? siteContent.success_desc_ar : siteContent.success_desc_en;
+
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-6 animate-fade-in">
           <div className="w-20 h-20 mx-auto rounded-full gradient-accent flex items-center justify-center">
             <Send className="w-10 h-10 text-accent-foreground" />
           </div>
-          <h2 className="text-3xl font-bold text-primary">{t("success.title")}</h2>
-          <p className="text-muted-foreground text-lg max-w-md mx-auto">{t("success.desc")}</p>
+          <h2 className="text-3xl font-bold text-primary">{successTitle}</h2>
+          <p className="text-muted-foreground text-lg max-w-md mx-auto">{successDesc}</p>
           <Button
             onClick={() => {
               setIsSubmitted(false);
