@@ -6,9 +6,8 @@ import TopBar from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
-import { Shield, Mail, ArrowRight } from "lucide-react";
+import { Shield, Mail, ExternalLink } from "lucide-react";
 import logo from "@/assets/logo.jpg";
 
 const AdminLoginPage = () => {
@@ -16,8 +15,7 @@ const AdminLoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [otpCode, setOtpCode] = useState("");
-  const [step, setStep] = useState<"credentials" | "otp">("credentials");
+  const [step, setStep] = useState<"credentials" | "waiting">("credentials");
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const [resendTimer, setResendTimer] = useState(0);
@@ -25,8 +23,12 @@ const AdminLoginPage = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      // Don't auto-redirect during the login flow (credentials → OTP)
-      if (session && !isLoggingIn && step !== "otp") {
+      if (session && !isLoggingIn) {
+        navigate("/admin", { replace: true });
+      }
+      // If we're in waiting step and session arrives (magic link clicked), navigate
+      if (session && isLoggingIn && step === "waiting") {
+        setIsLoggingIn(false);
         navigate("/admin", { replace: true });
       }
       setChecking(false);
@@ -59,7 +61,7 @@ const AdminLoginPage = () => {
       return;
     }
 
-    // Step 2: Sign out and send OTP for 2FA
+    // Step 2: Sign out and send magic link for 2FA
     await supabase.auth.signOut();
 
     const { error: otpError } = await supabase.auth.signInWithOtp({
@@ -75,30 +77,9 @@ const AdminLoginPage = () => {
     }
 
     toast.success(t("admin.otpSent"));
-    setStep("otp");
+    setStep("waiting");
     setResendTimer(60);
     setLoading(false);
-  };
-
-  const handleVerifyOtp = async () => {
-    if (otpCode.length < 6) { toast.error(t("validation.required")); return; }
-    setLoading(true);
-
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: otpCode,
-      type: "email",
-    });
-
-    if (error) {
-      toast.error(t("admin.otpInvalid"));
-      setOtpCode("");
-      setLoading(false);
-      return;
-    }
-
-    setIsLoggingIn(false);
-    navigate("/admin", { replace: true });
   };
 
   const handleResendOtp = async () => {
@@ -115,7 +96,6 @@ const AdminLoginPage = () => {
     } else {
       toast.success(t("admin.otpSent"));
       setResendTimer(60);
-      setOtpCode("");
     }
     setLoading(false);
   };
@@ -131,7 +111,7 @@ const AdminLoginPage = () => {
           <img src={logo} alt="AlKholi Group" className="h-16 mx-auto mb-4 object-contain" />
           <CardTitle className="text-2xl">{t("dash.login")}</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">
-            {step === "credentials" ? t("admin.loginDesc") : t("admin.otpDesc")}
+            {step === "credentials" ? t("admin.loginDesc") : t("admin.magicLinkDesc")}
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -166,35 +146,15 @@ const AdminLoginPage = () => {
                 <span className="text-sm font-medium">{email}</span>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">{t("admin.otpLabel")}</label>
-                <div className="flex justify-center" dir="ltr">
-                  <InputOTP
-                    maxLength={6}
-                    value={otpCode}
-                    onChange={setOtpCode}
-                    onComplete={handleVerifyOtp}
-                  >
-                    <InputOTPGroup>
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                  </InputOTP>
-                </div>
+              <div className="flex flex-col items-center gap-3 p-6 border rounded-lg bg-muted/30">
+                <ExternalLink className="w-10 h-10 text-primary" />
+                <p className="text-sm text-center text-muted-foreground">
+                  {t("admin.checkEmailForLink")}
+                </p>
+                <p className="text-xs text-center text-muted-foreground">
+                  {t("admin.clickLinkToLogin")}
+                </p>
               </div>
-
-              <Button onClick={handleVerifyOtp} className="w-full gradient-primary text-primary-foreground gap-2" disabled={loading || otpCode.length < 6}>
-                {loading ? "..." : (
-                  <>
-                    <ArrowRight className="w-4 h-4" />
-                    {t("admin.verifyOtp")}
-                  </>
-                )}
-              </Button>
 
               <div className="flex justify-center">
                 <Button
@@ -214,7 +174,7 @@ const AdminLoginPage = () => {
                 <Button
                   variant="link"
                   size="sm"
-                  onClick={() => { setStep("credentials"); setOtpCode(""); }}
+                  onClick={() => { setStep("credentials"); setIsLoggingIn(false); }}
                   className="text-sm text-muted-foreground"
                 >
                   {t("admin.backToLogin")}
