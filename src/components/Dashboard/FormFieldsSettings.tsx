@@ -56,7 +56,7 @@ const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEd
     <div ref={setNodeRef} style={style}>
       <Card className={!f.is_visible ? "opacity-50" : ""}>
         <CardContent className="p-3 flex items-center gap-3">
-          <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing touch-none">
+          <button {...attributes} {...listeners} className={`touch-none ${isLocked ? "cursor-not-allowed opacity-30" : "cursor-grab active:cursor-grabbing"}`} disabled={isLocked}>
             <GripVertical className="w-4 h-4 text-muted-foreground shrink-0" />
           </button>
           <div className="flex-1 min-w-0">
