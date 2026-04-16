@@ -66,13 +66,13 @@ const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEd
             <p className="text-xs text-muted-foreground">{f.field_name}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0 flex-wrap">
-            <label className="flex items-center gap-1.5 rounded-md border px-2 py-1 cursor-pointer">
+            <label className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-1.5 cursor-pointer">
               <Switch checked={f.is_visible} onCheckedChange={(v) => onToggleVisible(f.id, v)} />
-              <span className="text-xs whitespace-nowrap">{lang === "ar" ? "ظاهر" : "Visible"}</span>
+              <span className="text-xs font-medium whitespace-nowrap">{lang === "ar" ? "ظاهر" : "Visible"}</span>
             </label>
-            <label className="flex items-center gap-1.5 rounded-md border px-2 py-1 cursor-pointer">
+            <label className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-1.5 cursor-pointer">
               <Switch checked={f.is_required} onCheckedChange={(v) => onToggleRequired(f.id, v)} />
-              <span className="text-xs whitespace-nowrap">{lang === "ar" ? "إلزامي" : "Required"}</span>
+              <span className="text-xs font-medium whitespace-nowrap">{lang === "ar" ? "إلزامي" : "Required"}</span>
             </label>
             <Button size="sm" variant="ghost" onClick={() => onEdit(f)}>
               <Pencil className="w-3.5 h-3.5" />
