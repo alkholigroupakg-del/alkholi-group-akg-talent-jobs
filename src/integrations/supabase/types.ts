@@ -514,6 +514,10 @@ export type Database = {
           hero_title2_ar: string | null
           hero_title2_en: string | null
           id: string
+          logo_alignment: string | null
+          logo_bg_enabled: boolean | null
+          logo_border_radius: string | null
+          logo_height: string | null
           logo_url: string | null
           primary_color: string | null
           projects_count: string | null
@@ -562,6 +566,10 @@ export type Database = {
           hero_title2_ar?: string | null
           hero_title2_en?: string | null
           id?: string
+          logo_alignment?: string | null
+          logo_bg_enabled?: boolean | null
+          logo_border_radius?: string | null
+          logo_height?: string | null
           logo_url?: string | null
           primary_color?: string | null
           projects_count?: string | null
@@ -610,6 +618,10 @@ export type Database = {
           hero_title2_ar?: string | null
           hero_title2_en?: string | null
           id?: string
+          logo_alignment?: string | null
+          logo_bg_enabled?: boolean | null
+          logo_border_radius?: string | null
+          logo_height?: string | null
           logo_url?: string | null
           primary_color?: string | null
           projects_count?: string | null
