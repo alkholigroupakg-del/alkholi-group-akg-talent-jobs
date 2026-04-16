@@ -120,4 +120,16 @@
   }
 }
 
-/* Switch thumb positions are now handled via inline styles in the Switch component */
+/* Switch custom sizing and positioning */
+.switch-custom .switch-thumb-custom {
+  width: var(--switch-thumb-size, 14px) !important;
+  height: var(--switch-thumb-size, 14px) !important;
+}
+
+.switch-custom[data-state="checked"] .switch-thumb-custom {
+  transform: translateX(var(--switch-thumb-checked-x, 16px)) !important;
+}
+
+.switch-custom[data-state="unchecked"] .switch-thumb-custom {
+  transform: translateX(var(--switch-thumb-unchecked-x, 2px)) !important;
+}
