@@ -34,6 +34,14 @@ export interface SiteContent {
   site_name_ar: string;
   site_name_en: string;
   logo_url: string | null;
+  apply_title_ar: string;
+  apply_title_en: string;
+  apply_desc_ar: string;
+  apply_desc_en: string;
+  success_title_ar: string;
+  success_title_en: string;
+  success_desc_ar: string;
+  success_desc_en: string;
 }
 
 const DEFAULTS: SiteContent = {
@@ -69,6 +77,14 @@ const DEFAULTS: SiteContent = {
   site_name_ar: "مجموعة الخولي",
   site_name_en: "AlKholi Group",
   logo_url: null,
+  apply_title_ar: "انضم لفريق مجموعة الخولي",
+  apply_title_en: "Join AlKholi Group Team",
+  apply_desc_ar: "يرجى تعبئة النموذج التالي بدقة. سيتم التواصل معك بعد مراجعة طلبك.",
+  apply_desc_en: "Please fill out the following form carefully. We will contact you after reviewing your application.",
+  success_title_ar: "تم إرسال طلبك بنجاح!",
+  success_title_en: "Application Submitted Successfully!",
+  success_desc_ar: "شكراً لتقديمك. سيتم مراجعة طلبك والتواصل معك في أقرب وقت.",
+  success_desc_en: "Thank you for applying. Your application will be reviewed and we will contact you soon.",
 };
 
 export const useSiteContent = () => {
