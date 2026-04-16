@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Pencil, List, RotateCcw, Plus, Lock, Unlock } from "lucide-react";
+import { Pencil, List, RotateCcw, Plus, Lock, Unlock, Search } from "lucide-react";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { invalidateDropdownCache } from "@/hooks/useDropdownOptions";
