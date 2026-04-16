@@ -21,6 +21,7 @@ import logo from "@/assets/logo.jpg";
 import { MAX_INLINE_IMAGE_SIZE, readImageAsDataUrl } from "@/lib/imageUpload";
 import { Link } from "react-router-dom";
 import CustomQuestionsSettings from "@/components/Dashboard/CustomQuestionsSettings";
+import StorageImage from "@/components/StorageImage";
 import DropdownOptionsSettings from "@/components/Dashboard/DropdownOptionsSettings";
 import BrandingSettings from "@/components/Dashboard/BrandingSettings";
 import BackupSettings from "@/components/Dashboard/BackupSettings";
@@ -220,11 +221,17 @@ const DashboardPage = () => {
 
   const getFileUrl = (path: string | null) => {
     if (!path) return "";
-    // Already a full URL
-    if (path.startsWith("http")) return path;
-    // Build public URL from storage path
-    const baseUrl = import.meta.env.VITE_SUPABASE_URL;
-    return `${baseUrl}/storage/v1/object/public/resumes/${path}`;
+    // Already a full URL or data URI
+    if (path.startsWith("http") || path.startsWith("data:")) return path;
+    // Build signed URL for private bucket paths
+    return ""; // Will use async version below
+  };
+
+  const getSignedFileUrl = async (path: string): Promise<string> => {
+    if (!path) return "";
+    if (path.startsWith("http") || path.startsWith("data:")) return path;
+    const { data } = await supabase.storage.from("resumes").createSignedUrl(path, 3600);
+    return data?.signedUrl || "";
   };
 
   const exportExcel = () => {
@@ -826,7 +833,7 @@ const DashboardPage = () => {
                         <CardContent className="p-4">
                           <div className="flex items-center gap-3 mb-2">
                             {p.logo_url ? (
-                              <img src={p.logo_url} alt="" className="h-10 w-10 object-contain rounded" />
+                              <StorageImage path={p.logo_url} alt="" className="h-10 w-10 object-contain rounded" />
                             ) : (
                               <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">
                                 <FolderOpen className="w-5 h-5 text-muted-foreground" />
@@ -1244,7 +1251,7 @@ const DashboardPage = () => {
                 <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
                 {projectForm.logo_url && (
                   <div className="mt-2 p-2 border rounded-md bg-muted/30">
-                    <img src={projectForm.logo_url} alt="Preview" className="h-16 w-auto object-contain mx-auto" onError={(e) => (e.currentTarget.style.display = "none")} />
+                    <StorageImage path={projectForm.logo_url} alt="Preview" className="h-16 w-auto object-contain mx-auto" />
                   </div>
                 )}
               </div>

@@ -6,6 +6,7 @@ import TopBar from "@/components/TopBar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { supabase } from "@/integrations/supabase/client";
+import StorageImage from "@/components/StorageImage";
 import logo from "@/assets/logo.jpg";
 import heroBg from "@/assets/hero-bg.jpg";
 
@@ -154,7 +155,7 @@ const Index = () => {
                 <div key={project.id} className="group">
                   <div className="bg-card rounded-xl border border-border p-6 hover:shadow-elevated transition-all duration-300 text-center h-full flex flex-col items-center justify-center gap-4">
                     {project.logo_url ? (
-                      <img src={project.logo_url} alt={bi(project.name_ar, project.name_en || project.name_ar)} className="h-16 w-auto object-contain" />
+                      <StorageImage path={project.logo_url} alt={bi(project.name_ar, project.name_en || project.name_ar)} className="h-16 w-auto object-contain" />
                     ) : (
                       <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center">
                         <Building2 className="w-8 h-8 text-primary" />
