@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Pencil, Eye, EyeOff, GripVertical, FormInput } from "lucide-react";
+import { Pencil, Eye, EyeOff, GripVertical, FormInput, Lock, LockOpen } from "lucide-react";
 import { invalidateFieldConfigCache, type FieldConfig } from "@/hooks/useFieldConfig";
 import {
   DndContext,
@@ -39,10 +39,11 @@ interface SortableFieldProps {
   onToggleVisible: (id: string, v: boolean) => void;
   onToggleRequired: (id: string, v: boolean) => void;
   onEdit: (f: FieldConfig) => void;
+  isLocked: boolean;
 }
 
-const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEdit }: SortableFieldProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: f.id });
+const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEdit, isLocked }: SortableFieldProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: f.id, disabled: isLocked });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -55,7 +56,7 @@ const SortableField = ({ field: f, lang, onToggleVisible, onToggleRequired, onEd
     <div ref={setNodeRef} style={style}>
       <Card className={!f.is_visible ? "opacity-50" : ""}>
         <CardContent className="p-3 flex items-center gap-3">
-          <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing touch-none">
+          <button {...attributes} {...listeners} className={`touch-none ${isLocked ? "cursor-not-allowed opacity-30" : "cursor-grab active:cursor-grabbing"}`} disabled={isLocked}>
             <GripVertical className="w-4 h-4 text-muted-foreground shrink-0" />
           </button>
           <div className="flex-1 min-w-0">
@@ -91,6 +92,7 @@ const FormFieldsSettings = () => {
   const [activeStep, setActiveStep] = useState("1");
   const [editField, setEditField] = useState<FieldConfig | null>(null);
   const [editForm, setEditForm] = useState({ label_ar: "", label_en: "", sort_order: 0 });
+  const [isReorderLocked, setIsReorderLocked] = useState(true);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -170,9 +172,22 @@ const FormFieldsSettings = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <FormInput className="w-5 h-5" />
-        <h3 className="text-lg font-bold">{lang === "ar" ? "إدارة حقول نموذج التقديم" : "Manage Application Form Fields"}</h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <FormInput className="w-5 h-5" />
+          <h3 className="text-lg font-bold">{lang === "ar" ? "إدارة حقول نموذج التقديم" : "Manage Application Form Fields"}</h3>
+        </div>
+        <Button
+          variant={isReorderLocked ? "outline" : "default"}
+          size="sm"
+          onClick={() => setIsReorderLocked(!isReorderLocked)}
+          className="gap-2"
+        >
+          {isReorderLocked ? <Lock className="w-4 h-4" /> : <LockOpen className="w-4 h-4" />}
+          {isReorderLocked
+            ? (lang === "ar" ? "الترتيب مقفل" : "Reorder Locked")
+            : (lang === "ar" ? "الترتيب مفتوح" : "Reorder Unlocked")}
+        </Button>
       </div>
 
       <Tabs value={activeStep} onValueChange={setActiveStep} dir={dir}>
@@ -198,6 +213,7 @@ const FormFieldsSettings = () => {
                       onToggleVisible={toggleVisible}
                       onToggleRequired={toggleRequired}
                       onEdit={openEdit}
+                      isLocked={isReorderLocked}
                     />
                   ))}
                 </SortableContext>

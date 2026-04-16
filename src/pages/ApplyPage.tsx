@@ -2,16 +2,21 @@ import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import ApplicationForm from "@/components/ApplicationForm/ApplicationForm";
 import TopBar from "@/components/TopBar";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import logo from "@/assets/logo.jpg";
 
 const ApplyPage = () => {
   const { t, dir, lang } = useLanguage();
+  const { content } = useSiteContent();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const preSelectedPosition = searchParams.get("position") || "";
   const BackArrow = lang === "ar" ? ArrowRight : ArrowLeft;
+
+  const applyTitle = lang === "ar" ? content.apply_title_ar : content.apply_title_en;
+  const applyDesc = lang === "ar" ? content.apply_desc_ar : content.apply_desc_en;
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
@@ -34,8 +39,8 @@ const ApplyPage = () => {
       {/* Form Section */}
       <main className="py-10 px-4">
         <div className="max-w-3xl mx-auto mb-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary mb-3">{t("apply.title")}</h1>
-          <p className="text-muted-foreground text-lg">{t("apply.desc")}</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-primary mb-3">{applyTitle}</h1>
+          <p className="text-muted-foreground text-lg">{applyDesc}</p>
         </div>
         <ApplicationForm preSelectedPosition={preSelectedPosition} />
       </main>

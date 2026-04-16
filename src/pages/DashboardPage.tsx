@@ -145,6 +145,7 @@ const DashboardPage = () => {
   const [newUserRole, setNewUserRole] = useState<string>("recruitment_coordinator");
   const [users, setUsers] = useState<any[]>([]);
   const [userRoles, setUserRoles] = useState<any[]>([]);
+  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
@@ -156,7 +157,16 @@ const DashboardPage = () => {
     fetchJobs();
     fetchProjects();
     fetchUsers();
+    fetchCurrentUserRole();
   }, []);
+
+  const fetchCurrentUserRole = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
+      setCurrentUserRole(data?.role || null);
+    }
+  };
 
   const fetchApplicants = async () => {
     const { data, error } = await supabase
@@ -485,6 +495,8 @@ const DashboardPage = () => {
     { label: t("dash.hired"), value: activeApplicants.filter(a => a.status === "hired").length, icon: CheckCircle2, color: "text-green-500" },
   ];
 
+  const isAdmin = currentUserRole === "admin";
+
   return (
     <div className="min-h-screen bg-background" dir={dir}>
       {/* Header */}
@@ -528,15 +540,15 @@ const DashboardPage = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-8 w-full max-w-4xl">
+          <TabsList className={`grid w-full max-w-4xl ${isAdmin ? "grid-cols-8" : "grid-cols-6"}`}>
             <TabsTrigger value="applicants">{t("dash.tab.applicants")}</TabsTrigger>
             <TabsTrigger value="archive" className="gap-1"><Archive className="w-3 h-3" />{lang === "ar" ? "الأرشيف" : "Archive"}{archivedApplicants.length > 0 && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 ms-1">{archivedApplicants.length}</Badge>}</TabsTrigger>
             <TabsTrigger value="jobs">{t("dash.tab.jobs")}</TabsTrigger>
-            <TabsTrigger value="users">{t("dash.tab.users")}</TabsTrigger>
+            {isAdmin && <TabsTrigger value="users">{t("dash.tab.users")}</TabsTrigger>}
             <TabsTrigger value="projects">{t("dash.tab.projects")}</TabsTrigger>
             <TabsTrigger value="analytics">{t("dash.tab.analytics")}</TabsTrigger>
-            <TabsTrigger value="settings">{t("dash.tab.settings")}</TabsTrigger>
-            <TabsTrigger value="backup" className="gap-1"><Database className="w-3 h-3" />{lang === "ar" ? "نسخ احتياطي" : "Backup"}</TabsTrigger>
+            {isAdmin && <TabsTrigger value="settings">{t("dash.tab.settings")}</TabsTrigger>}
+            {isAdmin && <TabsTrigger value="backup" className="gap-1"><Database className="w-3 h-3" />{lang === "ar" ? "نسخ احتياطي" : "Backup"}</TabsTrigger>}
           </TabsList>
 
           {/* APPLICANTS TAB */}
