@@ -119,6 +119,7 @@ const CHART_COLORS = ["#3b82f6", "#eab308", "#a855f7", "#6366f1", "#22c55e", "#1
 
 const DashboardPage = () => {
   const { t, dir, lang } = useLanguage();
+  const { permissions, hasPermission, role: currentUserRole, loading: permsLoading } = useUserPermissions();
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -149,7 +150,9 @@ const DashboardPage = () => {
   const [newUserRole, setNewUserRole] = useState<string>("recruitment_coordinator");
   const [users, setUsers] = useState<any[]>([]);
   const [userRoles, setUserRoles] = useState<any[]>([]);
-  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
+
+  // Permissions dialog state
+  const [permDialogUser, setPermDialogUser] = useState<{ id: string; name: string; role: string } | null>(null);
 
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
