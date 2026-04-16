@@ -66,7 +66,10 @@ const AdminLoginPage = () => {
 
     const { error: otpError } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: false },
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: `${window.location.origin}/admin`,
+      },
     });
 
     if (otpError) {
@@ -88,7 +91,10 @@ const AdminLoginPage = () => {
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: false },
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: `${window.location.origin}/admin`,
+      },
     });
 
     if (error) {
