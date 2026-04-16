@@ -42,6 +42,10 @@ export interface SiteContent {
   success_title_en: string;
   success_desc_ar: string;
   success_desc_en: string;
+  logo_height: string;
+  logo_alignment: string;
+  logo_border_radius: string;
+  logo_bg_enabled: boolean;
 }
 
 const DEFAULTS: SiteContent = {
@@ -85,6 +89,10 @@ const DEFAULTS: SiteContent = {
   success_title_en: "Application Submitted Successfully!",
   success_desc_ar: "شكراً لتقديمك. سيتم مراجعة طلبك والتواصل معك في أقرب وقت.",
   success_desc_en: "Thank you for applying. Your application will be reviewed and we will contact you soon.",
+  logo_height: "56",
+  logo_alignment: "start",
+  logo_border_radius: "8",
+  logo_bg_enabled: true,
 };
 
 export const useSiteContent = () => {
