@@ -141,8 +141,8 @@ const Index = () => {
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {projects.map(project => (
-                <Link key={project.id} to="/jobs" className="group">
-                  <div className="bg-card rounded-xl border border-border p-6 hover:shadow-elevated transition-all duration-300 text-center h-full flex flex-col items-center justify-center gap-4 group-hover:border-accent/50">
+                <div key={project.id} className="group">
+                  <div className="bg-card rounded-xl border border-border p-6 hover:shadow-elevated transition-all duration-300 text-center h-full flex flex-col items-center justify-center gap-4">
                     {project.logo_url ? (
                       <img src={project.logo_url} alt={bi(project.name_ar, project.name_en || project.name_ar)} className="h-16 w-auto object-contain" />
                     ) : (
