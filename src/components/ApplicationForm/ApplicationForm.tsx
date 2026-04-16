@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useFieldConfig, type FieldConfig } from "@/hooks/useFieldConfig";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import StepIndicator from "./StepIndicator";
 import ResumeUploadStep from "./steps/ResumeUploadStep";
 import BasicInfoStep from "./steps/BasicInfoStep";
