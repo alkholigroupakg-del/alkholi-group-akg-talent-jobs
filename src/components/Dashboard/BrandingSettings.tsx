@@ -11,6 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 import { Palette, Upload, Save, Image } from "lucide-react";
 import { invalidateSiteSettingsCache } from "@/hooks/useSiteSettings";
+import { MAX_INLINE_IMAGE_SIZE, readImageAsDataUrl } from "@/lib/imageUpload";
 
 interface Settings {
   id: string;
@@ -56,22 +57,21 @@ const BrandingSettings = () => {
 
   const handleLogoUpload = async (file: File) => {
     if (!settings) return;
-    setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `branding/logo_${Date.now()}.${ext}`;
-
-    const { error } = await supabase.storage.from("resumes").upload(path, file, { upsert: true });
-    if (error) {
-      toast.error(error.message);
-      setUploading(false);
+    if (file.size > MAX_INLINE_IMAGE_SIZE) {
+      toast.error(lang === "ar" ? "حجم الصورة كبير، اختر صورة أصغر من 4MB" : "Image is too large, choose one under 4MB");
       return;
     }
 
-    const baseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const logoUrl = `${baseUrl}/storage/v1/object/public/resumes/${path}`;
-    setSettings({ ...settings, logo_url: logoUrl });
-    setUploading(false);
-    toast.success(lang === "ar" ? "تم رفع الشعار" : "Logo uploaded");
+    setUploading(true);
+    try {
+      const logoUrl = await readImageAsDataUrl(file);
+      setSettings({ ...settings, logo_url: logoUrl });
+      toast.success(lang === "ar" ? "تم تجهيز الشعار" : "Logo ready");
+    } catch {
+      toast.error(lang === "ar" ? "فشل رفع الشعار" : "Logo upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const saveSettings = async () => {
