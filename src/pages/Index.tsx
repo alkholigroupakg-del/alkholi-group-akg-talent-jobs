@@ -161,7 +161,7 @@ const Index = () => {
                       )}
                     </div>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </div>
