@@ -8,6 +8,14 @@ import {
   getJobPositions as getDefaultPositions,
   getYearsOfExperience as getDefaultYears,
   getSalaryRanges as getDefaultSalary,
+  getGenderOptions as getDefaultGender,
+  getMaritalStatusOptions as getDefaultMarital,
+  getYesNoOptions as getDefaultYesNo,
+  getLanguageLevels as getDefaultLangLevels,
+  getJobTypes as getDefaultJobTypes,
+  getHearAboutOptions as getDefaultHearAbout,
+  getAvailableDates as getDefaultAvailDates,
+  getFacilityMgmtOptions as getDefaultFacilityMgmt,
 } from "@/data/jobPositions";
 
 interface DropdownOption {
@@ -57,6 +65,14 @@ export const useDropdownOptions = (lang: Lang) => {
     getJobPositions: () => getOptions("job_positions", getDefaultPositions("ar"), getDefaultPositions("en")),
     getYearsOfExperience: () => getOptions("years_experience", getDefaultYears("ar"), getDefaultYears("en")),
     getSalaryRanges: () => getOptions("salary_ranges", getDefaultSalary("ar"), getDefaultSalary("en")),
+    getGenderOptions: () => getOptions("gender", getDefaultGender("ar"), getDefaultGender("en")),
+    getMaritalStatusOptions: () => getOptions("marital_status", getDefaultMarital("ar"), getDefaultMarital("en")),
+    getYesNoOptions: () => getOptions("yes_no", getDefaultYesNo("ar"), getDefaultYesNo("en")),
+    getLanguageLevels: () => getOptions("language_levels", getDefaultLangLevels("ar"), getDefaultLangLevels("en")),
+    getJobTypes: () => getOptions("job_types", getDefaultJobTypes("ar"), getDefaultJobTypes("en")),
+    getHearAboutOptions: () => getOptions("hear_about", getDefaultHearAbout("ar"), getDefaultHearAbout("en")),
+    getAvailableDates: () => getOptions("available_dates", getDefaultAvailDates("ar"), getDefaultAvailDates("en")),
+    getFacilityMgmtOptions: () => getOptions("facility_mgmt", getDefaultFacilityMgmt("ar"), getDefaultFacilityMgmt("en")),
     getCustomOptions: (fieldName: string, fallbackAr: string[], fallbackEn: string[]) =>
       getOptions(fieldName, fallbackAr, fallbackEn),
   };
