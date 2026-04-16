@@ -423,6 +423,17 @@ const ApplicationForm = ({ preSelectedPosition }: Props) => {
         if (answersError) throw answersError;
       }
 
+      // Send confirmation email (non-blocking)
+      supabase.functions.invoke("send-confirmation-email", {
+        body: {
+          email: formData.email,
+          fullName: formData.fullName,
+          position: formData.desiredPosition,
+        },
+      }).catch((emailErr) => {
+        console.warn("Confirmation email failed (non-blocking):", emailErr);
+      });
+
       setIsSubmitted(true);
       localStorage.removeItem(STORAGE_KEY);
       toast.success(t("validation.success"));
