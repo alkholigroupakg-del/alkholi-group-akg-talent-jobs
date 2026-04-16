@@ -3,29 +3,21 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Pencil, List, RotateCcw, Plus, Trash2, GripVertical } from "lucide-react";
+import { Pencil, List, RotateCcw, Plus, Lock, Unlock } from "lucide-react";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { invalidateDropdownCache } from "@/hooks/useDropdownOptions";
+import SortableItem, { type EditableOption } from "./DropdownEditor/SortableItem";
+import ExcelImportExport from "./DropdownEditor/ExcelImportExport";
 import {
-  getNationalities,
-  getSaudiCities,
-  getEducationLevels,
-  getJobPositions,
-  getYearsOfExperience,
-  getSalaryRanges,
-  getGenderOptions,
-  getMaritalStatusOptions,
-  getYesNoOptions,
-  getLanguageLevels,
-  getJobTypes,
-  getHearAboutOptions,
-  getAvailableDates,
-  getFacilityMgmtOptions,
+  getNationalities, getSaudiCities, getEducationLevels, getJobPositions,
+  getYearsOfExperience, getSalaryRanges, getGenderOptions, getMaritalStatusOptions,
+  getYesNoOptions, getLanguageLevels, getJobTypes, getHearAboutOptions,
+  getAvailableDates, getFacilityMgmtOptions,
 } from "@/data/jobPositions";
 
 interface DropdownOption {
@@ -34,12 +26,6 @@ interface DropdownOption {
   options_ar: string[];
   options_en: string[];
   is_active: boolean;
-}
-
-interface EditableOption {
-  ar: string;
-  en: string;
-  enabled: boolean;
 }
 
 const FIELD_CONFIGS = [
@@ -67,6 +53,9 @@ const DropdownOptionsSettings = () => {
   const [items, setItems] = useState<EditableOption[]>([]);
   const [newAr, setNewAr] = useState("");
   const [newEn, setNewEn] = useState("");
+  const [locked, setLocked] = useState(true);
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   useEffect(() => { fetchOptions(); }, []);
 
@@ -79,18 +68,15 @@ const DropdownOptionsSettings = () => {
 
   const openEditor = (field: typeof FIELD_CONFIGS[0]) => {
     setEditingField(field);
+    setLocked(true);
     const existing = dbOptions[field.key];
     const defaultAr = field.getDefaultAr();
     const defaultEn = field.getDefaultEn();
 
     if (existing && existing.options_ar.length > 0) {
-      // Build items from saved data - all saved items are enabled
       const savedItems: EditableOption[] = existing.options_ar.map((ar, i) => ({
-        ar,
-        en: existing.options_en[i] || ar,
-        enabled: true,
+        ar, en: existing.options_en[i] || ar, enabled: true,
       }));
-      // Add default items that are not in saved data as disabled
       defaultAr.forEach((ar, i) => {
         const en = defaultEn[i] || ar;
         if (!savedItems.some(s => s.ar === ar || s.en === en)) {
@@ -99,40 +85,45 @@ const DropdownOptionsSettings = () => {
       });
       setItems(savedItems);
     } else {
-      // All defaults enabled
       setItems(defaultAr.map((ar, i) => ({ ar, en: defaultEn[i] || ar, enabled: true })));
     }
-    setNewAr("");
-    setNewEn("");
+    setNewAr(""); setNewEn("");
     setShowEditor(true);
   };
 
   const toggleItem = (index: number) => {
+    if (locked) return;
     setItems(prev => prev.map((item, i) => i === index ? { ...item, enabled: !item.enabled } : item));
   };
-
   const updateItem = (index: number, field: "ar" | "en", value: string) => {
+    if (locked) return;
     setItems(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item));
   };
-
   const removeItem = (index: number) => {
+    if (locked) return;
     setItems(prev => prev.filter((_, i) => i !== index));
   };
-
   const addItem = () => {
-    if (!newAr.trim() && !newEn.trim()) return;
+    if (locked || (!newAr.trim() && !newEn.trim())) return;
     setItems(prev => [...prev, { ar: newAr.trim(), en: newEn.trim() || newAr.trim(), enabled: true }]);
-    setNewAr("");
-    setNewEn("");
+    setNewAr(""); setNewEn("");
+  };
+  const toggleAll = (enabled: boolean) => {
+    if (locked) return;
+    setItems(prev => prev.map(item => ({ ...item, enabled })));
   };
 
-  const toggleAll = (enabled: boolean) => {
-    setItems(prev => prev.map(item => ({ ...item, enabled })));
+  const handleDragEnd = (event: DragEndEvent) => {
+    if (locked) return;
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = items.findIndex((_, i) => `item-${i}` === active.id);
+    const newIndex = items.findIndex((_, i) => `item-${i}` === over.id);
+    setItems(arrayMove(items, oldIndex, newIndex));
   };
 
   const saveOptions = async () => {
     if (!editingField) return;
-    // Only save enabled items
     const enabledItems = items.filter(i => i.enabled);
     const optionsAr = enabledItems.map(i => i.ar).filter(Boolean);
     const optionsEn = enabledItems.map(i => i.en).filter(Boolean);
@@ -144,15 +135,10 @@ const DropdownOptionsSettings = () => {
 
     const existing = dbOptions[editingField.key];
     if (existing?.id) {
-      const { error } = await supabase
-        .from("dropdown_options")
-        .update({ options_ar: optionsAr, options_en: optionsEn })
-        .eq("id", existing.id);
+      const { error } = await supabase.from("dropdown_options").update({ options_ar: optionsAr, options_en: optionsEn }).eq("id", existing.id);
       if (error) { toast.error(error.message); return; }
     } else {
-      const { error } = await supabase
-        .from("dropdown_options")
-        .insert({ field_name: editingField.key, options_ar: optionsAr, options_en: optionsEn });
+      const { error } = await supabase.from("dropdown_options").insert({ field_name: editingField.key, options_ar: optionsAr, options_en: optionsEn });
       if (error) { toast.error(error.message); return; }
     }
 
@@ -163,7 +149,7 @@ const DropdownOptionsSettings = () => {
   };
 
   const resetToDefault = () => {
-    if (!editingField) return;
+    if (!editingField || locked) return;
     const defaultAr = editingField.getDefaultAr();
     const defaultEn = editingField.getDefaultEn();
     setItems(defaultAr.map((ar, i) => ({ ar, en: defaultEn[i] || ar, enabled: true })));
@@ -183,7 +169,6 @@ const DropdownOptionsSettings = () => {
           const existing = dbOptions[field.key];
           const count = existing?.options_ar?.length || (lang === "ar" ? field.getDefaultAr().length : field.getDefaultEn().length);
           const isCustomized = !!existing?.id;
-
           return (
             <Card key={field.key} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => openEditor(field)}>
               <CardContent className="p-4 flex items-center justify-between">
@@ -205,92 +190,83 @@ const DropdownOptionsSettings = () => {
         <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col" dir={dir}>
           <DialogHeader>
             <DialogTitle>
-              {lang === "ar"
-                ? `تعديل: ${editingField?.labelAr}`
-                : `Edit: ${editingField?.labelEn}`}
+              {lang === "ar" ? `تعديل: ${editingField?.labelAr}` : `Edit: ${editingField?.labelEn}`}
             </DialogTitle>
           </DialogHeader>
 
-          {/* Toolbar */}
+          {/* Lock toggle + toolbar */}
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <p className="text-sm text-muted-foreground">
-              {enabledCount} / {items.length} {lang === "ar" ? "مفعّل" : "enabled"}
-            </p>
+            <div className="flex items-center gap-3">
+              <Button
+                variant={locked ? "destructive" : "outline"}
+                size="sm"
+                onClick={() => setLocked(!locked)}
+                className="gap-1.5"
+              >
+                {locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+                {locked
+                  ? (lang === "ar" ? "مقفل - اضغط لفتح التعديل" : "Locked - Click to unlock")
+                  : (lang === "ar" ? "مفتوح - التعديل متاح" : "Unlocked - Editing enabled")}
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                {enabledCount} / {items.length} {lang === "ar" ? "مفعّل" : "enabled"}
+              </span>
+            </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => toggleAll(true)}>
+              <Button variant="outline" size="sm" onClick={() => toggleAll(true)} disabled={locked}>
                 {lang === "ar" ? "تفعيل الكل" : "Enable All"}
               </Button>
-              <Button variant="outline" size="sm" onClick={() => toggleAll(false)}>
+              <Button variant="outline" size="sm" onClick={() => toggleAll(false)} disabled={locked}>
                 {lang === "ar" ? "تعطيل الكل" : "Disable All"}
               </Button>
             </div>
           </div>
 
-          {/* Items list */}
-          <div className="flex-1 overflow-y-auto space-y-2 max-h-[50vh] border rounded-lg p-3">
-            {items.map((item, index) => (
-              <div
-                key={index}
-                className={`flex items-center gap-3 p-2 rounded-lg border transition-colors ${
-                  item.enabled ? "bg-background border-border" : "bg-muted/50 border-muted opacity-60"
-                }`}
-              >
-                <Switch
-                  checked={item.enabled}
-                  onCheckedChange={() => toggleItem(index)}
-                />
-                <div className="flex-1 grid grid-cols-2 gap-2">
-                  <Input
-                    value={item.ar}
-                    onChange={(e) => updateItem(index, "ar", e.target.value)}
-                    className="text-sm h-8"
-                    dir="rtl"
-                    placeholder={lang === "ar" ? "عربي" : "Arabic"}
+          {/* Excel import/export */}
+          <ExcelImportExport
+            fieldLabel={lang === "ar" ? (editingField?.labelAr || "") : (editingField?.labelEn || "")}
+            items={items}
+            lang={lang}
+            onImport={(imported) => { if (!locked) setItems(imported); else toast.error(lang === "ar" ? "افتح القفل أولاً" : "Unlock first"); }}
+          />
+
+          {/* Items list with drag and drop */}
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={items.map((_, i) => `item-${i}`)} strategy={verticalListSortingStrategy}>
+              <div className="flex-1 overflow-y-auto space-y-2 max-h-[40vh] border rounded-lg p-3">
+                {items.map((item, index) => (
+                  <SortableItem
+                    key={`item-${index}`}
+                    item={item}
+                    index={index}
+                    locked={locked}
+                    lang={lang}
+                    onToggle={toggleItem}
+                    onUpdate={updateItem}
+                    onRemove={removeItem}
                   />
-                  <Input
-                    value={item.en}
-                    onChange={(e) => updateItem(index, "en", e.target.value)}
-                    className="text-sm h-8"
-                    dir="ltr"
-                    placeholder={lang === "ar" ? "إنجليزي" : "English"}
-                  />
-                </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => removeItem(index)}>
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                ))}
               </div>
-            ))}
-          </div>
+            </SortableContext>
+          </DndContext>
 
           {/* Add new */}
-          <div className="flex items-center gap-2 border rounded-lg p-3 bg-muted/30">
-            <Plus className="w-4 h-4 text-muted-foreground shrink-0" />
-            <div className="flex-1 grid grid-cols-2 gap-2">
-              <Input
-                value={newAr}
-                onChange={(e) => setNewAr(e.target.value)}
-                className="text-sm h-8"
-                dir="rtl"
-                placeholder={lang === "ar" ? "اسم الخيار بالعربي" : "Option in Arabic"}
-                onKeyDown={(e) => e.key === "Enter" && addItem()}
-              />
-              <Input
-                value={newEn}
-                onChange={(e) => setNewEn(e.target.value)}
-                className="text-sm h-8"
-                dir="ltr"
-                placeholder={lang === "ar" ? "اسم الخيار بالإنجليزي" : "Option in English"}
-                onKeyDown={(e) => e.key === "Enter" && addItem()}
-              />
+          {!locked && (
+            <div className="flex items-center gap-2 border rounded-lg p-3 bg-muted/30">
+              <Plus className="w-4 h-4 text-muted-foreground shrink-0" />
+              <div className="flex-1 grid grid-cols-2 gap-2">
+                <Input value={newAr} onChange={(e) => setNewAr(e.target.value)} className="text-sm h-8" dir="rtl" placeholder={lang === "ar" ? "اسم الخيار بالعربي" : "Option in Arabic"} onKeyDown={(e) => e.key === "Enter" && addItem()} />
+                <Input value={newEn} onChange={(e) => setNewEn(e.target.value)} className="text-sm h-8" dir="ltr" placeholder={lang === "ar" ? "اسم الخيار بالإنجليزي" : "Option in English"} onKeyDown={(e) => e.key === "Enter" && addItem()} />
+              </div>
+              <Button variant="outline" size="sm" onClick={addItem} className="shrink-0">
+                {lang === "ar" ? "إضافة" : "Add"}
+              </Button>
             </div>
-            <Button variant="outline" size="sm" onClick={addItem} className="shrink-0">
-              {lang === "ar" ? "إضافة" : "Add"}
-            </Button>
-          </div>
+          )}
 
           {/* Actions */}
           <div className="flex gap-3 justify-between">
-            <Button variant="outline" onClick={resetToDefault} className="gap-2">
+            <Button variant="outline" onClick={resetToDefault} disabled={locked} className="gap-2">
               <RotateCcw className="w-4 h-4" />
               {lang === "ar" ? "استعادة الافتراضي" : "Reset to Default"}
             </Button>
