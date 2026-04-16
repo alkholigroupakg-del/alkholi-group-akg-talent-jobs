@@ -367,6 +367,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "admin.clickLinkToLogin": "بعد الضغط على الرابط سيتم تسجيل دخولك تلقائياً",
     "admin.verifyOtp": "تحقق",
     "admin.resendOtp": "إعادة إرسال الرابط",
+    "admin.emailNotRegistered": "هذا البريد الإلكتروني غير مسجل في النظام",
   },
   en: {
     // Navbar & general
@@ -725,6 +726,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "admin.clickLinkToLogin": "You will be logged in automatically after clicking the link",
     "admin.verifyOtp": "Verify",
     "admin.resendOtp": "Resend link",
+    "admin.emailNotRegistered": "This email is not registered in the system",
   },
 };
 
