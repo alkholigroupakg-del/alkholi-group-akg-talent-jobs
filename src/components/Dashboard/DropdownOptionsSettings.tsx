@@ -75,37 +75,37 @@ const DropdownOptionsSettings = () => {
 
     if (existing && existing.options_ar.length > 0) {
       const savedItems: EditableOption[] = existing.options_ar.map((ar, i) => ({
-        ar, en: existing.options_en[i] || ar, enabled: true,
+        id: crypto.randomUUID(), ar, en: existing.options_en[i] || ar, enabled: true,
       }));
       defaultAr.forEach((ar, i) => {
         const en = defaultEn[i] || ar;
         if (!savedItems.some(s => s.ar === ar || s.en === en)) {
-          savedItems.push({ ar, en, enabled: false });
+          savedItems.push({ id: crypto.randomUUID(), ar, en, enabled: false });
         }
       });
       setItems(savedItems);
     } else {
-      setItems(defaultAr.map((ar, i) => ({ ar, en: defaultEn[i] || ar, enabled: true })));
+      setItems(defaultAr.map((ar, i) => ({ id: crypto.randomUUID(), ar, en: defaultEn[i] || ar, enabled: true })));
     }
     setNewAr(""); setNewEn("");
     setShowEditor(true);
   };
 
-  const toggleItem = (index: number) => {
+  const toggleItem = (id: string) => {
     if (locked) return;
-    setItems(prev => prev.map((item, i) => i === index ? { ...item, enabled: !item.enabled } : item));
+    setItems(prev => prev.map(item => item.id === id ? { ...item, enabled: !item.enabled } : item));
   };
-  const updateItem = (index: number, field: "ar" | "en", value: string) => {
+  const updateItem = (id: string, field: "ar" | "en", value: string) => {
     if (locked) return;
-    setItems(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item));
+    setItems(prev => prev.map(item => item.id === id ? { ...item, [field]: value } : item));
   };
-  const removeItem = (index: number) => {
+  const removeItem = (id: string) => {
     if (locked) return;
-    setItems(prev => prev.filter((_, i) => i !== index));
+    setItems(prev => prev.filter(item => item.id !== id));
   };
   const addItem = () => {
     if (locked || (!newAr.trim() && !newEn.trim())) return;
-    setItems(prev => [...prev, { ar: newAr.trim(), en: newEn.trim() || newAr.trim(), enabled: true }]);
+    setItems(prev => [...prev, { id: crypto.randomUUID(), ar: newAr.trim(), en: newEn.trim() || newAr.trim(), enabled: true }]);
     setNewAr(""); setNewEn("");
   };
   const toggleAll = (enabled: boolean) => {
@@ -117,9 +117,9 @@ const DropdownOptionsSettings = () => {
     if (locked) return;
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    const oldIndex = items.findIndex((_, i) => `item-${i}` === active.id);
-    const newIndex = items.findIndex((_, i) => `item-${i}` === over.id);
-    setItems(arrayMove(items, oldIndex, newIndex));
+    const oldIndex = items.findIndex(item => item.id === active.id);
+    const newIndex = items.findIndex(item => item.id === over.id);
+    if (oldIndex !== -1 && newIndex !== -1) setItems(arrayMove(items, oldIndex, newIndex));
   };
 
   const saveOptions = async () => {
@@ -152,7 +152,7 @@ const DropdownOptionsSettings = () => {
     if (!editingField || locked) return;
     const defaultAr = editingField.getDefaultAr();
     const defaultEn = editingField.getDefaultEn();
-    setItems(defaultAr.map((ar, i) => ({ ar, en: defaultEn[i] || ar, enabled: true })));
+    setItems(defaultAr.map((ar, i) => ({ id: crypto.randomUUID(), ar, en: defaultEn[i] || ar, enabled: true })));
   };
 
   const enabledCount = items.filter(i => i.enabled).length;
@@ -232,13 +232,12 @@ const DropdownOptionsSettings = () => {
 
           {/* Items list with drag and drop */}
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={items.map((_, i) => `item-${i}`)} strategy={verticalListSortingStrategy}>
+            <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
               <div className="flex-1 overflow-y-auto space-y-2 max-h-[40vh] border rounded-lg p-3">
-                {items.map((item, index) => (
+                {items.map((item) => (
                   <SortableItem
-                    key={`item-${index}`}
+                    key={item.id}
                     item={item}
-                    index={index}
                     locked={locked}
                     lang={lang}
                     onToggle={toggleItem}
