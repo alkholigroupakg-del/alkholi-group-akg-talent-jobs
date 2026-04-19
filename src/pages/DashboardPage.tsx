@@ -847,13 +847,19 @@ const DashboardPage = () => {
                       <Card key={p.id}>
                         <CardContent className="p-4">
                           <div className="flex items-center gap-3 mb-2">
-                            {p.logo_url ? (
-                              <StorageImage path={p.logo_url} alt="" className="h-10 w-10 object-contain rounded" />
-                            ) : (
-                              <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">
-                                <FolderOpen className="w-5 h-5 text-muted-foreground" />
-                              </div>
-                            )}
+                            <ProjectLogo
+                              path={p.logo_url}
+                              alt={p.name_ar}
+                              height={Math.min(p.logo_height || 64, 56)}
+                              fit={p.logo_fit}
+                              radius={p.logo_radius}
+                              rotation={p.logo_rotation}
+                              padding={p.logo_padding}
+                              bgColor={p.logo_bg_color}
+                              shadow={p.logo_shadow}
+                              border={p.logo_border}
+                              fallbackClassName=""
+                            />
                             <h3 className="font-bold">{lang === "ar" ? p.name_ar : (p.name_en || p.name_ar)}</h3>
                           </div>
                           {p.description_ar && <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{lang === "ar" ? p.description_ar : (p.description_en || p.description_ar)}</p>}
@@ -862,7 +868,22 @@ const DashboardPage = () => {
                             <div className="flex gap-1">
                               <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => {
                                 setEditingProjectId(p.id);
-                                setProjectForm({ name_ar: p.name_ar, name_en: p.name_en || "", description_ar: p.description_ar || "", description_en: p.description_en || "", logo_url: p.logo_url || "" });
+                                setProjectForm({
+                                  name_ar: p.name_ar,
+                                  name_en: p.name_en || "",
+                                  description_ar: p.description_ar || "",
+                                  description_en: p.description_en || "",
+                                  logo_url: p.logo_url || "",
+                                  logo_height: p.logo_height ?? 64,
+                                  logo_width: p.logo_width ?? null,
+                                  logo_fit: p.logo_fit ?? "contain",
+                                  logo_radius: p.logo_radius ?? 12,
+                                  logo_rotation: p.logo_rotation ?? 0,
+                                  logo_padding: p.logo_padding ?? 0,
+                                  logo_bg_color: p.logo_bg_color ?? "",
+                                  logo_shadow: !!p.logo_shadow,
+                                  logo_border: !!p.logo_border,
+                                });
                                 setShowProjectForm(true);
                               }}>
                                 <Pencil className="w-3.5 h-3.5" />
