@@ -31,6 +31,7 @@ import FormFieldsSettings from "@/components/Dashboard/FormFieldsSettings";
 import SiteContentSettings from "@/components/Dashboard/SiteContentSettings";
 import AdvancedAnalytics from "@/components/Dashboard/AdvancedAnalytics";
 import UIStylingSettings from "@/components/Dashboard/UIStylingSettings";
+import JobPageSettings from "@/components/Dashboard/JobPageSettings";
 import UserPermissionsDialog from "@/components/Dashboard/UserPermissionsDialog";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 
@@ -545,6 +546,7 @@ const DashboardPage = () => {
   if (hasPermission("view_projects")) visibleTabs.push({ value: "projects", label: t("dash.tab.projects") });
   if (hasPermission("view_analytics")) visibleTabs.push({ value: "analytics", label: t("dash.tab.analytics") });
   if (hasPermission("manage_settings")) visibleTabs.push({ value: "settings", label: t("dash.tab.settings") });
+  if (hasPermission("manage_settings")) visibleTabs.push({ value: "jobpage", label: <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" />{lang === "ar" ? "صفحة الوظائف" : "Job Page"}</span> });
   if (hasPermission("manage_backup")) visibleTabs.push({ value: "backup", label: <span className="flex items-center gap-1"><Database className="w-3 h-3" />{lang === "ar" ? "نسخ احتياطي" : "Backup"}</span> });
 
   return (
@@ -956,7 +958,16 @@ const DashboardPage = () => {
             </div>
           </TabsContent>
 
-          {/* BACKUP TAB */}
+          {/* JOB PAGE SETTINGS TAB */}
+          <TabsContent value="jobpage">
+            <Card>
+              <CardContent className="p-6">
+                <JobPageSettings />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+
           <TabsContent value="backup">
             <Card>
               <CardContent className="p-6">
