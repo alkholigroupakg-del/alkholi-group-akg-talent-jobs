@@ -40,24 +40,31 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { pin } = await req.json();
-    if (typeof pin !== "string" || !pin) {
-      return new Response(JSON.stringify({ valid: false, reason: "missing_pin" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const body = await req.json().catch(() => ({}));
+    const { pin, checkOnly } = body || {};
 
     const { data: settings } = await admin.from("site_settings").select("delete_pin").limit(1).maybeSingle();
     const current = (settings as any)?.delete_pin;
+    const configured = !!current;
 
-    if (!current) {
-      return new Response(JSON.stringify({ valid: false, reason: "not_configured" }), {
+    if (checkOnly) {
+      return new Response(JSON.stringify({ configured }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    if (typeof pin !== "string" || !pin) {
+      return new Response(JSON.stringify({ valid: false, configured, reason: "missing_pin" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!configured) {
+      return new Response(JSON.stringify({ valid: false, configured, reason: "not_configured" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const valid = pin === current;
-    return new Response(JSON.stringify({ valid }), {
+    return new Response(JSON.stringify({ valid, configured }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
