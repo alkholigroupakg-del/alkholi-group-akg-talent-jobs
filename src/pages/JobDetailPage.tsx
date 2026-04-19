@@ -7,14 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   MapPin, Clock, Briefcase, ArrowLeft, ArrowRight, Flag, Hash,
-  GraduationCap, CalendarDays, FileText, LogIn, ChevronRight, ChevronLeft,
+  GraduationCap, CalendarDays, FileText, ChevronRight, ChevronLeft,
 } from "lucide-react";
-import logo from "@/assets/logo.jpg";
+import ProjectLogo from "@/components/ProjectLogo";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const JobDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { t, dir, lang } = useLanguage();
   const navigate = useNavigate();
+  const { settings } = useSiteSettings();
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -69,6 +71,29 @@ const JobDetailPage = () => {
   const degreeReq = bi(job.degree_required_ar, job.degree_required_en);
   const additionalDetails = bi(job.additional_details_ar, job.additional_details_en);
 
+  // Customizable settings (with safe fallbacks)
+  const s: any = settings || {};
+  const cardRadius = `${s.job_page_card_radius ?? 12}px`;
+  const cardStyle: React.CSSProperties = {
+    backgroundColor: s.job_page_card_bg || undefined,
+    borderColor: s.job_page_card_border_color || undefined,
+    borderRadius: cardRadius,
+  };
+  const iconStyle: React.CSSProperties = { color: s.job_page_icon_color || undefined };
+  const heroStyle: React.CSSProperties = { backgroundColor: s.job_page_hero_bg || undefined };
+  const applyBtnStyle: React.CSSProperties = {
+    backgroundColor: s.job_page_apply_btn_bg || undefined,
+    color: s.job_page_apply_btn_text_color || undefined,
+  };
+
+  const brandText = bi(s.job_page_brand_text_ar || "ALKHOLI GROUP", s.job_page_brand_text_en || "ALKHOLI GROUP");
+  const descTitle = bi(s.job_page_description_title_ar, s.job_page_description_title_en) || t("jobDetail.description");
+  const reqTitle = bi(s.job_page_requirements_title_ar, s.job_page_requirements_title_en) || t("jobDetail.requirements");
+  const addTitle = bi(s.job_page_additional_title_ar, s.job_page_additional_title_en) || t("jobDetail.additionalDetails");
+  const applyTitle = bi(s.job_page_apply_title_ar, s.job_page_apply_title_en) || t("jobDetail.interestedTitle");
+  const applyDesc = bi(s.job_page_apply_desc_ar, s.job_page_apply_desc_en) || t("jobDetail.interestedDesc");
+  const applyBtn = bi(s.job_page_apply_btn_ar, s.job_page_apply_btn_en) || t("jobs.applyNow");
+
   const infoItems = [
     { icon: MapPin, label: t("jobs.location"), value: location },
     { icon: Clock, label: t("jobs.type"), value: jobType },
@@ -84,15 +109,28 @@ const JobDetailPage = () => {
       {/* Navbar */}
       <nav className="sticky top-0 z-30 bg-card border-b border-border shadow-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between py-3 px-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate("/jobs")}>
               <BackArrow className="w-5 h-5" />
             </Button>
-            <Link to="/">
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-black text-primary">ALKHOLI</span>
-                <span className="text-xl font-black text-accent">GROUP</span>
-              </div>
+            <Link to="/" className="flex items-center gap-3">
+              {s.job_page_logo_url ? (
+                <ProjectLogo
+                  path={s.job_page_logo_url}
+                  height={s.job_page_logo_height || 40}
+                  radius={s.job_page_logo_radius}
+                  padding={s.job_page_logo_padding}
+                  bgColor={s.job_page_logo_bg_color}
+                  shadow={s.job_page_logo_shadow}
+                  border={s.job_page_logo_border}
+                  fit="contain"
+                />
+              ) : null}
+              {(s.job_page_show_brand_text ?? true) && (
+                <span className="text-xl font-black text-primary tracking-wide">
+                  {brandText}
+                </span>
+              )}
             </Link>
           </div>
           <div className="flex items-center gap-3">
@@ -102,7 +140,10 @@ const JobDetailPage = () => {
       </nav>
 
       {/* Hero */}
-      <section className="bg-muted/30 py-12 px-6 border-b border-border">
+      <section
+        className="py-12 px-6 border-b border-border"
+        style={{ backgroundColor: s.job_page_hero_bg || "hsl(var(--muted) / 0.3)", ...heroStyle }}
+      >
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
             <Link to="/jobs" className="hover:text-foreground transition-colors">{t("nav.jobs")}</Link>
@@ -124,13 +165,12 @@ const JobDetailPage = () => {
       {/* Content */}
       <main className="max-w-4xl mx-auto px-6 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6">
             {/* Job Info Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {infoItems.map((item, i) => (
-                <div key={i} className="bg-card border border-border rounded-xl p-4 flex items-start gap-3">
-                  <item.icon className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                <div key={i} className="bg-card border border-border p-4 flex items-start gap-3" style={cardStyle}>
+                  <item.icon className="w-5 h-5 text-accent shrink-0 mt-0.5" style={iconStyle} />
                   <div>
                     <p className="text-xs text-muted-foreground">{item.label}</p>
                     <p className="font-semibold text-sm text-foreground">{item.value}</p>
@@ -139,34 +179,31 @@ const JobDetailPage = () => {
               ))}
             </div>
 
-            {/* Description */}
             {description && (
-              <div className="bg-card border border-border rounded-xl p-6">
+              <div className="bg-card border border-border p-6" style={cardStyle}>
                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-accent" />
-                  {t("jobDetail.description")}
+                  <FileText className="w-5 h-5 text-accent" style={iconStyle} />
+                  {descTitle}
                 </h2>
                 <div className="text-muted-foreground leading-relaxed whitespace-pre-line">{description}</div>
               </div>
             )}
 
-            {/* Requirements */}
             {requirements && (
-              <div className="bg-card border border-border rounded-xl p-6">
+              <div className="bg-card border border-border p-6" style={cardStyle}>
                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-accent" />
-                  {t("jobDetail.requirements")}
+                  <GraduationCap className="w-5 h-5 text-accent" style={iconStyle} />
+                  {reqTitle}
                 </h2>
                 <div className="text-muted-foreground leading-relaxed whitespace-pre-line">{requirements}</div>
               </div>
             )}
 
-            {/* Additional Details */}
             {additionalDetails && (
-              <div className="bg-card border border-border rounded-xl p-6">
+              <div className="bg-card border border-border p-6" style={cardStyle}>
                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-accent" />
-                  {t("jobDetail.additionalDetails")}
+                  <Briefcase className="w-5 h-5 text-accent" style={iconStyle} />
+                  {addTitle}
                 </h2>
                 <div className="text-muted-foreground leading-relaxed whitespace-pre-line">{additionalDetails}</div>
               </div>
@@ -175,12 +212,15 @@ const JobDetailPage = () => {
 
           {/* Sidebar - Apply */}
           <div className="lg:col-span-1">
-            <div className="bg-card border border-border rounded-xl p-6 sticky top-24 space-y-4">
-              <h3 className="text-lg font-bold text-foreground">{t("jobDetail.interestedTitle")}</h3>
-              <p className="text-sm text-muted-foreground">{t("jobDetail.interestedDesc")}</p>
+            <div className="bg-card border border-border p-6 sticky top-24 space-y-4" style={cardStyle}>
+              <h3 className="text-lg font-bold text-foreground">{applyTitle}</h3>
+              <p className="text-sm text-muted-foreground">{applyDesc}</p>
               <Link to={`/apply?position=${encodeURIComponent(title)}`} className="block">
-                <Button className="w-full bg-foreground text-background hover:bg-foreground/90 gap-2 rounded-lg font-semibold py-6 text-base">
-                  {t("jobs.applyNow")}
+                <Button
+                  className="w-full bg-foreground text-background hover:opacity-90 gap-2 rounded-lg font-semibold py-6 text-base"
+                  style={applyBtnStyle}
+                >
+                  {applyBtn}
                   <ForwardArrow className="w-5 h-5" />
                 </Button>
               </Link>
@@ -192,7 +232,6 @@ const JobDetailPage = () => {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-card border-t border-border py-6 px-4 mt-10">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-muted-foreground text-sm">
