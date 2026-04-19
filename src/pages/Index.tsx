@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { supabase } from "@/integrations/supabase/client";
 import StorageImage from "@/components/StorageImage";
+import ProjectLogo from "@/components/ProjectLogo";
 import logo from "@/assets/logo.jpg";
 import heroBg from "@/assets/hero-bg.jpg";
 
