@@ -33,6 +33,7 @@ import AdvancedAnalytics from "@/components/Dashboard/AdvancedAnalytics";
 import UIStylingSettings from "@/components/Dashboard/UIStylingSettings";
 import JobPageSettings from "@/components/Dashboard/JobPageSettings";
 import DeletePinSettings from "@/components/Dashboard/DeletePinSettings";
+import JobsExcelTools from "@/components/Dashboard/JobsExcelTools";
 import UserPermissionsDialog from "@/components/Dashboard/UserPermissionsDialog";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { useDeletePin } from "@/components/DeletePinDialog";
@@ -727,7 +728,8 @@ const DashboardPage = () => {
                   <Button onClick={() => openJobForm()} className="gradient-accent text-accent-foreground gap-2"><Plus className="w-4 h-4" />{t("dash.addJob")}</Button>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
+                <JobsExcelTools jobs={jobs} onChanged={fetchJobs} />
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
