@@ -34,6 +34,7 @@ import UIStylingSettings from "@/components/Dashboard/UIStylingSettings";
 import JobPageSettings from "@/components/Dashboard/JobPageSettings";
 import UserPermissionsDialog from "@/components/Dashboard/UserPermissionsDialog";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
+import { useDeletePin } from "@/components/DeletePinDialog";
 
 type ApplicantStatus = "new" | "reviewing" | "phone_interview" | "in_person_interview" | "accepted" | "hired" | "rejected" | "withdrawn";
 
