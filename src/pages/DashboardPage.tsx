@@ -126,6 +126,7 @@ const CHART_COLORS = ["#3b82f6", "#eab308", "#a855f7", "#6366f1", "#22c55e", "#1
 const DashboardPage = () => {
   const { t, dir, lang } = useLanguage();
   const { permissions, hasPermission, role: currentUserRole, loading: permsLoading } = useUserPermissions();
+  const { requestDelete } = useDeletePin();
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -375,9 +376,15 @@ const DashboardPage = () => {
     }
   };
 
-  const deleteJob = async (id: string) => {
-    const { error } = await supabase.from("job_postings").delete().eq("id", id);
-    if (!error) { toast.success(t("dash.deleted")); fetchJobs(); }
+  const deleteJob = (id: string) => {
+    requestDelete({
+      message: lang === "ar" ? "سيتم حذف هذه الوظيفة نهائياً." : "This job will be permanently deleted.",
+      onConfirm: async () => {
+        const { error } = await supabase.from("job_postings").delete().eq("id", id);
+        if (!error) { toast.success(t("dash.deleted")); fetchJobs(); }
+        else toast.error(error.message);
+      },
+    });
   };
 
   const toggleJobActive = async (id: string, active: boolean) => {
