@@ -1295,10 +1295,105 @@ const DashboardPage = () => {
                   <p className="text-xs text-muted-foreground">{lang === "ar" ? "أو أدخل رابط مباشر:" : "Or enter a direct URL:"}</p>
                   <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
                   {projectForm.logo_url && (
-                    <div className="mt-2 rounded-md border bg-muted/30 p-2">
-                      <StorageImage path={projectForm.logo_url} alt="Preview" className="mx-auto h-16 w-auto object-contain" />
+                    <div className="mt-2 rounded-md border bg-[hsl(var(--muted)/0.3)] p-4 flex items-center justify-center min-h-[140px]">
+                      <ProjectLogo
+                        path={projectForm.logo_url}
+                        alt="Preview"
+                        height={projectForm.logo_height}
+                        width={projectForm.logo_width}
+                        fit={projectForm.logo_fit}
+                        radius={projectForm.logo_radius}
+                        rotation={projectForm.logo_rotation}
+                        padding={projectForm.logo_padding}
+                        bgColor={projectForm.logo_bg_color}
+                        shadow={projectForm.logo_shadow}
+                        border={projectForm.logo_border}
+                      />
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Logo styling controls */}
+              <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
+                <h4 className="font-semibold text-sm">{lang === "ar" ? "تنسيق الشعار" : "Logo Styling"}</h4>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? `الارتفاع: ${projectForm.logo_height}px` : `Height: ${projectForm.logo_height}px`}</Label>
+                    <Slider min={24} max={200} step={2} value={[projectForm.logo_height]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_height: v }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? `العرض: ${projectForm.logo_width ?? "تلقائي"}` : `Width: ${projectForm.logo_width ?? "auto"}`}</Label>
+                    <Slider min={0} max={300} step={2} value={[projectForm.logo_width ?? 0]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_width: v === 0 ? null : v }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? `الزوايا: ${projectForm.logo_radius}px` : `Radius: ${projectForm.logo_radius}px`}</Label>
+                    <Slider min={0} max={100} step={1} value={[projectForm.logo_radius]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_radius: v }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? `الحشوة: ${projectForm.logo_padding}px` : `Padding: ${projectForm.logo_padding}px`}</Label>
+                    <Slider min={0} max={40} step={1} value={[projectForm.logo_padding]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_padding: v }))} />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label className="text-xs">{lang === "ar" ? `الدوران: ${projectForm.logo_rotation}°` : `Rotation: ${projectForm.logo_rotation}°`}</Label>
+                    <Slider min={-180} max={180} step={1} value={[projectForm.logo_rotation]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_rotation: v }))} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? "طريقة العرض" : "Object Fit"}</Label>
+                    <Select value={projectForm.logo_fit} onValueChange={(v) => setProjectForm(p => ({ ...p, logo_fit: v }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="contain">{lang === "ar" ? "احتواء" : "Contain"}</SelectItem>
+                        <SelectItem value="cover">{lang === "ar" ? "تغطية" : "Cover"}</SelectItem>
+                        <SelectItem value="fill">{lang === "ar" ? "ملء" : "Fill"}</SelectItem>
+                        <SelectItem value="scale-down">{lang === "ar" ? "تصغير" : "Scale Down"}</SelectItem>
+                        <SelectItem value="none">{lang === "ar" ? "بدون" : "None"}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? "لون الخلفية" : "Background Color"}</Label>
+                    <div className="flex gap-2">
+                      <Input type="color" value={projectForm.logo_bg_color || "#ffffff"}
+                        onChange={e => setProjectForm(p => ({ ...p, logo_bg_color: e.target.value }))}
+                        className="h-10 w-16 p-1 cursor-pointer" />
+                      <Input value={projectForm.logo_bg_color} placeholder={lang === "ar" ? "شفاف" : "Transparent"}
+                        onChange={e => setProjectForm(p => ({ ...p, logo_bg_color: e.target.value }))} dir="ltr" />
+                      {projectForm.logo_bg_color && (
+                        <Button type="button" variant="ghost" size="sm" onClick={() => setProjectForm(p => ({ ...p, logo_bg_color: "" }))}>×</Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <Switch checked={projectForm.logo_shadow}
+                      onCheckedChange={(v) => setProjectForm(p => ({ ...p, logo_shadow: v }))} />
+                    <Label className="text-xs">{lang === "ar" ? "ظل" : "Shadow"}</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={projectForm.logo_border}
+                      onCheckedChange={(v) => setProjectForm(p => ({ ...p, logo_border: v }))} />
+                    <Label className="text-xs">{lang === "ar" ? "إطار" : "Border"}</Label>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" className="ms-auto"
+                    onClick={() => setProjectForm(p => ({
+                      ...p, logo_height: 64, logo_width: null, logo_fit: "contain",
+                      logo_radius: 12, logo_rotation: 0, logo_padding: 0,
+                      logo_bg_color: "", logo_shadow: false, logo_border: false,
+                    }))}>
+                    {lang === "ar" ? "إعادة ضبط" : "Reset"}
+                  </Button>
                 </div>
               </div>
             </div>
