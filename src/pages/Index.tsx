@@ -38,9 +38,18 @@ const Index = () => {
   const [jobCount, setJobCount] = useState(0);
 
   useEffect(() => {
-    supabase.from("projects").select("*").eq("is_active", true).then(({ data }) => {
-      if (data) setProjects(data as Project[]);
-    });
+    supabase
+      .from("projects")
+      .select("id,name_ar,name_en,description_ar,description_en,logo_url,is_active,logo_height,logo_width,logo_fit,logo_radius,logo_rotation,logo_padding,logo_bg_color,logo_shadow,logo_border")
+      .eq("is_active", true)
+      .order("created_at", { ascending: true })
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("[projects] fetch error:", error);
+          return;
+        }
+        if (data) setProjects(data as Project[]);
+      });
     supabase.from("job_postings").select("id", { count: "exact", head: true }).eq("is_active", true).then(({ count }) => {
       setJobCount(count || 0);
     });
