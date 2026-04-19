@@ -164,13 +164,19 @@ const Index = () => {
               {projects.map(project => (
                 <div key={project.id} className="group">
                   <div className="bg-card rounded-xl border border-border p-6 hover:shadow-elevated transition-all duration-300 text-center h-full flex flex-col items-center justify-center gap-4">
-                    {project.logo_url ? (
-                      <StorageImage path={project.logo_url} alt={bi(project.name_ar, project.name_en || project.name_ar)} className="h-16 w-auto object-contain" />
-                    ) : (
-                      <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <Building2 className="w-8 h-8 text-primary" />
-                      </div>
-                    )}
+                    <ProjectLogo
+                      path={project.logo_url}
+                      alt={bi(project.name_ar, project.name_en || project.name_ar)}
+                      height={project.logo_height ?? 64}
+                      width={project.logo_width}
+                      fit={project.logo_fit}
+                      radius={project.logo_radius}
+                      rotation={project.logo_rotation}
+                      padding={project.logo_padding}
+                      bgColor={project.logo_bg_color}
+                      shadow={project.logo_shadow}
+                      border={project.logo_border}
+                    />
                     <div>
                       <h3 className="font-bold text-foreground group-hover:text-accent transition-colors">
                         {bi(project.name_ar, project.name_en || project.name_ar)}
