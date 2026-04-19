@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from "react";
+import { useState, createContext, useContext, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -30,14 +30,7 @@ export const DeletePinProvider = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
   const [pin, setPin] = useState("");
   const [request, setRequest] = useState<PinRequest | null>(null);
-  const [savedPin, setSavedPin] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    supabase.from("site_settings").select("delete_pin").limit(1).maybeSingle().then(({ data }) => {
-      setSavedPin((data as any)?.delete_pin ?? null);
-    });
-  }, []);
 
   const requestDelete = (req: PinRequest) => {
     setRequest(req);
@@ -46,20 +39,22 @@ export const DeletePinProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const confirm = async () => {
-    // Re-fetch in case it changed
-    const { data } = await supabase.from("site_settings").select("delete_pin").limit(1).maybeSingle();
-    const current = (data as any)?.delete_pin ?? savedPin;
-
-    if (!current) {
-      toast.error(lang === "ar" ? "لم يتم تعيين رقم سري للحذف. اطلب من المدير ضبطه من الإعدادات." : "No delete PIN set. Ask the admin to configure it in settings.");
-      return;
-    }
-    if (pin !== current) {
-      toast.error(lang === "ar" ? "الرقم السري غير صحيح" : "Incorrect PIN");
-      return;
-    }
+    if (!pin) return;
     setBusy(true);
     try {
+      const { data, error } = await supabase.functions.invoke("verify-delete-pin", { body: { pin } });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data?.configured === false) {
+        toast.error(lang === "ar" ? "لم يتم تعيين رقم سري للحذف. اطلب من المدير ضبطه من الإعدادات." : "No delete PIN set. Ask the admin to configure it in settings.");
+        return;
+      }
+      if (!data?.valid) {
+        toast.error(lang === "ar" ? "الرقم السري غير صحيح" : "Incorrect PIN");
+        return;
+      }
       await request?.onConfirm();
       setOpen(false);
     } finally {
