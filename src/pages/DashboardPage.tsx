@@ -159,7 +159,13 @@ const DashboardPage = () => {
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
-  const [projectForm, setProjectForm] = useState({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" });
+  const emptyProjectForm = {
+    name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "",
+    logo_height: 64, logo_width: null as number | null, logo_fit: "contain",
+    logo_radius: 12, logo_rotation: 0, logo_padding: 0,
+    logo_bg_color: "" as string, logo_shadow: false, logo_border: false,
+  };
+  const [projectForm, setProjectForm] = useState(emptyProjectForm);
   const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
