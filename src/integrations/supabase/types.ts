@@ -452,7 +452,16 @@ export type Database = {
           description_en: string | null
           id: string
           is_active: boolean
+          logo_bg_color: string | null
+          logo_border: boolean
+          logo_fit: string
+          logo_height: number
+          logo_padding: number
+          logo_radius: number
+          logo_rotation: number
+          logo_shadow: boolean
           logo_url: string | null
+          logo_width: number | null
           name_ar: string
           name_en: string | null
           updated_at: string
@@ -463,7 +472,16 @@ export type Database = {
           description_en?: string | null
           id?: string
           is_active?: boolean
+          logo_bg_color?: string | null
+          logo_border?: boolean
+          logo_fit?: string
+          logo_height?: number
+          logo_padding?: number
+          logo_radius?: number
+          logo_rotation?: number
+          logo_shadow?: boolean
           logo_url?: string | null
+          logo_width?: number | null
           name_ar: string
           name_en?: string | null
           updated_at?: string
@@ -474,7 +492,16 @@ export type Database = {
           description_en?: string | null
           id?: string
           is_active?: boolean
+          logo_bg_color?: string | null
+          logo_border?: boolean
+          logo_fit?: string
+          logo_height?: number
+          logo_padding?: number
+          logo_radius?: number
+          logo_rotation?: number
+          logo_shadow?: boolean
           logo_url?: string | null
+          logo_width?: number | null
           name_ar?: string
           name_en?: string | null
           updated_at?: string
