@@ -441,12 +441,16 @@ const DashboardPage = () => {
     fetchUsers();
   };
 
-  const deleteUser = async (userId: string) => {
-    if (!confirm(t("dash.confirmDelete"))) return;
-    const result = await callManageUser({ action: "delete_user", user_id: userId });
-    if (result.error) { toast.error(result.error); return; }
-    toast.success(t("dash.userDeleted"));
-    fetchUsers();
+  const deleteUser = (userId: string) => {
+    requestDelete({
+      message: lang === "ar" ? "سيتم حذف هذا المستخدم نهائياً." : "This user will be permanently deleted.",
+      onConfirm: async () => {
+        const result = await callManageUser({ action: "delete_user", user_id: userId });
+        if (result.error) { toast.error(result.error); return; }
+        toast.success(t("dash.userDeleted"));
+        fetchUsers();
+      },
+    });
   };
 
   // Project management
