@@ -1006,6 +1006,14 @@ const DashboardPage = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="auditlog">
+            <SystemLog />
+          </TabsContent>
+
+          <TabsContent value="trash">
+            <TrashBin />
+          </TabsContent>
         </Tabs>
       </main>
 
