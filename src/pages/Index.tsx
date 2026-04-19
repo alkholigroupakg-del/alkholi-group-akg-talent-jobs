@@ -18,6 +18,15 @@ interface Project {
   description_en: string | null;
   logo_url: string | null;
   is_active: boolean;
+  logo_height?: number | null;
+  logo_width?: number | null;
+  logo_fit?: string | null;
+  logo_radius?: number | null;
+  logo_rotation?: number | null;
+  logo_padding?: number | null;
+  logo_bg_color?: string | null;
+  logo_shadow?: boolean | null;
+  logo_border?: boolean | null;
 }
 
 const Index = () => {
