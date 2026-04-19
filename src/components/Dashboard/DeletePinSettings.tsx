@@ -17,11 +17,11 @@ const DeletePinSettings = () => {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    supabase.from("site_settings").select("id, delete_pin").limit(1).maybeSingle().then(({ data }) => {
-      if (data) {
-        setSettingsId((data as any).id);
-        setHasPin(!!(data as any).delete_pin);
-      }
+    supabase.from("site_settings").select("id").limit(1).maybeSingle().then(({ data }) => {
+      if (data) setSettingsId((data as any).id);
+    });
+    supabase.functions.invoke("verify-delete-pin", { body: { checkOnly: true } }).then(({ data }) => {
+      setHasPin(!!(data as any)?.configured);
     });
   }, []);
 
