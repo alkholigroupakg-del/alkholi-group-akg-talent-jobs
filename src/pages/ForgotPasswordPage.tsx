@@ -21,30 +21,11 @@ const ForgotPasswordPage = () => {
     if (!email) { toast.error(t("validation.required")); return; }
     setLoading(true);
 
-    // Check if email is registered in the system first
-    try {
-      const { data } = await supabase.functions.invoke("check-email-exists", {
-        body: { email: email.trim().toLowerCase() },
-      });
-      if (!data?.exists) {
-        toast.error(t("admin.emailNotRegistered"));
-        setLoading(false);
-        return;
-      }
-    } catch {
-      toast.error(t("admin.resetError"));
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    // Always show success to avoid leaking whether the email is registered
+    await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/admin/reset-password`,
     });
-    if (error) {
-      toast.error(t("admin.resetError"));
-    } else {
-      setSent(true);
-    }
+    setSent(true);
     setLoading(false);
   };
 

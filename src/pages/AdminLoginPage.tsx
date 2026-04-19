@@ -52,22 +52,7 @@ const AdminLoginPage = () => {
     setLoading(true);
     setIsLoggingIn(true);
 
-    // Check if email is registered in the system first
-    try {
-      const { data } = await supabase.functions.invoke("check-email-exists", {
-        body: { email: email.trim().toLowerCase() },
-      });
-      if (!data?.exists) {
-        toast.error(t("admin.emailNotRegistered"));
-        setLoading(false);
-        setIsLoggingIn(false);
-        return;
-      }
-    } catch {
-      // If check fails, proceed with normal login (will fail at auth level)
-    }
-
-    // Step 1: Verify credentials
+    // Step 1: Verify credentials (generic error on failure to avoid email enumeration)
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       toast.error(t("dash.loginError"));
