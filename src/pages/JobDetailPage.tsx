@@ -16,7 +16,7 @@ const JobDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { t, dir, lang } = useLanguage();
   const navigate = useNavigate();
-  const settings = useSiteSettings() as Record<string, any> | null;
+  const { settings } = useSiteSettings();
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
