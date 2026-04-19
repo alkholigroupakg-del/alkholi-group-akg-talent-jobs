@@ -910,11 +910,16 @@ const DashboardPage = () => {
                               }}>
                                 <Eye className="w-3.5 h-3.5" />
                               </Button>
-                              <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={async () => {
-                                if (!confirm(lang === "ar" ? "هل أنت متأكد من حذف هذا المشروع؟" : "Delete this project?")) return;
-                                await supabase.from("projects").delete().eq("id", p.id);
-                                fetchProjects();
-                                toast.success(lang === "ar" ? "تم الحذف" : "Deleted");
+                              <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => {
+                                requestDelete({
+                                  message: lang === "ar" ? "سيتم حذف هذا المشروع نهائياً." : "This project will be permanently deleted.",
+                                  onConfirm: async () => {
+                                    const { error } = await supabase.from("projects").delete().eq("id", p.id);
+                                    if (error) { toast.error(error.message); return; }
+                                    fetchProjects();
+                                    toast.success(lang === "ar" ? "تم الحذف" : "Deleted");
+                                  },
+                                });
                               }}>
                                 <Trash2 className="w-3.5 h-3.5" />
                               </Button>
