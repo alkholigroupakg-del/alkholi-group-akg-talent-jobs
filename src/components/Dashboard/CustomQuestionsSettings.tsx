@@ -31,6 +31,7 @@ const STEP_LABELS_EN = ["Basic Info", "Job Preferences", "Education", "Experienc
 
 const CustomQuestionsSettings = () => {
   const { t, lang, dir } = useLanguage();
+  const { requestDelete } = useDeletePin();
   const [questions, setQuestions] = useState<CustomQuestion[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<CustomQuestion | null>(null);
@@ -130,12 +131,15 @@ const CustomQuestionsSettings = () => {
     }
   };
 
-  const deleteQuestion = async (id: string) => {
-    const { error } = await supabase.from("custom_questions").delete().eq("id", id);
-    if (!error) {
-      toast.success(t("dash.deleted"));
-      fetchQuestions();
-    }
+  const deleteQuestion = (id: string) => {
+    requestDelete({
+      message: lang === "ar" ? "سيتم حذف هذا السؤال نهائياً." : "This question will be permanently deleted.",
+      onConfirm: async () => {
+        const { error } = await supabase.from("custom_questions").delete().eq("id", id);
+        if (!error) { toast.success(t("dash.deleted")); fetchQuestions(); }
+        else toast.error(error.message);
+      },
+    });
   };
 
   const toggleActive = async (id: string, active: boolean) => {
