@@ -541,6 +541,35 @@ export type Database = {
           hero_title2_ar: string | null
           hero_title2_en: string | null
           id: string
+          job_page_additional_title_ar: string | null
+          job_page_additional_title_en: string | null
+          job_page_apply_btn_ar: string | null
+          job_page_apply_btn_bg: string | null
+          job_page_apply_btn_en: string | null
+          job_page_apply_btn_text_color: string | null
+          job_page_apply_desc_ar: string | null
+          job_page_apply_desc_en: string | null
+          job_page_apply_title_ar: string | null
+          job_page_apply_title_en: string | null
+          job_page_brand_text_ar: string | null
+          job_page_brand_text_en: string | null
+          job_page_card_bg: string | null
+          job_page_card_border_color: string | null
+          job_page_card_radius: number
+          job_page_description_title_ar: string | null
+          job_page_description_title_en: string | null
+          job_page_hero_bg: string | null
+          job_page_icon_color: string | null
+          job_page_logo_bg_color: string | null
+          job_page_logo_border: boolean
+          job_page_logo_height: number
+          job_page_logo_padding: number
+          job_page_logo_radius: number
+          job_page_logo_shadow: boolean
+          job_page_logo_url: string | null
+          job_page_requirements_title_ar: string | null
+          job_page_requirements_title_en: string | null
+          job_page_show_brand_text: boolean
           logo_alignment: string | null
           logo_bg_enabled: boolean | null
           logo_border_radius: string | null
@@ -593,6 +622,35 @@ export type Database = {
           hero_title2_ar?: string | null
           hero_title2_en?: string | null
           id?: string
+          job_page_additional_title_ar?: string | null
+          job_page_additional_title_en?: string | null
+          job_page_apply_btn_ar?: string | null
+          job_page_apply_btn_bg?: string | null
+          job_page_apply_btn_en?: string | null
+          job_page_apply_btn_text_color?: string | null
+          job_page_apply_desc_ar?: string | null
+          job_page_apply_desc_en?: string | null
+          job_page_apply_title_ar?: string | null
+          job_page_apply_title_en?: string | null
+          job_page_brand_text_ar?: string | null
+          job_page_brand_text_en?: string | null
+          job_page_card_bg?: string | null
+          job_page_card_border_color?: string | null
+          job_page_card_radius?: number
+          job_page_description_title_ar?: string | null
+          job_page_description_title_en?: string | null
+          job_page_hero_bg?: string | null
+          job_page_icon_color?: string | null
+          job_page_logo_bg_color?: string | null
+          job_page_logo_border?: boolean
+          job_page_logo_height?: number
+          job_page_logo_padding?: number
+          job_page_logo_radius?: number
+          job_page_logo_shadow?: boolean
+          job_page_logo_url?: string | null
+          job_page_requirements_title_ar?: string | null
+          job_page_requirements_title_en?: string | null
+          job_page_show_brand_text?: boolean
           logo_alignment?: string | null
           logo_bg_enabled?: boolean | null
           logo_border_radius?: string | null
@@ -645,6 +703,35 @@ export type Database = {
           hero_title2_ar?: string | null
           hero_title2_en?: string | null
           id?: string
+          job_page_additional_title_ar?: string | null
+          job_page_additional_title_en?: string | null
+          job_page_apply_btn_ar?: string | null
+          job_page_apply_btn_bg?: string | null
+          job_page_apply_btn_en?: string | null
+          job_page_apply_btn_text_color?: string | null
+          job_page_apply_desc_ar?: string | null
+          job_page_apply_desc_en?: string | null
+          job_page_apply_title_ar?: string | null
+          job_page_apply_title_en?: string | null
+          job_page_brand_text_ar?: string | null
+          job_page_brand_text_en?: string | null
+          job_page_card_bg?: string | null
+          job_page_card_border_color?: string | null
+          job_page_card_radius?: number
+          job_page_description_title_ar?: string | null
+          job_page_description_title_en?: string | null
+          job_page_hero_bg?: string | null
+          job_page_icon_color?: string | null
+          job_page_logo_bg_color?: string | null
+          job_page_logo_border?: boolean
+          job_page_logo_height?: number
+          job_page_logo_padding?: number
+          job_page_logo_radius?: number
+          job_page_logo_shadow?: boolean
+          job_page_logo_url?: string | null
+          job_page_requirements_title_ar?: string | null
+          job_page_requirements_title_en?: string | null
+          job_page_show_brand_text?: boolean
           logo_alignment?: string | null
           logo_bg_enabled?: boolean | null
           logo_border_radius?: string | null
