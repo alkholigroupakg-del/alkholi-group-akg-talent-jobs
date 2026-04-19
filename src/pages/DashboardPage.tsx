@@ -22,6 +22,8 @@ import { MAX_INLINE_IMAGE_SIZE, readImageAsDataUrl } from "@/lib/imageUpload";
 import { Link } from "react-router-dom";
 import CustomQuestionsSettings from "@/components/Dashboard/CustomQuestionsSettings";
 import StorageImage from "@/components/StorageImage";
+import ProjectLogo from "@/components/ProjectLogo";
+import { Slider } from "@/components/ui/slider";
 import DropdownOptionsSettings from "@/components/Dashboard/DropdownOptionsSettings";
 import BrandingSettings from "@/components/Dashboard/BrandingSettings";
 import BackupSettings from "@/components/Dashboard/BackupSettings";
@@ -159,7 +161,13 @@ const DashboardPage = () => {
   // Project form state
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
-  const [projectForm, setProjectForm] = useState({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" });
+  const emptyProjectForm = {
+    name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "",
+    logo_height: 64, logo_width: null as number | null, logo_fit: "contain",
+    logo_radius: 12, logo_rotation: 0, logo_padding: 0,
+    logo_bg_color: "" as string, logo_shadow: false, logo_border: false,
+  };
+  const [projectForm, setProjectForm] = useState(emptyProjectForm);
   const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
@@ -441,6 +449,15 @@ const DashboardPage = () => {
       description_ar: projectForm.description_ar || null,
       description_en: projectForm.description_en || null,
       logo_url: projectForm.logo_url || null,
+      logo_height: projectForm.logo_height,
+      logo_width: projectForm.logo_width,
+      logo_fit: projectForm.logo_fit,
+      logo_radius: projectForm.logo_radius,
+      logo_rotation: projectForm.logo_rotation,
+      logo_padding: projectForm.logo_padding,
+      logo_bg_color: projectForm.logo_bg_color || null,
+      logo_shadow: projectForm.logo_shadow,
+      logo_border: projectForm.logo_border,
     };
     const { error } = editingProjectId
       ? await supabase.from("projects").update(payload).eq("id", editingProjectId)
@@ -455,7 +472,7 @@ const DashboardPage = () => {
     fetchProjects();
     setShowProjectForm(false);
     setEditingProjectId(null);
-    setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" });
+    setProjectForm(emptyProjectForm);
   };
 
   const activeApplicants = applicants.filter(a => !a.is_archived);
@@ -820,7 +837,7 @@ const DashboardPage = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2"><FolderOpen className="w-5 h-5" />{t("dash.projects")}</CardTitle>
-                  <Button onClick={() => { setEditingProjectId(null); setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" }); setShowProjectForm(true); }} className="gradient-accent text-accent-foreground gap-2"><Plus className="w-4 h-4" />{t("dash.addProject")}</Button>
+                  <Button onClick={() => { setEditingProjectId(null); setProjectForm(emptyProjectForm); setShowProjectForm(true); }} className="gradient-accent text-accent-foreground gap-2"><Plus className="w-4 h-4" />{t("dash.addProject")}</Button>
                 </div>
               </CardHeader>
               <CardContent>
@@ -832,13 +849,19 @@ const DashboardPage = () => {
                       <Card key={p.id}>
                         <CardContent className="p-4">
                           <div className="flex items-center gap-3 mb-2">
-                            {p.logo_url ? (
-                              <StorageImage path={p.logo_url} alt="" className="h-10 w-10 object-contain rounded" />
-                            ) : (
-                              <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">
-                                <FolderOpen className="w-5 h-5 text-muted-foreground" />
-                              </div>
-                            )}
+                            <ProjectLogo
+                              path={p.logo_url}
+                              alt={p.name_ar}
+                              height={Math.min(p.logo_height || 64, 56)}
+                              fit={p.logo_fit}
+                              radius={p.logo_radius}
+                              rotation={p.logo_rotation}
+                              padding={p.logo_padding}
+                              bgColor={p.logo_bg_color}
+                              shadow={p.logo_shadow}
+                              border={p.logo_border}
+                              fallbackClassName=""
+                            />
                             <h3 className="font-bold">{lang === "ar" ? p.name_ar : (p.name_en || p.name_ar)}</h3>
                           </div>
                           {p.description_ar && <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{lang === "ar" ? p.description_ar : (p.description_en || p.description_ar)}</p>}
@@ -847,7 +870,22 @@ const DashboardPage = () => {
                             <div className="flex gap-1">
                               <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => {
                                 setEditingProjectId(p.id);
-                                setProjectForm({ name_ar: p.name_ar, name_en: p.name_en || "", description_ar: p.description_ar || "", description_en: p.description_en || "", logo_url: p.logo_url || "" });
+                                setProjectForm({
+                                  name_ar: p.name_ar,
+                                  name_en: p.name_en || "",
+                                  description_ar: p.description_ar || "",
+                                  description_en: p.description_en || "",
+                                  logo_url: p.logo_url || "",
+                                  logo_height: p.logo_height ?? 64,
+                                  logo_width: p.logo_width ?? null,
+                                  logo_fit: p.logo_fit ?? "contain",
+                                  logo_radius: p.logo_radius ?? 12,
+                                  logo_rotation: p.logo_rotation ?? 0,
+                                  logo_padding: p.logo_padding ?? 0,
+                                  logo_bg_color: p.logo_bg_color ?? "",
+                                  logo_shadow: !!p.logo_shadow,
+                                  logo_border: !!p.logo_border,
+                                });
                                 setShowProjectForm(true);
                               }}>
                                 <Pencil className="w-3.5 h-3.5" />
@@ -1257,10 +1295,105 @@ const DashboardPage = () => {
                   <p className="text-xs text-muted-foreground">{lang === "ar" ? "أو أدخل رابط مباشر:" : "Or enter a direct URL:"}</p>
                   <Input value={projectForm.logo_url} onChange={e => setProjectForm(p => ({ ...p, logo_url: e.target.value }))} dir="ltr" placeholder="https://..." />
                   {projectForm.logo_url && (
-                    <div className="mt-2 rounded-md border bg-muted/30 p-2">
-                      <StorageImage path={projectForm.logo_url} alt="Preview" className="mx-auto h-16 w-auto object-contain" />
+                    <div className="mt-2 rounded-md border bg-[hsl(var(--muted)/0.3)] p-4 flex items-center justify-center min-h-[140px]">
+                      <ProjectLogo
+                        path={projectForm.logo_url}
+                        alt="Preview"
+                        height={projectForm.logo_height}
+                        width={projectForm.logo_width}
+                        fit={projectForm.logo_fit}
+                        radius={projectForm.logo_radius}
+                        rotation={projectForm.logo_rotation}
+                        padding={projectForm.logo_padding}
+                        bgColor={projectForm.logo_bg_color}
+                        shadow={projectForm.logo_shadow}
+                        border={projectForm.logo_border}
+                      />
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Logo styling controls */}
+              <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
+                <h4 className="font-semibold text-sm">{lang === "ar" ? "تنسيق الشعار" : "Logo Styling"}</h4>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? `الارتفاع: ${projectForm.logo_height}px` : `Height: ${projectForm.logo_height}px`}</Label>
+                    <Slider min={24} max={200} step={2} value={[projectForm.logo_height]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_height: v }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? `العرض: ${projectForm.logo_width ?? "تلقائي"}` : `Width: ${projectForm.logo_width ?? "auto"}`}</Label>
+                    <Slider min={0} max={300} step={2} value={[projectForm.logo_width ?? 0]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_width: v === 0 ? null : v }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? `الزوايا: ${projectForm.logo_radius}px` : `Radius: ${projectForm.logo_radius}px`}</Label>
+                    <Slider min={0} max={100} step={1} value={[projectForm.logo_radius]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_radius: v }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? `الحشوة: ${projectForm.logo_padding}px` : `Padding: ${projectForm.logo_padding}px`}</Label>
+                    <Slider min={0} max={40} step={1} value={[projectForm.logo_padding]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_padding: v }))} />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label className="text-xs">{lang === "ar" ? `الدوران: ${projectForm.logo_rotation}°` : `Rotation: ${projectForm.logo_rotation}°`}</Label>
+                    <Slider min={-180} max={180} step={1} value={[projectForm.logo_rotation]}
+                      onValueChange={([v]) => setProjectForm(p => ({ ...p, logo_rotation: v }))} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? "طريقة العرض" : "Object Fit"}</Label>
+                    <Select value={projectForm.logo_fit} onValueChange={(v) => setProjectForm(p => ({ ...p, logo_fit: v }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="contain">{lang === "ar" ? "احتواء" : "Contain"}</SelectItem>
+                        <SelectItem value="cover">{lang === "ar" ? "تغطية" : "Cover"}</SelectItem>
+                        <SelectItem value="fill">{lang === "ar" ? "ملء" : "Fill"}</SelectItem>
+                        <SelectItem value="scale-down">{lang === "ar" ? "تصغير" : "Scale Down"}</SelectItem>
+                        <SelectItem value="none">{lang === "ar" ? "بدون" : "None"}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">{lang === "ar" ? "لون الخلفية" : "Background Color"}</Label>
+                    <div className="flex gap-2">
+                      <Input type="color" value={projectForm.logo_bg_color || "#ffffff"}
+                        onChange={e => setProjectForm(p => ({ ...p, logo_bg_color: e.target.value }))}
+                        className="h-10 w-16 p-1 cursor-pointer" />
+                      <Input value={projectForm.logo_bg_color} placeholder={lang === "ar" ? "شفاف" : "Transparent"}
+                        onChange={e => setProjectForm(p => ({ ...p, logo_bg_color: e.target.value }))} dir="ltr" />
+                      {projectForm.logo_bg_color && (
+                        <Button type="button" variant="ghost" size="sm" onClick={() => setProjectForm(p => ({ ...p, logo_bg_color: "" }))}>×</Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <Switch checked={projectForm.logo_shadow}
+                      onCheckedChange={(v) => setProjectForm(p => ({ ...p, logo_shadow: v }))} />
+                    <Label className="text-xs">{lang === "ar" ? "ظل" : "Shadow"}</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={projectForm.logo_border}
+                      onCheckedChange={(v) => setProjectForm(p => ({ ...p, logo_border: v }))} />
+                    <Label className="text-xs">{lang === "ar" ? "إطار" : "Border"}</Label>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" className="ms-auto"
+                    onClick={() => setProjectForm(p => ({
+                      ...p, logo_height: 64, logo_width: null, logo_fit: "contain",
+                      logo_radius: 12, logo_rotation: 0, logo_padding: 0,
+                      logo_bg_color: "", logo_shadow: false, logo_border: false,
+                    }))}>
+                    {lang === "ar" ? "إعادة ضبط" : "Reset"}
+                  </Button>
                 </div>
               </div>
             </div>
