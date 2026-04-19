@@ -164,6 +164,51 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log: {
+        Row: {
+          action: string
+          id: string
+          ip_address: string | null
+          new_data: Json | null
+          occurred_at: string
+          old_data: Json | null
+          record_id: string | null
+          summary: string | null
+          table_name: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          id?: string
+          ip_address?: string | null
+          new_data?: Json | null
+          occurred_at?: string
+          old_data?: Json | null
+          record_id?: string | null
+          summary?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          id?: string
+          ip_address?: string | null
+          new_data?: Json | null
+          occurred_at?: string
+          old_data?: Json | null
+          record_id?: string | null
+          summary?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       custom_answers: {
         Row: {
           answer: string | null
@@ -245,6 +290,48 @@ export type Database = {
           step_number?: number
           type?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      deleted_items: {
+        Row: {
+          data: Json
+          deleted_at: string
+          deleted_by: string | null
+          deleted_by_email: string | null
+          expires_at: string
+          id: string
+          original_id: string
+          restored: boolean
+          restored_at: string | null
+          restored_by: string | null
+          table_name: string
+        }
+        Insert: {
+          data: Json
+          deleted_at?: string
+          deleted_by?: string | null
+          deleted_by_email?: string | null
+          expires_at?: string
+          id?: string
+          original_id: string
+          restored?: boolean
+          restored_at?: string | null
+          restored_by?: string | null
+          table_name: string
+        }
+        Update: {
+          data?: Json
+          deleted_at?: string
+          deleted_by?: string | null
+          deleted_by_email?: string | null
+          expires_at?: string
+          id?: string
+          original_id?: string
+          restored?: boolean
+          restored_at?: string | null
+          restored_by?: string | null
+          table_name?: string
         }
         Relationships: []
       }
@@ -810,6 +897,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_trash: { Args: never; Returns: number }
+      current_user_email: { Args: never; Returns: string }
       has_permission: {
         Args: { _permission: string; _user_id: string }
         Returns: boolean
@@ -822,6 +911,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin_or_hr: { Args: { _user_id: string }; Returns: boolean }
+      restore_deleted_item: { Args: { _deleted_id: string }; Returns: Json }
     }
     Enums: {
       app_role:

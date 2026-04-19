@@ -34,6 +34,8 @@ import UIStylingSettings from "@/components/Dashboard/UIStylingSettings";
 import JobPageSettings from "@/components/Dashboard/JobPageSettings";
 import DeletePinSettings from "@/components/Dashboard/DeletePinSettings";
 import JobsExcelTools from "@/components/Dashboard/JobsExcelTools";
+import SystemLog from "@/components/Dashboard/SystemLog";
+import TrashBin from "@/components/Dashboard/TrashBin";
 import UserPermissionsDialog from "@/components/Dashboard/UserPermissionsDialog";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { useDeletePin } from "@/components/DeletePinDialog";
@@ -211,6 +213,8 @@ const DashboardPage = () => {
   };
 
   const handleLogout = async () => {
+    const { logAudit } = await import("@/lib/audit");
+    await logAudit({ action: "LOGOUT", summary: "User logged out" });
     await supabase.auth.signOut();
     window.location.href = "/admin/login";
   };
@@ -562,6 +566,8 @@ const DashboardPage = () => {
   if (hasPermission("manage_settings")) visibleTabs.push({ value: "settings", label: t("dash.tab.settings") });
   if (hasPermission("manage_settings")) visibleTabs.push({ value: "jobpage", label: <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" />{lang === "ar" ? "صفحة الوظائف" : "Job Page"}</span> });
   if (hasPermission("manage_backup")) visibleTabs.push({ value: "backup", label: <span className="flex items-center gap-1"><Database className="w-3 h-3" />{lang === "ar" ? "نسخ احتياطي" : "Backup"}</span> });
+  if (hasPermission("manage_settings")) visibleTabs.push({ value: "auditlog", label: <span className="flex items-center gap-1"><Shield className="w-3 h-3" />{lang === "ar" ? "سجل النظام" : "System Log"}</span> });
+  if (hasPermission("manage_settings")) visibleTabs.push({ value: "trash", label: <span className="flex items-center gap-1"><Trash2 className="w-3 h-3" />{lang === "ar" ? "سلة المحذوفات" : "Trash"}</span> });
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
@@ -999,6 +1005,14 @@ const DashboardPage = () => {
                 <BackupSettings />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="auditlog">
+            <SystemLog />
+          </TabsContent>
+
+          <TabsContent value="trash">
+            <TrashBin />
           </TabsContent>
         </Tabs>
       </main>

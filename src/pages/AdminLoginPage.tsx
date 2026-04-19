@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Shield, Mail, ExternalLink } from "lucide-react";
 import logo from "@/assets/logo.jpg";
+import { logAudit } from "@/lib/audit";
 
 const AdminLoginPage = () => {
   const { t, dir } = useLanguage();
@@ -55,11 +56,20 @@ const AdminLoginPage = () => {
     // Step 1: Verify credentials (generic error on failure to avoid email enumeration)
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+      // log failed attempt as anon (user_id null)
+      await (supabase as any).from("audit_log").insert({
+        action: "LOGIN_FAILED",
+        summary: `Failed login attempt for ${email}`,
+        user_email: email,
+        user_agent: navigator.userAgent,
+      });
       toast.error(t("dash.loginError"));
       setLoading(false);
       setIsLoggingIn(false);
       return;
     }
+    // log success (current session is still active before signOut)
+    await logAudit({ action: "LOGIN", summary: `Successful login for ${email}` });
 
     // Step 2: Sign out and send magic link for 2FA
     await supabase.auth.signOut();
