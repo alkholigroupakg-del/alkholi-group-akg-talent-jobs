@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Pencil, List, RotateCcw, Plus, Lock, Unlock, Search } from "lucide-react";
+import { Pencil, List, RotateCcw, Plus, Lock, Unlock, Search, Trash2 } from "lucide-react";
+import { useDeletePin } from "@/components/DeletePinDialog";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { invalidateDropdownCache } from "@/hooks/useDropdownOptions";
@@ -48,6 +49,7 @@ const FIELD_CONFIGS = [
 
 const DropdownOptionsSettings = () => {
   const { t, lang, dir } = useLanguage();
+  const { requestDelete } = useDeletePin();
   const [dbOptions, setDbOptions] = useState<Record<string, DropdownOption>>({});
   const [showEditor, setShowEditor] = useState(false);
   const [editingField, setEditingField] = useState<typeof FIELD_CONFIGS[0] | null>(null);
@@ -218,12 +220,32 @@ const DropdownOptionsSettings = () => {
                 {enabledCount} / {items.length} {lang === "ar" ? "مفعّل" : "enabled"}
               </span>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button variant="outline" size="sm" onClick={() => toggleAll(true)} disabled={locked}>
                 {lang === "ar" ? "تفعيل الكل" : "Enable All"}
               </Button>
               <Button variant="outline" size="sm" onClick={() => toggleAll(false)} disabled={locked}>
                 {lang === "ar" ? "تعطيل الكل" : "Disable All"}
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={locked || items.length === 0}
+                onClick={() => {
+                  requestDelete({
+                    message: lang === "ar"
+                      ? `سيتم حذف جميع الخيارات (${items.length}) من هذه القائمة نهائياً.`
+                      : `All ${items.length} options in this list will be permanently removed.`,
+                    onConfirm: async () => {
+                      setItems([]);
+                      toast.success(lang === "ar" ? "تم حذف جميع الخيارات. اضغط حفظ لتثبيت التغيير." : "All options removed. Click Save to confirm.");
+                    },
+                  });
+                }}
+                className="gap-1.5"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                {lang === "ar" ? "حذف الكل" : "Delete All"}
               </Button>
             </div>
           </div>
