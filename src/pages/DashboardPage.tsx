@@ -447,6 +447,15 @@ const DashboardPage = () => {
       description_ar: projectForm.description_ar || null,
       description_en: projectForm.description_en || null,
       logo_url: projectForm.logo_url || null,
+      logo_height: projectForm.logo_height,
+      logo_width: projectForm.logo_width,
+      logo_fit: projectForm.logo_fit,
+      logo_radius: projectForm.logo_radius,
+      logo_rotation: projectForm.logo_rotation,
+      logo_padding: projectForm.logo_padding,
+      logo_bg_color: projectForm.logo_bg_color || null,
+      logo_shadow: projectForm.logo_shadow,
+      logo_border: projectForm.logo_border,
     };
     const { error } = editingProjectId
       ? await supabase.from("projects").update(payload).eq("id", editingProjectId)
@@ -461,7 +470,7 @@ const DashboardPage = () => {
     fetchProjects();
     setShowProjectForm(false);
     setEditingProjectId(null);
-    setProjectForm({ name_ar: "", name_en: "", description_ar: "", description_en: "", logo_url: "" });
+    setProjectForm(emptyProjectForm);
   };
 
   const activeApplicants = applicants.filter(a => !a.is_archived);
