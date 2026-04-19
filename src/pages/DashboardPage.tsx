@@ -32,6 +32,7 @@ import SiteContentSettings from "@/components/Dashboard/SiteContentSettings";
 import AdvancedAnalytics from "@/components/Dashboard/AdvancedAnalytics";
 import UIStylingSettings from "@/components/Dashboard/UIStylingSettings";
 import JobPageSettings from "@/components/Dashboard/JobPageSettings";
+import DeletePinSettings from "@/components/Dashboard/DeletePinSettings";
 import UserPermissionsDialog from "@/components/Dashboard/UserPermissionsDialog";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
 import { useDeletePin } from "@/components/DeletePinDialog";
@@ -942,6 +943,11 @@ const DashboardPage = () => {
           {/* SETTINGS TAB */}
           <TabsContent value="settings">
             <div className="space-y-6">
+              <Card className="border-destructive/40">
+                <CardContent className="p-6">
+                  <DeletePinSettings />
+                </CardContent>
+              </Card>
               <Card>
                 <CardContent className="p-6">
                   <SiteContentSettings />
