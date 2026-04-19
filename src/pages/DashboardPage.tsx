@@ -32,8 +32,10 @@ import SiteContentSettings from "@/components/Dashboard/SiteContentSettings";
 import AdvancedAnalytics from "@/components/Dashboard/AdvancedAnalytics";
 import UIStylingSettings from "@/components/Dashboard/UIStylingSettings";
 import JobPageSettings from "@/components/Dashboard/JobPageSettings";
+import DeletePinSettings from "@/components/Dashboard/DeletePinSettings";
 import UserPermissionsDialog from "@/components/Dashboard/UserPermissionsDialog";
 import { useUserPermissions } from "@/hooks/useUserPermissions";
+import { useDeletePin } from "@/components/DeletePinDialog";
 
 type ApplicantStatus = "new" | "reviewing" | "phone_interview" | "in_person_interview" | "accepted" | "hired" | "rejected" | "withdrawn";
 
@@ -125,6 +127,7 @@ const CHART_COLORS = ["#3b82f6", "#eab308", "#a855f7", "#6366f1", "#22c55e", "#1
 const DashboardPage = () => {
   const { t, dir, lang } = useLanguage();
   const { permissions, hasPermission, role: currentUserRole, loading: permsLoading } = useUserPermissions();
+  const { requestDelete } = useDeletePin();
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -374,9 +377,15 @@ const DashboardPage = () => {
     }
   };
 
-  const deleteJob = async (id: string) => {
-    const { error } = await supabase.from("job_postings").delete().eq("id", id);
-    if (!error) { toast.success(t("dash.deleted")); fetchJobs(); }
+  const deleteJob = (id: string) => {
+    requestDelete({
+      message: lang === "ar" ? "سيتم حذف هذه الوظيفة نهائياً." : "This job will be permanently deleted.",
+      onConfirm: async () => {
+        const { error } = await supabase.from("job_postings").delete().eq("id", id);
+        if (!error) { toast.success(t("dash.deleted")); fetchJobs(); }
+        else toast.error(error.message);
+      },
+    });
   };
 
   const toggleJobActive = async (id: string, active: boolean) => {
@@ -433,12 +442,16 @@ const DashboardPage = () => {
     fetchUsers();
   };
 
-  const deleteUser = async (userId: string) => {
-    if (!confirm(t("dash.confirmDelete"))) return;
-    const result = await callManageUser({ action: "delete_user", user_id: userId });
-    if (result.error) { toast.error(result.error); return; }
-    toast.success(t("dash.userDeleted"));
-    fetchUsers();
+  const deleteUser = (userId: string) => {
+    requestDelete({
+      message: lang === "ar" ? "سيتم حذف هذا المستخدم نهائياً." : "This user will be permanently deleted.",
+      onConfirm: async () => {
+        const result = await callManageUser({ action: "delete_user", user_id: userId });
+        if (result.error) { toast.error(result.error); return; }
+        toast.success(t("dash.userDeleted"));
+        fetchUsers();
+      },
+    });
   };
 
   // Project management
@@ -898,11 +911,16 @@ const DashboardPage = () => {
                               }}>
                                 <Eye className="w-3.5 h-3.5" />
                               </Button>
-                              <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={async () => {
-                                if (!confirm(lang === "ar" ? "هل أنت متأكد من حذف هذا المشروع؟" : "Delete this project?")) return;
-                                await supabase.from("projects").delete().eq("id", p.id);
-                                fetchProjects();
-                                toast.success(lang === "ar" ? "تم الحذف" : "Deleted");
+                              <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => {
+                                requestDelete({
+                                  message: lang === "ar" ? "سيتم حذف هذا المشروع نهائياً." : "This project will be permanently deleted.",
+                                  onConfirm: async () => {
+                                    const { error } = await supabase.from("projects").delete().eq("id", p.id);
+                                    if (error) { toast.error(error.message); return; }
+                                    fetchProjects();
+                                    toast.success(lang === "ar" ? "تم الحذف" : "Deleted");
+                                  },
+                                });
                               }}>
                                 <Trash2 className="w-3.5 h-3.5" />
                               </Button>
@@ -925,6 +943,11 @@ const DashboardPage = () => {
           {/* SETTINGS TAB */}
           <TabsContent value="settings">
             <div className="space-y-6">
+              <Card className="border-destructive/40">
+                <CardContent className="p-6">
+                  <DeletePinSettings />
+                </CardContent>
+              </Card>
               <Card>
                 <CardContent className="p-6">
                   <SiteContentSettings />

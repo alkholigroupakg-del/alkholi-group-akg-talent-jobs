@@ -520,6 +520,7 @@ export type Database = {
           cta_desc_en: string | null
           cta_title_ar: string | null
           cta_title_en: string | null
+          delete_pin: string | null
           employee_count: string | null
           feature1_desc_ar: string | null
           feature1_desc_en: string | null
@@ -601,6 +602,7 @@ export type Database = {
           cta_desc_en?: string | null
           cta_title_ar?: string | null
           cta_title_en?: string | null
+          delete_pin?: string | null
           employee_count?: string | null
           feature1_desc_ar?: string | null
           feature1_desc_en?: string | null
@@ -682,6 +684,7 @@ export type Database = {
           cta_desc_en?: string | null
           cta_title_ar?: string | null
           cta_title_en?: string | null
+          delete_pin?: string | null
           employee_count?: string | null
           feature1_desc_ar?: string | null
           feature1_desc_en?: string | null
