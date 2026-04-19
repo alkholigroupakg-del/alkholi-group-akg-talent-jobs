@@ -49,6 +49,7 @@ const FIELD_CONFIGS = [
 
 const DropdownOptionsSettings = () => {
   const { t, lang, dir } = useLanguage();
+  const { requestDelete } = useDeletePin();
   const [dbOptions, setDbOptions] = useState<Record<string, DropdownOption>>({});
   const [showEditor, setShowEditor] = useState(false);
   const [editingField, setEditingField] = useState<typeof FIELD_CONFIGS[0] | null>(null);
@@ -219,12 +220,32 @@ const DropdownOptionsSettings = () => {
                 {enabledCount} / {items.length} {lang === "ar" ? "مفعّل" : "enabled"}
               </span>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button variant="outline" size="sm" onClick={() => toggleAll(true)} disabled={locked}>
                 {lang === "ar" ? "تفعيل الكل" : "Enable All"}
               </Button>
               <Button variant="outline" size="sm" onClick={() => toggleAll(false)} disabled={locked}>
                 {lang === "ar" ? "تعطيل الكل" : "Disable All"}
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={locked || items.length === 0}
+                onClick={() => {
+                  requestDelete({
+                    message: lang === "ar"
+                      ? `سيتم حذف جميع الخيارات (${items.length}) من هذه القائمة نهائياً.`
+                      : `All ${items.length} options in this list will be permanently removed.`,
+                    onConfirm: async () => {
+                      setItems([]);
+                      toast.success(lang === "ar" ? "تم حذف جميع الخيارات. اضغط حفظ لتثبيت التغيير." : "All options removed. Click Save to confirm.");
+                    },
+                  });
+                }}
+                className="gap-1.5"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                {lang === "ar" ? "حذف الكل" : "Delete All"}
               </Button>
             </div>
           </div>
