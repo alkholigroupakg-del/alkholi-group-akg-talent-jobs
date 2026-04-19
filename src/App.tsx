@@ -17,6 +17,7 @@ import DashboardPage from "./pages/DashboardPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { useEffect } from "react";
 import { loadUIStyles, applyUIStyles } from "@/components/Dashboard/UIStylingSettings";
+import { DeletePinProvider } from "@/components/DeletePinDialog";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           <Sonner />
           <UIStylesLoader />
           <BrowserRouter>
+            <DeletePinProvider>
             <Routes>
               {/* Public applicant-facing routes */}
               <Route path="/" element={<Index />} />
@@ -54,6 +56,7 @@ const App = () => (
 
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </DeletePinProvider>
           </BrowserRouter>
         </TooltipProvider>
       </LanguageProvider>
